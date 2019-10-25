@@ -1,5 +1,6 @@
 const ROUTES = {
-  BASE: '/'
+  BASE: '/',
+  SIGN_UP: '/signup'
 }
 
 export {
