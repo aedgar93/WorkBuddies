@@ -35,7 +35,13 @@ class App extends Component {
           authUser.user = snapshot.docs[0].data()
           localStorage.setItem('authUser', JSON.stringify(authUser));
           localStorage.setItem('user', JSON.stringify(authUser.user));
-          this.setState({ authUser, loading: false })
+          let companyRef = this.props.firebase.db.collection('companies').doc(authUser.user.company_uid)
+          companyRef.get()
+          .then(snapshot => {
+            authUser.company = snapshot.data()
+            authUser.companyRef = this.props.firebase.db.collection('companies').doc(authUser.user.company_uid)
+            this.setState({ authUser, loading: false })
+          })
         })
       } else {
         localStorage.removeItem('authUser');
@@ -55,20 +61,20 @@ class App extends Component {
       <AuthUserContext.Provider value={this.state.authUser}>
         <div className="App">
           <>
-            <Header />
-            <div className="content">
-              {
-                loading ? <div> Loading ... </div> :
-                <Router>
-                  <Switch>
-                      <Route path={ROUTES.SIGN_UP} component={SignUp}></Route>
-                      { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
-                      { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
-                  </Switch>
-                </Router>
-              }
+            <Router>
+              <Header />
+              <div className="content">
+                {
+                  loading ? <div> Loading ... </div> :
 
-            </div>
+                    <Switch>
+                        <Route path={ROUTES.SIGN_UP} component={SignUp}></Route>
+                        { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
+                        { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
+                    </Switch>
+                }
+              </div>
+            </Router>
           </>
 
         </div>

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styles from './SignIn.module.css'
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../../firebaseComponents'
@@ -31,13 +31,14 @@ const SignIn = ({ history }) => {
     })
   }
 
-  const onChange = () => {
-    setValidated(email !== '' && password !== '')
-  }
+  useEffect(() => {
+    let valid = email !== '' && password !== ''
+    setValidated(valid)
+  }, [email, password])
 
   return (
     <div className={styles.wrapper}>
-      <Form onSubmit={onSubmit} validated={validated} onChange={onChange}>
+      <Form onSubmit={onSubmit} validated={validated}>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control

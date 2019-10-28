@@ -1,0 +1,82 @@
+.card {
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: 5px;
+  height: 75px;
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 1;
+  margin: 5px;
+  width: 250px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.editCard {
+  width: 100%;
+}
+
+.iconContainer {
+  height: 100%;
+  width: 75px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background: rgba(0,0,0,.125);
+  display: flex;
+}
+
+.name {
+  align-self: center;
+  padding: 0 10px;
+  text-align: center;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+.editName {
+  align-self: center;
+  flex-grow: 1;
+}
+
+.input {
+  max-width: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding-left: 5px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.editIcon {
+  color: rgba(0,0,0,.5);
+  font-size: 12px;
+  text-align: center;
+  align-self: center;
+}
+
+.action {
+  width: 100px;
+  line-height: 75px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.save {
+  background: #d4edda;
+  color: #155724;
+}
+
+.save:hover {
+  background: #155724;
+  color:  #d4edda;
+}
+
+.delete {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+.delete:hover {
+  color: #f8d7da;
+  background-color: #721c24;
+}

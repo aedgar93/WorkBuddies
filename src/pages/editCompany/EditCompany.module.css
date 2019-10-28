@@ -1,0 +1,16 @@
+.wrapper {
+  width: 800px;
+  margin: auto;
+  text-align: left;
+  max-width: 100%;
+}
+
+.buttonContainer {
+  text-align: right;
+}
+
+.activities {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
