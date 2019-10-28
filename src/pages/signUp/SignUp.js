@@ -28,15 +28,27 @@ const SignUp = ({ history }) => {
 
     firebase.createUserWithEmailAndPassword(email, password1)
     .then((result) => {
+      let companyId = 'uGUSGGMbNNu5nU9GAc2j'
+      //TODO: add user to company
       firebase.db.collection('users').add({
         auth_id: result.user.uid,
         firstName: firstName,
         lastName: lastName,
-        company: 'Q3YTnubqC9lPp4VvQ1Vx'
-      }).then(() => {
-        history.push(ROUTES.BASE)
-      })
-    }).catch(setError)
+        company_uid: companyId
+      }).then((user) => {
+        let company = firebase.db.collection('companies').doc(companyId)
+        company.update({
+          users: firebase.firestore.FieldValue.arrayUnion(firebase.db.doc('users/' + user.id))
+        }).then(() => {
+          history.push(ROUTES.BASE)
+        }).catch(updateError)
+      }).catch(updateError)
+    }).catch(updateError)
+  }
+
+  const updateError = (error) => {
+    setError(error)
+    setLoading(false)
   }
 
   useEffect(() => {

@@ -26,7 +26,6 @@ const SignIn = ({ history }) => {
       history.push(ROUTES.BASE)
     })
     .catch(( error ) => {
-      console.log(error)
       setError(error)
       setLoading(false)
     })

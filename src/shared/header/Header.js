@@ -26,6 +26,7 @@ const Header = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link href={ROUTES.BASE}>Home</Nav.Link>
+          { auth && auth.user && auth.user.admin ? <Nav.Link href={ROUTES.EDIT_COMPANY}>My Company</Nav.Link> : null}
         </Nav>
       </Navbar.Collapse>
       { auth ? <Button onClick={signOut} variant="outline-light">Sign Out</Button> : null }

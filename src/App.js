@@ -8,6 +8,7 @@ import './App.css';
 import { ROUTES } from './utils/constants'
 import SignIn from './pages/signIn'
 import SignUp from './pages/signUp'
+import EditCompany from './pages/editCompany'
 import Header from './shared/header'
 import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
@@ -16,20 +17,29 @@ import Dashboard from './pages/dashboard'
 class App extends Component {
   constructor(props) {
     super(props);
+    let authUser = JSON.parse(localStorage.getItem('authUser'))
+    if (authUser) {
+      authUser.user = JSON.parse(localStorage.getItem('user'))
+    }
     this.state = {
-      authUser: null,
+      authUser,
       loading: true
     };
   }
+
   componentDidMount() {
     this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
       if (authUser) {
         this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
         .then(snapshot => {
           authUser.user = snapshot.docs[0].data()
+          localStorage.setItem('authUser', JSON.stringify(authUser));
+          localStorage.setItem('user', JSON.stringify(authUser.user));
           this.setState({ authUser, loading: false })
         })
       } else {
+        localStorage.removeItem('authUser');
+        localStorage.removeItem('user');
         this.setState({ authUser: null, loading: false });
       }
     });
@@ -44,22 +54,22 @@ class App extends Component {
     return (
       <AuthUserContext.Provider value={this.state.authUser}>
         <div className="App">
-          {
-            loading ?
-              <div>Loading ...</div>
-              :
-              <>
-                <Header />
-                <div className="content">
-                  <Router>
-                    <Switch>
-                        <Route path={ROUTES.SIGN_UP} component={SignUp}></Route>
-                        { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
-                    </Switch>
-                  </Router>
-                </div>
-              </>
-          }
+          <>
+            <Header />
+            <div className="content">
+              {
+                loading ? <div> Loading ... </div> :
+                <Router>
+                  <Switch>
+                      <Route path={ROUTES.SIGN_UP} component={SignUp}></Route>
+                      { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
+                      { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
+                  </Switch>
+                </Router>
+              }
+
+            </div>
+          </>
 
         </div>
       </AuthUserContext.Provider>
