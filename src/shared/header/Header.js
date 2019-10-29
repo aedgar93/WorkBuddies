@@ -41,8 +41,8 @@ const Header = () => {
             : null
           }
         </Nav>
+        { auth ? <Button onClick={signOut} variant="outline-light">Sign Out</Button> : null }
       </Navbar.Collapse>
-      { auth ? <Button onClick={signOut} variant="outline-light">Sign Out</Button> : null }
     </Navbar>
   )
 }

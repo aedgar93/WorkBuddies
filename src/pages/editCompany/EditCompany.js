@@ -3,10 +3,49 @@ import React, { useContext, useState, Component } from 'react';
 import styles from './EditCompany.module.css'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
 import { withFirebase } from '../../firebaseComponents'
 import { withAuth } from '../../session'
 import moment from 'moment-timezone'
 import Activity, { EditActivity } from '../../shared/activity'
+
+const hours = [
+  { label: '12 a.m.', value: 0},
+  { label: '1 a.m.', value: 1},
+  { label: '2 a.m.', value: 2},
+  { label: '3 a.m.', value: 3},
+  { label: '4 a.m.', value: 4},
+  { label: '5 a.m.', value: 5},
+  { label: '6 a.m.', value: 6},
+  { label: '7 a.m.', value: 7},
+  { label: '8 a.m.', value: 8},
+  { label: '9 a.m.', value: 9},
+  { label: '10 a.m.', value: 10},
+  { label: '11 a.m.', value: 11},
+  { label: '12 p.m.', value: 12},
+  { label: '1 p.m.', value: 13},
+  { label: '2 p.m.', value: 14},
+  { label: '3 p.m.', value: 15},
+  { label: '4 p.m.', value: 16},
+  { label: '5 p.m.', value: 17},
+  { label: '6 p.m.', value: 18},
+  { label: '7 p.m.', value: 19},
+  { label: '8 p.m.', value: 20},
+  { label: '9 p.m.', value: 21},
+  { label: '10 p.m.', value: 22},
+  { label: '11 p.m.', value: 23},
+]
+
+const days = [
+  {label: 'Sunday', value: 0},
+  {label: 'Monday', value: 1},
+  {label: 'Tuesday', value: 2},
+  {label: 'Wednesday', value: 3},
+  {label: 'Thursday', value: 4},
+  {label: 'Friday', value: 5},
+  {label: 'Saturday', value: 6},
+]
 
 class EditCompany extends Component {
 
@@ -16,6 +55,8 @@ class EditCompany extends Component {
       validated: true,
       loading: false,
       name: this.props.auth.company.name,
+      day: 'Monday',
+      hour: 9,
       timeZone: this.props.auth.company.timeZone ? this.props.auth.company.timeZone : moment.tz.guess(),
       activities: null,
       activityRefs: null,
@@ -59,7 +100,7 @@ class EditCompany extends Component {
     activity.name = name
     activity.icon = icon
 
-    this.state.activityRefs[this.state.editIndex].ref.set({
+    ref.ref.set({
       name,
       icon: icon ? icon : null
     })
@@ -72,7 +113,7 @@ class EditCompany extends Component {
   }
 
   render() {
-    const { validated, name, timeZone, loading, activities, editIndex } = this.state
+    const { validated, name, timeZone, hour, day, loading, activities, editIndex } = this.state
 
     return (
       <div className={styles.wrapper}>
@@ -88,21 +129,54 @@ class EditCompany extends Component {
                 required
                 placeholder="Company Name" />
             </Form.Group>
-            <Form.Group controlId="timezone">
-              <Form.Label>Time Zone</Form.Label>
-              <Form.Control
-                value={timeZone}
-                name="timeZone"
-                onChange={this.onChange}
-                required
-                as="select"
-                placeholder="TimeZone">
-                  {
-                    moment.tz.names().map(zone => {
-                      return (<option key={zone} value={zone}>{zone}</option>)
-                    })
-                  }
-              </Form.Control>
+            <Form.Group>
+            <Row>
+              <Col xs={12} s={4} m={4} l={4} xl={4} className={styles.timeColumn}>
+                <Form.Control
+                  value={day}
+                  name="day"
+                  onChange={this.onChange}
+                  required
+                  as="select"
+                  placeholder="Select a day">
+                    {
+                      days.map(day => {
+                        return (<option key={day.value} value={day.value}>{day.label}</option>)
+                      })
+                    }
+                </Form.Control>
+              </Col>
+              <Col xs={12} s={4} m={4} l={4} xl={4} className={styles.timeColumn}>
+                <Form.Control
+                  value={hour}
+                  name="hour"
+                  onChange={this.onChange}
+                  required
+                  as="select"
+                  placeholder="Select a time">
+                    {
+                      hours.map(time => {
+                        return (<option key={time.value} value={time.value}>{time.label}</option>)
+                      })
+                    }
+                </Form.Control>
+              </Col>
+              <Col xs={12} s={4} m={4} l={4} xl={4} className={styles.timeColumn}>
+                <Form.Control
+                  value={timeZone}
+                  name="timeZone"
+                  onChange={this.onChange}
+                  required
+                  as="select"
+                  placeholder="Select your timezone">
+                    {
+                      moment.tz.names().map(zone => {
+                        return (<option key={zone} value={zone}>{zone}</option>)
+                      })
+                    }
+                </Form.Control>
+              </Col>
+            </Row>
             </Form.Group>
             <div className={styles.buttonContainer}>
               <Button variant="primary" type="submit" className={styles.button} disabled={!validated || loading}>

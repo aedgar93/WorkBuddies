@@ -14,3 +14,7 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+.timeColumn {
+  margin: 10px 0;
+}
