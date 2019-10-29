@@ -18,3 +18,17 @@
 .timeColumn {
   margin: 10px 0;
 }
+
+.addButton {
+  margin: 5px;
+  width: 75px;
+  padding: 0 !important;
+  line-height: 75px !important;
+  max-height: 100%;
+  box-sizing: border-box;
+  height: 75px;
+}
+
+.buttonSpinner {
+  margin-right: 5px;
+}

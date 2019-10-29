@@ -10,10 +10,7 @@ const EditActivity = ({ name, icon, onDelete, onSave }) => {
   // }
 
   const handleDelete = () => {
-    // eslint-disable-next-line no-restricted-globals
-    if(confirm(`Are you sure you want to delete ${name}?`)) {
       onDelete()
-    }
   }
 
   const handleSave = () => {

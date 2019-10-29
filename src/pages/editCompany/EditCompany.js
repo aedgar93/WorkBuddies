@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
+import Spinner from 'react-bootstrap/Spinner'
 import { withFirebase } from '../../firebaseComponents'
 import { withAuth } from '../../session'
 import moment from 'moment-timezone'
@@ -55,18 +56,23 @@ class EditCompany extends Component {
       validated: true,
       loading: false,
       name: this.props.auth.company.name,
-      day: 'Monday',
-      hour: 9,
+      day: this.props.auth.company.day,
+      hour: this.props.auth.company.hour,
       timeZone: this.props.auth.company.timeZone ? this.props.auth.company.timeZone : moment.tz.guess(),
       activities: null,
       activityRefs: null,
       loadingActivies: true,
-      editIndex: -1
+      editIndex: -1,
+      adding: null,
+
     }
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
     this.handleActivitySave = this.handleActivitySave.bind(this)
     this.handleActivityDelete = this.handleActivityDelete.bind(this)
+    this.handleOpenAdd = this.handleOpenAdd.bind(this)
+    this.handleAddActivity = this.handleAddActivity.bind(this)
+    this.handleCancelAdd = this.handleCancelAdd.bind(this)
   }
 
   componentDidMount() {
@@ -84,6 +90,15 @@ class EditCompany extends Component {
 
   onSubmit(event) {
     event.preventDefault()
+    this.setState({ loading: true })
+    this.props.auth.companyRef.set({
+      name: this.state.name,
+      day: this.state.day,
+      hour: this.state.hour,
+      timeZone: this.state.timeZone
+    }).then(() => {
+      this.setState({ loading: false })
+    })
   }
 
   onChange(event) {
@@ -109,11 +124,46 @@ class EditCompany extends Component {
   }
 
   handleActivityDelete() {
+    // eslint-disable-next-line no-restricted-globals
+    if(confirm('Are you sure you want to delete this activity?')) {
+      let ref = this.state.activityRefs[this.state.editIndex]
+      ref.ref.delete()
+      let i = this.state.editIndex
+      let activities = [...this.state.activities]
+      let refs = [...this.state.activityRefs]
+
+      activities.splice(i, 1)
+      refs.splice(i, 1)
+      this.setState({activities, activityRefs: refs, editIndex: -1})
+    }
 
   }
 
+  handleOpenAdd() {
+    this.setState({adding: {name: "", icon: null}, editIndex: -1})
+  }
+
+  handleCancelAdd() {
+    this.setState({adding: null})
+  }
+
+  handleAddActivity(name, icon) {
+    this.props.auth.companyRef.collection('activities').add({
+      name,
+      icon
+    }).then(ref => {
+      let activities = [...this.state.activities]
+      let refs = [...this.state.activityRefs]
+      activities.push({name, icon})
+      refs.push({ref})
+      this.setState({adding: null, activities, activityRefs: refs})
+    }).catch(error => {
+      console.log(error)
+    })
+  }
+
   render() {
-    const { validated, name, timeZone, hour, day, loading, activities, editIndex } = this.state
+    const { validated, name, timeZone, hour, day, loading, activities, editIndex, adding } = this.state
 
     return (
       <div className={styles.wrapper}>
@@ -180,7 +230,17 @@ class EditCompany extends Component {
             </Form.Group>
             <div className={styles.buttonContainer}>
               <Button variant="primary" type="submit" className={styles.button} disabled={!validated || loading}>
-                Submit
+                { loading ?
+                  <Spinner
+                      className={styles.buttonSpinner}
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                  : null }
+                <span>Submit</span>
               </Button>
             </div>
           </Form>
@@ -192,9 +252,14 @@ class EditCompany extends Component {
               !activities ? <div>Loading... </div> :
               activities.map((activity, index) => {
                 return index === editIndex ?
-                  <EditActivity key={activity.name + index} name={activity.name} onDelete={this.handleActivityDelete} onSave={this.handleActivitySave}/> :
-                  <Activity key={activity.name + index} name={activity.name} onClick={() => this.setState({editIndex: index})} />
+                  <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={this.handleActivityDelete} onSave={this.handleActivitySave}/> :
+                  <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() => this.setState({editIndex: index, adding: null})} />
               })
+            }
+            {
+              adding ?
+              <EditActivity name={adding.name} icon={adding.icon} onDelete={this.handleCancelAdd} onSave={this.handleAddActivity} /> :
+              <Button variant="outline-success" onClick={this.handleOpenAdd} className={styles.addButton} >Add</Button>
             }
           </div>
         </div>
