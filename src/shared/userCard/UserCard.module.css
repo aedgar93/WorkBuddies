@@ -1,0 +1,30 @@
+.card {
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.imgContainer {
+  height: 75px;
+  width: 75px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.5);
+  margin: 15px;
+}
+
+.name {
+  font-weight: bold;;
+}
+
+.detail {
+  margin-left: 5px;
+}

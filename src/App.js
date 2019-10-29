@@ -13,6 +13,8 @@ import Header from './shared/header'
 import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
+import EditEmployees from './pages/editEmployees/EditEmployees';
+import Spinner from 'react-bootstrap/Spinner'
 
 class App extends Component {
   constructor(props) {
@@ -65,11 +67,12 @@ class App extends Component {
               <Header />
               <div className="content">
                 {
-                  loading ? <div> Loading ... </div> :
+                  loading ? <div><Spinner animation="border" size="lg" variant="primary"/></div>:
 
                     <Switch>
                         <Route path={ROUTES.SIGN_UP} component={SignUp}></Route>
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
+                        { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
                         { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
                     </Switch>
                 }

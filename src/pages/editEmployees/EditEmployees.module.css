@@ -1,0 +1,21 @@
+.wrapper {
+  width: 1000px;
+  margin: auto;
+  text-align: left;
+  max-width: 100%;
+}
+
+.section {
+  margin-bottom: 50px;
+}
+
+.user {
+  margin-bottom: 15px;
+}
+
+.loadingContainer {
+  margin: 20px auto;
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
