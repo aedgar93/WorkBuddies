@@ -34,3 +34,13 @@
 .buttonSpinner {
   margin-right: 5px;
 }
+
+.inviteContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 15px 0;
+  padding: 15px;
+  border: 1px solid rgba(0,0,0,.125);
+  align-items: center;
+}

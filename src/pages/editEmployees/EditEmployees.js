@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { Component } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { withFirebase } from '../../firebaseComponents'
 import { withAuth } from '../../session'
 import styles from './EditEmployees.module.css'
@@ -26,12 +27,12 @@ class EditEmployees extends Component {
   componentDidMount() {
     this.usersListener = this.props.firebase.db.collection('users').where('company_uid', '==', this.props.auth.companyRef.id)
     .onSnapshot(snapshot => {
-      this.setState({ userRefs: snapshot.docs })
+      if(snapshot && snapshot.docs) this.setState({ userRefs: snapshot.docs })
     })
 
     this.invitesListener = this.props.firebase.db.collection('invites').where('company_uid', '==', this.props.auth.companyRef.id)
     .onSnapshot(snapshot => {
-      this.setState({ inviteRefs: snapshot.docs })
+      if(snapshot && snapshot.docs) this.setState({ inviteRefs: snapshot.docs })
     })
   }
 
@@ -49,7 +50,8 @@ class EditEmployees extends Component {
     this.setState({addingUser: true})
     this.props.firebase.db.collection('invites').add({
       email: email,
-      company_uid: this.props.auth.companyRef.id
+      company_uid: this.props.auth.companyRef.id,
+      createdAt: new Date().getTime()
     }).then(result => {
         this.setState({addingUser: false, invitedEmail: ""})
     }).catch(_error => {
@@ -62,6 +64,12 @@ class EditEmployees extends Component {
     this.setState({ [event.target.name]: event.target.value})
   }
 
+  handleDelete(ref) {
+    // eslint-disable-next-line no-restricted-globals
+    if(confirm('Are you sure you want to delete this invite?')) {
+      ref.ref.delete()
+    }
+  }
 
   render() {
     const { userRefs, inviteRefs, addingUser, invitedEmail } = this.state
@@ -111,12 +119,23 @@ class EditEmployees extends Component {
                       </Button>
                     </div>
                   </Form>
-                  {
-                    inviteRefs.map(ref => {
-                      let invite = ref.data()
-                      return (<div key={invite.email}>{invite.email}</div>)
-                    })
-                  }
+                  <ReactCSSTransitionGroup
+                    transitionName="slideIn"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}>
+                      {
+                        inviteRefs.sort((a, b) =>  b.data().createdAt - a.data().createdAt).map(ref => {
+
+                          let invite = ref.data()
+                          return (
+                            <div key={invite.email} className={styles.inviteContainer}>
+                              <div>{invite.email}</div>
+                              <Button variant="outline-danger" onClick={() => this.handleDelete(ref)}>Delete</Button>
+                            </div>
+                          )
+                        })
+                      }
+                  </ReactCSSTransitionGroup>
                 </>
                 :
                 <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
