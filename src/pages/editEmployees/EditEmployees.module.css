@@ -19,3 +19,18 @@
   text-align: center;
   display: inline-block;
 }
+
+.inviteForm {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.addInput {
+  max-width: 450px;
+  margin-right: 25px;
+}
+
+.buttonSpinner {
+  margin-right: 5px;
+}

@@ -59,7 +59,6 @@ class EditCompany extends Component {
       day: this.props.auth.company.day,
       hour: this.props.auth.company.hour,
       timeZone: this.props.auth.company.timeZone ? this.props.auth.company.timeZone : moment.tz.guess(),
-      activities: null,
       activityRefs: null,
       loadingActivies: true,
       editIndex: -1,
@@ -76,16 +75,14 @@ class EditCompany extends Component {
   }
 
   componentDidMount() {
-    this.props.auth.companyRef.collection('activities').get()
-    .then(snapshot => {
-      let activityRefs = []
-      let activities = []
-      snapshot.forEach(doc => {
-        activityRefs.push(doc)
-        activities.push(doc.data())
-      })
-      this.setState({ activities, activityRefs })
+    this.listener = this.props.auth.companyRef.collection('activities')
+    .onSnapshot(snapshot => {
+      this.setState({ activityRefs: snapshot.docs })
     })
+  }
+
+  componentWillUnmount() {
+    this.listener()
   }
 
   onSubmit(event) {
@@ -109,11 +106,7 @@ class EditCompany extends Component {
   }
 
   handleActivitySave(name, icon) {
-    let activity = this.state.activities[this.state.editIndex]
     let ref = this.state.activityRefs[this.state.editIndex]
-
-    activity.name = name
-    activity.icon = icon
 
     ref.ref.set({
       name,
@@ -128,13 +121,7 @@ class EditCompany extends Component {
     if(confirm('Are you sure you want to delete this activity?')) {
       let ref = this.state.activityRefs[this.state.editIndex]
       ref.ref.delete()
-      let i = this.state.editIndex
-      let activities = [...this.state.activities]
-      let refs = [...this.state.activityRefs]
-
-      activities.splice(i, 1)
-      refs.splice(i, 1)
-      this.setState({activities, activityRefs: refs, editIndex: -1})
+      this.setState({editIndex: -1})
     }
 
   }
@@ -152,18 +139,14 @@ class EditCompany extends Component {
       name,
       icon
     }).then(ref => {
-      let activities = [...this.state.activities]
-      let refs = [...this.state.activityRefs]
-      activities.push({name, icon})
-      refs.push({ref})
-      this.setState({adding: null, activities, activityRefs: refs})
+      this.setState({adding: null})
     }).catch(error => {
       console.log(error)
     })
   }
 
   render() {
-    const { validated, name, timeZone, hour, day, loading, activities, editIndex, adding } = this.state
+    const { validated, name, timeZone, hour, day, loading, editIndex, adding, activityRefs } = this.state
 
     return (
       <div className={styles.wrapper}>
@@ -249,8 +232,9 @@ class EditCompany extends Component {
           <h2>Activities</h2>
           <div className={styles.activities}>
             {
-              !activities ? <div>Loading... </div> :
-              activities.map((activity, index) => {
+              !activityRefs ? <div>Loading... </div> :
+              activityRefs.map((ref, index) => {
+                let activity = ref.data()
                 return index === editIndex ?
                   <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={this.handleActivityDelete} onSave={this.handleActivitySave}/> :
                   <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() => this.setState({editIndex: index, adding: null})} />
