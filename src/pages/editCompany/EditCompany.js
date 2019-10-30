@@ -100,7 +100,7 @@ class EditCompany extends Component {
 
   onChange(event) {
     this.setState({ [event.target.name]: event.target.value}, () => {
-      let validated = this.state.name !== '' && this.state.timeZone
+      let validated = this.state.name !== '' && this.state.timeZone && this.state.day && this.state.hour
       this.setState({ validated })
     })
   }
