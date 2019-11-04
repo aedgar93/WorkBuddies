@@ -4,7 +4,12 @@ const sgMail = require('@sendgrid/mail');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-admin.initializeApp();
+var serviceAccount = require("./admin-service-account.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://hr-app-391b3.firebaseio.com"
+});
 
 const inviteEmailContent = () => {
   return `
@@ -15,7 +20,7 @@ const foods = ["soup", "coffee", "pancake", "pizza", "sushi", "ramen", "burrito"
 const generateCode = () => foods[Math.floor(Math.random() * foods.length)] + Math.floor(1000 + Math.random() * 9000);
 
 
-sgMail.setApiKey(functions.config().mail.key);
+// sgMail.setApiKey(functions.config().mail.key);
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
@@ -49,3 +54,70 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
         });
     }
   });
+
+//Generate matchups
+exports.matchup = functions.https.onCall(({ companyId }, _ctx) => {
+  const firestore = admin.firestore();
+  let companyRef = firestore.collection('companies').doc(companyId);
+  if (!companyRef) return Promise.reject(new Error("company not found"))
+
+  let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
+
+
+  return usersRef.get()
+    .then(snapshot => {
+      const users = []
+      snapshot.forEach(user => users.push(user))
+
+      console.log(users.length)
+      let promises = []
+      while (users.length > 1) {
+        let buddy = null
+        let user = users.pop()
+        if(users.length === 1) {
+          buddy = users.pop()
+        } else {
+          const usersCopy = [...users].map((user, i) => {
+            let data = {}
+            data.id = user.id
+            data.originalIndex = i
+            return data
+          })
+          let lastBuddyId = user.data().buddy_uid
+          if(lastBuddyId) {
+            //remove last buddy from array of options
+            let lastBuddyIndex = usersCopy.findIndex(user => user.id === lastBuddyId)
+            usersCopy.splice(lastBuddyIndex, 1)
+          }
+
+          //get random buddy from remaining options
+          let buddyInfo = usersCopy[Math.floor(Math.random()*users.length)]
+
+          //remove buddy from original users list
+          buddy = users[buddyInfo.originalIndex]
+          users.splice(buddyInfo.originalIndex, 1)
+
+        }
+        console.log('user', user.id)
+        console.log('buddy', buddy.id)
+        promises.push(user.ref.set({
+          buddy_uid: buddy.id
+        }, {merge: true}))
+
+        promises.push(buddy.ref.set({
+          buddy_uid: user.id
+        }, {merge: true}))
+        console.log('remaining', users.length)
+      }
+      if(users.length === 1) {
+        //handle odd
+        user = users.pop()
+        promises.push(user.ref.set({
+          buddy_uid: null
+        }))
+        console.log('left over', user.id)
+      }
+
+      return Promise.all(promises)
+    })
+})

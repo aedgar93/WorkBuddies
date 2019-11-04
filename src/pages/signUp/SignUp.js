@@ -35,13 +35,8 @@ const SignUp = ({ history }) => {
         firstName: firstName,
         lastName: lastName,
         company_uid: companyId
-      }).then((user) => {
-        let company = firebase.db.collection('companies').doc(companyId)
-        company.update({
-          users: firebase.firestore.FieldValue.arrayUnion(firebase.db.doc('users/' + user.id))
-        }).then(() => {
-          history.push(ROUTES.BASE)
-        }).catch(updateError)
+      }).then((_user) => {
+        history.push(ROUTES.BASE)
       }).catch(updateError)
     }).catch(updateError)
   }
@@ -58,6 +53,8 @@ const SignUp = ({ history }) => {
 
   return (
     <div className={styles.wrapper}>
+      <h3>Step 2</h3>
+      <div>Create your account</div>
       <Form onSubmit={onSubmit} validated={validated}>
       <Form.Group controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>

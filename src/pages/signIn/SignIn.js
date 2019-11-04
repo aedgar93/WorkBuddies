@@ -69,7 +69,7 @@ const SignIn = ({ history }) => {
         }
       </Form>
       <div className={styles.signUp}>
-        Don't have an account? <Link to={ROUTES.SIGN_UP}>Click here to sign up.</Link>
+        Don't have an account? <Link to={ROUTES.GET_STARTED}>Click here to get started.</Link>
       </div>
     </div>
     );

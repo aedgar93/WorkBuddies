@@ -15,6 +15,7 @@ import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
 import EditEmployees from './pages/editEmployees/EditEmployees';
 import Spinner from 'react-bootstrap/Spinner'
+import GetStarted from './pages/getStarted';
 
 class App extends Component {
   constructor(props) {
@@ -67,12 +68,18 @@ class App extends Component {
               <Header />
               <div className="content">
                 {
-                  loading ? <div><Spinner animation="border" size="lg" variant="primary"/></div>:
+                  loading ? <div><Spinner animation="border" size="lg" variant="primary"/></div> :
 
                     <Switch>
-                        <Route path={ROUTES.SIGN_UP} component={SignUp}></Route>
+                        { /* Unauth Routes */}
+                        { !authUser ? <Route path={ROUTES.SIGN_UP} component={SignUp}></Route> : null }
+                        { !authUser ? <Route path={ROUTES.GET_STARTED} component={GetStarted}></Route> : null}
+
+                        { /* Admin Routes */ }
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
+
+                        { /* Default */ }
                         { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
                     </Switch>
                 }
