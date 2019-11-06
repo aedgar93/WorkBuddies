@@ -1,6 +1,7 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require('firebase-functions');
 const sgMail = require('@sendgrid/mail');
+const moment = require('moment-timezone');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
@@ -11,6 +12,11 @@ admin.initializeApp({
   databaseURL: "https://hr-app-391b3.firebaseio.com"
 });
 
+const config = functions.config()
+
+
+
+//INVITE EMAIL
 const inviteEmailContent = () => {
   return `
     <p>Welcome to Work Buddies! Enter the code {code} to join {companyName}
@@ -20,7 +26,7 @@ const foods = ["soup", "coffee", "pancake", "pizza", "sushi", "ramen", "burrito"
 const generateCode = () => foods[Math.floor(Math.random() * foods.length)] + Math.floor(1000 + Math.random() * 9000);
 
 
-// sgMail.setApiKey(functions.config().mail.key);
+sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
@@ -55,7 +61,11 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
     }
   });
 
-//Generate matchups
+  //END INVITE EMAIL
+
+
+
+//GENERATE MATCHUPS
 exports.matchup = functions.https.onCall(({ companyId }, _ctx) => {
   const firestore = admin.firestore();
   let companyRef = firestore.collection('companies').doc(companyId);
@@ -121,3 +131,30 @@ exports.matchup = functions.https.onCall(({ companyId }, _ctx) => {
       return Promise.all(promises)
     })
 })
+// END GENERATE MATCHUPS
+
+// TRIGGER MATCHUPS
+
+//set next matchup time
+exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
+  const firestore = admin.firestore();
+  let companyRef = firestore.collection('companies').doc(companyId);
+  if (!companyRef) return Promise.reject(new Error("company not found"))
+
+  return companyRef.get()
+  .then(company => {
+    let data = company.data()
+    let now = moment().tz(data.timeZone)
+    let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0)
+
+    if(now.isAfter(nextTime)) {
+      nextTime = nextTime.add(1, 'weeks')
+    }
+
+    return company.ref.set({
+      matchUpTime: nextTime.valueOf()
+    }, {merge: true})
+  })
+})
+
+// END TRIGGER MATCHUPS
