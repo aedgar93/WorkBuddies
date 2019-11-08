@@ -1,0 +1,22 @@
+.wrapper {
+  width: 800px;
+  max-width: 100%;
+  margin: auto;
+}
+
+.title {
+  text-align: left;
+}
+
+.subtext {
+  text-align: left;
+  color: rgba(0,0,0, .75)
+}
+
+.content {
+  margin-top: 50px;
+}
+
+.companyForm {
+  text-align: left;
+}
