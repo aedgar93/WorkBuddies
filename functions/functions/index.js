@@ -2,6 +2,9 @@
 const functions = require('firebase-functions');
 const sgMail = require('@sendgrid/mail');
 const moment = require('moment-timezone');
+const initQueries = require('./queries.js');
+const uuidv1 = require('uuid/v1');
+const { PubSub } = require('@google-cloud/pubsub');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
@@ -14,7 +17,10 @@ admin.initializeApp({
 
 const config = functions.config()
 
-
+const pubsub = new PubSub({
+  projectId: process.env.GCLOUD_PROJECT,
+  keyFilename: './admin-service-account.json'
+});
 
 //INVITE EMAIL
 const inviteEmailContent = () => {
@@ -66,7 +72,10 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
 
 
 //GENERATE MATCHUPS
-exports.matchup = functions.https.onCall(({ companyId }, _ctx) => {
+exports.matchup = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
+  const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+  console.info(JSON.stringify(data))
+  const companyId = data.id
   const firestore = admin.firestore();
   let companyRef = firestore.collection('companies').doc(companyId);
   if (!companyRef) return Promise.reject(new Error("company not found"))
@@ -74,7 +83,7 @@ exports.matchup = functions.https.onCall(({ companyId }, _ctx) => {
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
 
 
-  return usersRef.get()
+  let matchUpUsersPromise = usersRef.get()
     .then(snapshot => {
       const users = []
       snapshot.forEach(user => users.push(user))
@@ -130,13 +139,18 @@ exports.matchup = functions.https.onCall(({ companyId }, _ctx) => {
 
       return Promise.all(promises)
     })
+
+    let setNextMatchupPromise = setNextMatchupTime(companyId)
+
+    return Promise.all([matchUpUsersPromise, setNextMatchupPromise])
 })
 // END GENERATE MATCHUPS
+
 
 // TRIGGER MATCHUPS
 
 //set next matchup time
-exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
+const setNextMatchupTime = (companyId) => {
   const firestore = admin.firestore();
   let companyRef = firestore.collection('companies').doc(companyId);
   if (!companyRef) return Promise.reject(new Error("company not found"))
@@ -155,6 +169,46 @@ exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
       matchUpTime: nextTime.valueOf()
     }, {merge: true})
   })
+}
+exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
+  return setNextMatchupTime(companyId)
 })
+
+
+//find matchups happening this hour
+const queries = initQueries(admin.firestore());
+let publishToTopic = topic =>
+  batch =>
+    batch.forEach(v => {
+      let event_id = uuidv1();
+      let iso = new Date().toISOString();
+      console.info(`[${iso}] Publishing to topic: '${topic}'`);
+      console.info(`[${iso}] Event ID: ${event_id}`);
+      return pubsub.topic(topic).publish(
+        Buffer.from(JSON.stringify({
+          id: v.id,
+          event_id
+        }))
+      )
+        .then(r => {
+          iso = new Date().toISOString();
+          console.info(`[${iso}] Successful Publish.`);
+          console.info(`[${iso}] Event ID: ${event_id}`);
+          console.info(`[${iso}] Message ID: ${r}`);
+          return
+        })
+        .catch(e => {
+          iso = new Date().toISOString();
+          console.info(`[${iso}] Publish Failed.`);
+          console.info(`[${iso}] Event ID: ${event_id}`);
+          console.info(`[${iso}] Error: ${e.message}`);
+        });
+    });
+
+
+exports.matchUpScheduler = functions.pubsub.schedule('0 * * * *').onRun((_ctx) => {
+  let timestamp = moment.utc().valueOf();
+  return queries.getToMatchUp(timestamp).asyncMap(publishToTopic('matchup'))
+});
 
 // END TRIGGER MATCHUPS
