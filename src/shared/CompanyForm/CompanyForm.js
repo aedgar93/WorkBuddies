@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col'
@@ -45,10 +45,10 @@ const days = [
 ]
 
 const CompanyForm = (props) => {
-  const [name, setName] = useState(props.name)
-  const [hour, setHour] = useState(props.hour)
-  const [day, setDay] = useState(props.day)
-  const [timeZone, setTimeZone] = useState(props.timeZone)
+  const [name, setName] = useState(props.name ? props.name : '')
+  const [hour, setHour] = useState(props.hour ? props.hour : 9)
+  const [day, setDay] = useState(props.day ? props.day : 1)
+  const [timeZone, setTimeZone] = useState(props.timeZone ? props.timeZone : moment.tz.guess())
   const [valid, setValid] = useState(props.name && props.name !== '' && typeof props.hour === 'number' && typeof props.day === 'number' && props.timeZone)
   const [loading, setLoading] = useState(false)
 
@@ -81,6 +81,8 @@ const CompanyForm = (props) => {
             placeholder="Company Name" />
         </Form.Group>
         <Form.Group>
+          <Form.Label>Match up Time</Form.Label>
+          <div className={styles.subtext}>Please select a time for buddies to be matched up. We suggest setting a time at the beginning of your work week</div>
           <Row>
             <Col xs={12} s={4} m={4} l={4} xl={4} className={styles.timeColumn}>
               <Form.Control

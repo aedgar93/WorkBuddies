@@ -19,26 +19,83 @@ const SignUp = ({ history }) => {
   let [error, setError] = useState(null)
   let [validated, setValidated] = useState(false)
   let [loading, setLoading] = useState(false)
+  let [companyId, setCompanyId] = useState(null)
   let firebase = useContext(FirebaseContext)
 
-  const onSubmit = event => {
+  useEffect(() => {
+    //set up
+    if (history.location.inviteCode) {
+      firebase.db.collection('invites').where('code', '==', history.location.inviteCode).get()
+      .then(snapshot => {
+        if(!snapshot.docs || snapshot.docs.length === 0) return history.push(ROUTES.GET_STARTED).state({error: 'Sorry, that invite is no longer valid.'})
+        setCompanyId(snapshot.docs[0].data().company_uid)
+      })
+    } else if(!verifyCompanyInfo()) {
+      companyError()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const verifyCompanyInfo = () => {
+    if (!history.location.state.company) return false
+    let {name, hour, day, timeZone } = history.location.state.company
+    console.log(history.location.state)
+    return name && typeof hour === 'number' && typeof day === 'number' && timeZone
+  }
+
+  const companyError = (error) => {
+    console.error(error)
+    // history.push(ROUTES.GET_STARTED, {error: 'There was an error setting up your company. Please try again'})
+  }
+
+  const signUp = (admin, id = companyId) => {
+    if (!id) return Promise.reject('Company not found')
+    return firebase.createUserWithEmailAndPassword(email, password1)
+    .then((result) => {
+      firebase.db.collection('users').add({
+        auth_id: result.user.uid,
+        firstName,
+        lastName,
+        company_uid: id,
+        admin
+      }).then((_user) => {
+        history.push(ROUTES.BASE)
+      })
+    })
+  }
+
+  const createCompany = () => {
+    if (!verifyCompanyInfo()) return Promise.reject()
+
+    let {name, hour, day, timeZone } = history.location.state.company
+    return firebase.db.collection('companies').add({
+      name,
+      hour,
+      day,
+      timeZone
+    }).then(docRef => {
+      setCompanyId(docRef.id)
+      return docRef.id
+    })
+  }
+
+  async function onSubmit(event) {
     event.preventDefault()
     setError(null)
     setLoading(true)
-
-    firebase.createUserWithEmailAndPassword(email, password1)
-    .then((result) => {
-      let companyId = 'uGUSGGMbNNu5nU9GAc2j'
-      //TODO: add user to company
-      firebase.db.collection('users').add({
-        auth_id: result.user.uid,
-        firstName: firstName,
-        lastName: lastName,
-        company_uid: companyId
-      }).then((_user) => {
-        history.push(ROUTES.BASE)
-      }).catch(updateError)
-    }).catch(updateError)
+    let isAdmin = false
+    let id = companyId
+    if(history.location.state.company) {
+      //create company
+      try {
+        companyId = await createCompany()
+      } catch(err) {
+        companyError(err)
+      }
+      isAdmin = true
+    }
+    signUp(isAdmin, companyId)
+    .catch(updateError)
   }
 
   const updateError = (error) => {
@@ -53,76 +110,77 @@ const SignUp = ({ history }) => {
 
   return (
     <div className={styles.wrapper}>
-      <h3>Step 2</h3>
-      <div>Create your account</div>
-      <Form onSubmit={onSubmit} validated={validated}>
-      <Form.Group controlId="formBasicEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control
-          required
-          type="email"
-          placeholder="Enter email"
-          isValid={email !== ""}
-          onChange={e => { setEmail(e.target.value,); }}/>
-      </Form.Group>
+      {history.location.state.company ? <h3>Step 2</h3> : <h3>Welcome!</h3>}
+      <div className={styles.subtitle}>Create your account</div>
+      <Form onSubmit={onSubmit} validated={validated} className={styles.content}>
+        <Form.Group controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control
+            required
+            type="email"
+            placeholder="Enter email"
+            isValid={email !== ""}
+            onChange={e => { setEmail(e.target.value,); }}/>
+        </Form.Group>
 
-      <Form.Group>
-        <Row>
-          <Col>
-            <Form.Control
-              name="firstName"
-              placeholder="First name"
-              required
-              isValid={firstName !== ""}
-              onChange={e => setFirstName(e.target.value)}
-            />
-          </Col>
-          <Col>
-            <Form.Control
-              name="lastName"
-              placeholder="Last name"
-              required
-              isValid={lastName !== ""}
-              onChange={e => setLastName(e.target.value)}
-            />
-          </Col>
-        </Row>
-      </Form.Group>
+        <Form.Group>
+          <Form.Label>Name</Form.Label>
+          <Row>
+            <Col>
+              <Form.Control
+                name="firstName"
+                placeholder="First name"
+                required
+                isValid={firstName !== ""}
+                onChange={e => setFirstName(e.target.value)}
+              />
+            </Col>
+            <Col>
+              <Form.Control
+                name="lastName"
+                placeholder="Last name"
+                required
+                isValid={lastName !== ""}
+                onChange={e => setLastName(e.target.value)}
+              />
+            </Col>
+          </Row>
+        </Form.Group>
 
-      <Form.Group controlId="formBasicPassword1">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
-          required
-          name="password1"
-          type="password"
-          placeholder="Password"
-          isValid={password1 !== ""}
-          onChange={e => setPassword1(e.target.value)}/>
-      </Form.Group>
-      <Form.Group controlId="formBasicPassword2">
-        <Form.Label>Confirm Password</Form.Label>
-        <Form.Control
-          name="password2"
-          type="password"
-          isValid={password2 !== "" && password1 === password2}
-          isInvalid={passwordTouched && password1 !== password2}
-          placeholder="Confirm Password"
-          onChange={e => {
-            setPassword2(e.target.value);
-            setPasswordTouched(true)
-            }}/>
-          <Form.Control.Feedback type="invalid">Passwords do not match</Form.Control.Feedback>
-      </Form.Group>
-      <div className={styles.buttonContainer}>
-        <Button variant="primary" type="submit" className={styles.button} disabled={!validated || loading}>
-          Submit
-        </Button>
-      </div>
-      {
-        error ? <Alert variant="danger" className={styles.alert}>Something went wrong. Please try again. </Alert> : null
-      }
-    </Form>
-  </div>
+        <Form.Group controlId="formBasicPassword1">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            required
+            name="password1"
+            type="password"
+            placeholder="Password"
+            isValid={password1 !== ""}
+            onChange={e => setPassword1(e.target.value)}/>
+        </Form.Group>
+        <Form.Group controlId="formBasicPassword2">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            name="password2"
+            type="password"
+            isValid={password2 !== "" && password1 === password2}
+            isInvalid={passwordTouched && password1 !== password2}
+            placeholder="Confirm Password"
+            onChange={e => {
+              setPassword2(e.target.value);
+              setPasswordTouched(true)
+              }}/>
+            <Form.Control.Feedback type="invalid">Passwords do not match</Form.Control.Feedback>
+        </Form.Group>
+        <div className={styles.buttonContainer}>
+          <Button variant="primary" type="submit" className={styles.button} disabled={!validated || loading}>
+            Submit
+          </Button>
+        </div>
+        {
+          error ? <Alert variant="danger" className={styles.alert}>{error}</Alert> : null
+        }
+      </Form>
+    </div>
   );
 }
 

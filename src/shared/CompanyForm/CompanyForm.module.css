@@ -8,3 +8,12 @@
 .timeColumn {
   margin: 10px 0;
 }
+
+.wrapper {
+  text-align: left;
+}
+
+.subtext {
+  color: rgba(0,0,0, .5);
+  font-size: 12px;
+}

@@ -8,9 +8,9 @@
   text-align: left;
 }
 
-.subtext {
+.subtitle {
   text-align: left;
-  color: rgba(0,0,0, .75)
+  color: rgba(0,0,0, .5)
 }
 
 .content {

@@ -20,7 +20,6 @@ class EditCompany extends Component {
       adding: null,
 
     }
-    this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
     this.handleActivitySave = this.handleActivitySave.bind(this)
     this.handleActivityDelete = this.handleActivityDelete.bind(this)
@@ -96,6 +95,7 @@ class EditCompany extends Component {
       <div className={styles.wrapper}>
         <div className={styles.section}>
           <h2>My Company</h2>
+          { console.log(this.props.auth)}
           <CompanyForm
             name={this.props.auth.company.name}
             day={this.props.auth.company.day}
