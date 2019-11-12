@@ -73,14 +73,14 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
 
 
 //GENERATE MATCHUPS
-const getLastBuddy = (userId, lastBuddiesData) => {
-  if(!lastBuddiesData) return false
-  let matchup = lastBuddiesData.find(matchup => {
+const getLastBuddy = (userId, previousMatchups) => {
+  if(!previousMatchups) return false
+  let matchup = previousMatchups.find(matchup => {
     return matchup.buddies.indexOf(userId) !== -1
   })
-  if(matchup && matchup.length === 2) {
-    let userIndex = matchup.indexOf(userId)
-    return userIndex === 0 ? matchup[1] : matchup[0]
+  if(matchup && matchup.buddies.length === 2) {
+    let userIndex = matchup.buddies.indexOf(userId)
+    return userIndex === 0 ? matchup.buddies[1] : matchup.buddies[0]
   }
   return false
 
@@ -97,10 +97,11 @@ const matchup = async (data) => {
   if (!companyRef) return Promise.reject(new Error("company not found"))
   let companyData = await companyRef.get()
   companyData = companyData.data()
-
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
   let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
-  let lastBuddiesData = lastBuddiesRef && lastBuddiesRef.exists ? await lastBuddiesRef.get().data().matchups : []
+  let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
+  let previousMatchups = lastBuddiesDoc && lastBuddiesDoc.exists  ? await lastBuddiesDoc.data().matchups : []
+
   let newMatchups = []
 
   let matchUpUsersPromise = usersRef.get()
@@ -108,8 +109,6 @@ const matchup = async (data) => {
       const users = []
       snapshot.forEach(user => users.push(user))
 
-      console.log(users.length)
-      let promises = []
       while (users.length > 1) {
         let buddy = null
         let user = users.pop()
@@ -122,7 +121,7 @@ const matchup = async (data) => {
             data.originalIndex = i
             return data
           })
-          let lastBuddyId = getLastBuddy(user.id, lastBuddiesData)
+          let lastBuddyId = getLastBuddy(user.id, previousMatchups)
           if(lastBuddyId) {
             //remove last buddy from array of options
             let lastBuddyIndex = usersCopy.findIndex(user => user.id === lastBuddyId)
@@ -130,7 +129,7 @@ const matchup = async (data) => {
           }
 
           //get random buddy from remaining options
-          let buddyInfo = usersCopy[Math.floor(Math.random()*users.length)]
+          let buddyInfo = usersCopy[Math.floor(Math.random()*usersCopy.length)]
 
           //remove buddy from original users list
           buddy = users[buddyInfo.originalIndex]
@@ -149,7 +148,6 @@ const matchup = async (data) => {
           buddies: [user.id],
           activity: getRandomActivity()
         })
-        console.log('left over', user.id)
       }
 
       // eslint-disable-next-line promise/no-nesting
@@ -192,7 +190,7 @@ const setNextMatchupTime = (companyId) => {
   .then(company => {
     let data = company.data()
     let now = moment().tz(data.timeZone)
-    let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0)
+    let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0).milliseconds(0)
 
     if(now.isAfter(nextTime)) {
       nextTime = nextTime.add(1, 'weeks')
