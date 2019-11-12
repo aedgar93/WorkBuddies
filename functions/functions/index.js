@@ -25,12 +25,12 @@ const pubsub = new PubSub({
 //INVITE EMAIL
 const inviteEmailContent = () => {
   return `
-    <p>Welcome to Work Buddies! Enter the code {code} to join {companyName}
+    <p>Welcome to Work Buddies! Please follow this link to join {companyName}: {link}
   `
 }
 const foods = ["soup", "coffee", "pancake", "pizza", "sushi", "ramen", "burrito", "gyros", "pasta", "curry", "bratwurst"];
 const generateCode = () => foods[Math.floor(Math.random() * foods.length)] + Math.floor(1000 + Math.random() * 9000);
-
+const signupLink = `${config && config.host ? config.host : 'http://localhost'}/signup?code=`
 
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 
@@ -45,12 +45,13 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
       let companyRef = results[1];
 
       let emailContent = inviteEmailContent();
-      emailContent = emailContent.replace('{code}', code);
+      let link = signupLink + code
+      emailContent = emailContent.replace('{link}', link);
       emailContent = emailContent.replace('{companyName}', companyRef.data().name);
 
       const msg = {
         to: inviteSnapshot.data().email,
-        from: functions.config().mail.email,
+        from: functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com',
         subject: 'You\'re Invited to Work Buddies!',
         html: emailContent,
       };

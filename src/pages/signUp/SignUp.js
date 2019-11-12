@@ -8,8 +8,9 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Alert from 'react-bootstrap/Alert'
+import Spinner from 'react-bootstrap/Spinner'
 
-const SignUp = ({ history }) => {
+const SignUp = ({ history, match }) => {
   let [email, setEmail] = useState('')
   let [firstName, setFirstName] = useState('')
   let [lastName, setLastName] = useState('')
@@ -20,15 +21,21 @@ const SignUp = ({ history }) => {
   let [validated, setValidated] = useState(false)
   let [loading, setLoading] = useState(false)
   let [companyId, setCompanyId] = useState(null)
+  let [inviteId, setInviteId] = useState(null)
   let firebase = useContext(FirebaseContext)
+  const companyInfo = history.location.state && history.location.state.company
+  const code  = match && match.params && match.params.code
 
   useEffect(() => {
     //set up
-    if (history.location.inviteCode) {
-      firebase.db.collection('invites').where('code', '==', history.location.inviteCode).get()
+    if (code) {
+      firebase.db.collection('invites').where('code', '==', code).get()
       .then(snapshot => {
         if(!snapshot.docs || snapshot.docs.length === 0) return history.push(ROUTES.GET_STARTED).state({error: 'Sorry, that invite is no longer valid.'})
-        setCompanyId(snapshot.docs[0].data().company_uid)
+        let data = snapshot.docs[0].data()
+        setCompanyId(data.company_uid)
+        setEmail(data.email)
+        setInviteId(snapshot.docs[0].id)
       })
     } else if(!verifyCompanyInfo()) {
       companyError()
@@ -37,7 +44,7 @@ const SignUp = ({ history }) => {
   }, [])
 
   const verifyCompanyInfo = () => {
-    if (!history.location.state.company) return false
+    if (!history.location.state || !history.location.state.company) return false
     let {name, hour, day, timeZone } = history.location.state.company
     console.log(history.location.state)
     return name && typeof hour === 'number' && typeof day === 'number' && timeZone
@@ -45,22 +52,27 @@ const SignUp = ({ history }) => {
 
   const companyError = (error) => {
     console.error(error)
-    // history.push(ROUTES.GET_STARTED, {error: 'There was an error setting up your company. Please try again'})
+    history.push(ROUTES.GET_STARTED, {error: 'There was an error setting up your company. Please try again'})
   }
 
-  const signUp = (admin, id = companyId) => {
+  const signUp = async (admin, id = companyId) => {
     if (!id) return Promise.reject('Company not found')
-    return firebase.createUserWithEmailAndPassword(email, password1)
-    .then((result) => {
-      firebase.db.collection('users').add({
-        auth_id: result.user.uid,
-        firstName,
-        lastName,
-        company_uid: id,
-        admin
-      }).then((_user) => {
-        history.push(ROUTES.BASE)
-      })
+    let { user } = await firebase.createUserWithEmailAndPassword(email, password1)
+    let promises = []
+    promises.push(firebase.db.collection('users').add({
+      auth_id: user.uid,
+      firstName,
+      lastName,
+      email,
+      company_uid: id,
+      admin
+    }))
+    if(inviteId) {
+      promises.push(firebase.db.collection('invites').doc(inviteId).delete())
+    }
+    Promise.all(promises)
+    .then(() => {
+      history.push(ROUTES.BASE)
     })
   }
 
@@ -85,7 +97,7 @@ const SignUp = ({ history }) => {
     setLoading(true)
     let isAdmin = false
     let id = companyId
-    if(history.location.state.company) {
+    if(companyInfo) {
       //create company
       try {
         id = await createCompany()
@@ -108,9 +120,10 @@ const SignUp = ({ history }) => {
     setValidated(valid)
   }, [email, password1, password2, firstName, lastName])
 
+  if (!companyInfo && !companyId) return (<Spinner animation="border" size="lg" variant="primary"/>)
   return (
     <div className={styles.wrapper}>
-      {history.location.state.company ? <h3>Step 2</h3> : <h3>Welcome!</h3>}
+      { companyInfo ? <h3>Step 2</h3> : <h3>Welcome!</h3>}
       <div className={styles.subtitle}>Create your account</div>
       <Form onSubmit={onSubmit} validated={validated} className={styles.content}>
         <Form.Group controlId="formBasicEmail">
@@ -118,6 +131,7 @@ const SignUp = ({ history }) => {
           <Form.Control
             required
             type="email"
+            value={email}
             placeholder="Enter email"
             isValid={email !== ""}
             onChange={e => { setEmail(e.target.value,); }}/>
@@ -129,6 +143,7 @@ const SignUp = ({ history }) => {
             <Col>
               <Form.Control
                 name="firstName"
+                value={firstName}
                 placeholder="First name"
                 required
                 isValid={firstName !== ""}
@@ -138,6 +153,7 @@ const SignUp = ({ history }) => {
             <Col>
               <Form.Control
                 name="lastName"
+                value={lastName}
                 placeholder="Last name"
                 required
                 isValid={lastName !== ""}
@@ -151,6 +167,7 @@ const SignUp = ({ history }) => {
           <Form.Label>Password</Form.Label>
           <Form.Control
             required
+            value={password1}
             name="password1"
             type="password"
             placeholder="Password"
@@ -162,6 +179,7 @@ const SignUp = ({ history }) => {
           <Form.Control
             name="password2"
             type="password"
+            value={password2}
             isValid={password2 !== "" && password1 === password2}
             isInvalid={passwordTouched && password1 !== password2}
             placeholder="Confirm Password"
@@ -177,7 +195,7 @@ const SignUp = ({ history }) => {
           </Button>
         </div>
         {
-          error ? <Alert variant="danger" className={styles.alert}>{error}</Alert> : null
+          error ? <Alert variant="danger" className={styles.alert}>Something went wrong. Please try again.</Alert> : null
         }
       </Form>
     </div>
