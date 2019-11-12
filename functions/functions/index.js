@@ -72,16 +72,35 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
 
 
 //GENERATE MATCHUPS
-exports.matchup = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
-  const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
-  console.info(JSON.stringify(data))
+const getLastBuddy = (userId, lastBuddiesData) => {
+  if(!lastBuddiesData) return false
+  let matchup = lastBuddiesData.find(matchup => {
+    return matchup.buddies.indexOf(userId) !== -1
+  })
+  if(matchup && matchup.length === 2) {
+    let userIndex = matchup.indexOf(userId)
+    return userIndex === 0 ? matchup[1] : matchup[0]
+  }
+  return false
+
+}
+
+const getRandomActivity = () => {
+  return 'Table Tennis'
+}
+
+const matchup = async (data) => {
   const companyId = data.id
   const firestore = admin.firestore();
   let companyRef = firestore.collection('companies').doc(companyId);
   if (!companyRef) return Promise.reject(new Error("company not found"))
+  let companyData = await companyRef.get()
+  companyData = companyData.data()
 
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
-
+  let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
+  let lastBuddiesData = lastBuddiesRef && lastBuddiesRef.exists ? await lastBuddiesRef.get().data().matchups : []
+  let newMatchups = []
 
   let matchUpUsersPromise = usersRef.get()
     .then(snapshot => {
@@ -102,7 +121,7 @@ exports.matchup = functions.pubsub.topic('matchup').onPublish((message, _ctx) =>
             data.originalIndex = i
             return data
           })
-          let lastBuddyId = user.data().buddy_uid
+          let lastBuddyId = getLastBuddy(user.id, lastBuddiesData)
           if(lastBuddyId) {
             //remove last buddy from array of options
             let lastBuddyIndex = usersCopy.findIndex(user => user.id === lastBuddyId)
@@ -117,32 +136,45 @@ exports.matchup = functions.pubsub.topic('matchup').onPublish((message, _ctx) =>
           users.splice(buddyInfo.originalIndex, 1)
 
         }
-        console.log('user', user.id)
-        console.log('buddy', buddy.id)
-        promises.push(user.ref.set({
-          buddy_uid: buddy.id
-        }, {merge: true}))
-
-        promises.push(buddy.ref.set({
-          buddy_uid: user.id
-        }, {merge: true}))
-        console.log('remaining', users.length)
+        newMatchups.push({
+          buddies: [user.id, buddy.id],
+          activity: getRandomActivity()
+        })
       }
       if(users.length === 1) {
         //handle odd
         user = users.pop()
-        promises.push(user.ref.set({
-          buddy_uid: null
-        }))
+        newMatchups.push({
+          buddies: [user.id],
+          activity: getRandomActivity()
+        })
         console.log('left over', user.id)
       }
 
-      return Promise.all(promises)
+      // eslint-disable-next-line promise/no-nesting
+      return companyRef.collection('buddies').add({
+        matchups: newMatchups
+      })
+      .then(snapshot => {
+        return companyRef.set({
+          activeBuddies: snapshot.id
+        }, {merge: true})
+      })
     })
 
     let setNextMatchupPromise = setNextMatchupTime(companyId)
 
     return Promise.all([matchUpUsersPromise, setNextMatchupPromise])
+}
+
+exports.matchupSub = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
+  const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+  console.info(JSON.stringify(data))
+  return matchup(data)
+})
+
+exports.matchup = functions.https.onCall((data, _ctx) => {
+  return matchup(data)
 })
 // END GENERATE MATCHUPS
 
@@ -173,6 +205,11 @@ const setNextMatchupTime = (companyId) => {
 exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
   return setNextMatchupTime(companyId)
 })
+
+exports.setInitialMatchupTime = functions.database.ref('/companies/{companyId}')
+.onCreate((snapshot, _context) => {
+  setNextMatchupTime(snapshot.id)
+});
 
 
 //find matchups happening this hour

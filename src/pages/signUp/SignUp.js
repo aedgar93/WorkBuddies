@@ -88,13 +88,13 @@ const SignUp = ({ history }) => {
     if(history.location.state.company) {
       //create company
       try {
-        companyId = await createCompany()
+        id = await createCompany()
       } catch(err) {
         companyError(err)
       }
       isAdmin = true
     }
-    signUp(isAdmin, companyId)
+    signUp(isAdmin, id)
     .catch(updateError)
   }
 
