@@ -36,6 +36,7 @@ class App extends Component {
         this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
         .then(snapshot => {
           authUser.user = snapshot.docs[0].data()
+          authUser.user.id = snapshot.docs[0].id
           localStorage.setItem('authUser', JSON.stringify(authUser));
           localStorage.setItem('user', JSON.stringify(authUser.user));
           let companyRef = this.props.firebase.db.collection('companies').doc(authUser.user.company_uid)

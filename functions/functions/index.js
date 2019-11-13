@@ -109,6 +109,7 @@ const matchup = async (data) => {
       const users = []
       snapshot.forEach(user => users.push(user))
 
+      //TODO: if someone didn't have a partner last time, match them up first this time
       while (users.length > 1) {
         let buddy = null
         let user = users.pop()

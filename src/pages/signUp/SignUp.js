@@ -11,18 +11,18 @@ import Alert from 'react-bootstrap/Alert'
 import Spinner from 'react-bootstrap/Spinner'
 
 const SignUp = ({ history, match }) => {
-  let [email, setEmail] = useState('')
-  let [firstName, setFirstName] = useState('')
-  let [lastName, setLastName] = useState('')
-  let [password1, setPassword1] = useState('')
-  let [password2, setPassword2] = useState('')
-  let [passwordTouched, setPasswordTouched] = useState(false)
-  let [error, setError] = useState(null)
-  let [validated, setValidated] = useState(false)
-  let [loading, setLoading] = useState(false)
-  let [companyId, setCompanyId] = useState(null)
-  let [inviteId, setInviteId] = useState(null)
-  let firebase = useContext(FirebaseContext)
+  const [email, setEmail] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [password1, setPassword1] = useState('')
+  const [password2, setPassword2] = useState('')
+  const [passwordTouched, setPasswordTouched] = useState(false)
+  const [error, setError] = useState(null)
+  const [validated, setValidated] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [companyId, setCompanyId] = useState(null)
+  const [inviteId, setInviteId] = useState(null)
+  const firebase = useContext(FirebaseContext)
   const companyInfo = history.location.state && history.location.state.company
   const code  = match && match.params && match.params.code
 
