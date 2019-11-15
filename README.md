@@ -1,68 +1,13 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Welcome to Work Buddies!
 
-## Available Scripts
 
-In the project directory, you can run:
+## What is Work Buddies?
+Work Buddies is a website that pairs up coworkers on a weekly basis and encourages them to do something together. Admins can add activities avaliable in their office, such as ping pong or foosball, to be suggested to the pairs. 
 
-### `yarn start`
+## Why Work Buddies?
+I noticed that my company can be very siloed. I am very close with my small team, but I don't interact with the rest of the company much. I pass by my coworkers every day, but I don't have many chances to get to know them. We do have an office manager that plans the occasional happy hour or party. But many people don't attend because it's too much of a time commitment. Plus they are difficult to plan in the first place!
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+I also notices that while my company has a lot of cool toys (ping pong, foosball, boccee ball, corn hole, putt putt, baskball, etc, etc), hardly anyone uses them! I wanted to create a way to encourage people to take the occasional break from work, de-stress, and know that it's encrouaged for them to get away from their desk every now and then.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
 
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+That's where Work Buddies come in. It encourages people to get to know each other, on a more regular basis. Instead of facing a lengthy after work party, with a bunch of people you barely know, you can spend 15 minutes a week building up relationships. Hopefully it will help break the ice, introduce different departments to one another, and encourage healthy interactions. 
