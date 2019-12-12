@@ -7,7 +7,7 @@ import {
 import './App.css';
 import { ROUTES } from './utils/constants'
 import SignIn from './pages/signIn'
-import SignUp from './pages/signUp'
+import AcceptInvite from './pages/acceptInvite'
 import EditCompany from './pages/editCompany'
 import Header from './shared/header'
 import { AuthUserContext } from './session'
@@ -15,7 +15,7 @@ import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
 import EditEmployees from './pages/editEmployees/EditEmployees';
 import Spinner from 'react-bootstrap/Spinner'
-import GetStarted from './pages/getStarted';
+import CreateCompany from './pages/createCompany';
 
 class App extends Component {
   constructor(props) {
@@ -31,8 +31,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
+    this.listener = this.props.firebase.auth.onAuthStateChanged(async authUser => {
       if (authUser) {
+        if (this.props.firebase.creatingUserPromise) await this.props.firebase.creatingUserPromise
         this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
         .then(snapshot => {
           authUser.user = snapshot.docs[0].data()
@@ -73,8 +74,8 @@ class App extends Component {
 
                     <Switch>
                         { /* Unauth Routes */}
-                        { !authUser ? <Route path={[ROUTES.SIGN_UP + '/:code', ROUTES.SIGN_UP]} component={SignUp}></Route> : null }
-                        { !authUser ? <Route path={ROUTES.GET_STARTED} component={GetStarted}></Route> : null}
+                        { !authUser ? <Route path={[ROUTES.SIGN_UP + '/:code', ROUTES.SIGN_UP]} component={AcceptInvite}></Route> : null }
+                        { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
 
                         { /* Admin Routes */ }
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}

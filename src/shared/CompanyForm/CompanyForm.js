@@ -3,7 +3,6 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import Spinner from 'react-bootstrap/Spinner'
 import styles from './CompanyForm.module.css'
 import moment from 'moment-timezone'
 
@@ -50,17 +49,10 @@ const CompanyForm = (props) => {
   const [day, setDay] = useState(props.day ? props.day : 1)
   const [timeZone, setTimeZone] = useState(props.timeZone ? props.timeZone : moment.tz.guess())
   const [valid, setValid] = useState(props.name && props.name !== '' && typeof props.hour === 'number' && typeof props.day === 'number' && props.timeZone)
-  const [loading, setLoading] = useState(false)
 
-  const onSubmit = () => {
-    setLoading(true)
+  const onSubmit = (event) => {
+    event.preventDefault()
     props.onSubmit({name, hour, day, timeZone})
-    .then(() => {
-      setLoading(false)
-    }).catch(error => {
-      setLoading(false)
-      //TODO, set error
-    })
   }
 
   useEffect(() => {
@@ -132,19 +124,7 @@ const CompanyForm = (props) => {
           </Row>
         </Form.Group>
         <div className={styles.buttonContainer}>
-          <Button variant="primary" type="submit" className={styles.button} disabled={!valid || loading}>
-            {loading ?
-              <Spinner
-                className={styles.buttonSpinner}
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-              />
-              : null}
-            <span>Submit</span>
-          </Button>
+          <Button variant="primary" type="submit" className={styles.button} disabled={!valid}>Submit</Button>
         </div>
       </Form>
     </div>

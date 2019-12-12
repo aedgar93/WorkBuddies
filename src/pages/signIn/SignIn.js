@@ -38,6 +38,7 @@ const SignIn = ({ history }) => {
 
   return (
     <div className={styles.wrapper}>
+      <h3>Sign In</h3>
       <Form onSubmit={onSubmit} validated={validated}>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>

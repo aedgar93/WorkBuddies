@@ -5,15 +5,8 @@
   text-align: left;
 }
 
-.buttonContainer {
-  text-align: right;
-}
-
 .subtitle {
   text-align: left;
   color: rgba(0,0,0, .5)
 }
 
-.content {
-  margin-top: 50px;
-}

@@ -4,6 +4,7 @@ import { withFirebase } from '../../firebaseComponents'
 import { withAuth } from '../../session'
 import moment from 'moment-timezone'
 import Spinner from 'react-bootstrap/Spinner'
+import styles from './Matchup.module.css'
 
 const Matchup = ({ auth, firebase }) => {
   const [buddy, setBuddy] = useState(null)
@@ -36,12 +37,22 @@ const Matchup = ({ auth, firebase }) => {
   }, [])
 
   if(error) return (<div>{error}</div>)
-  if(!buddy) return (<div>Fetching this week's buddy <Spinner animation="grow" size="sm" /> <Spinner animation="grow" size="sm" /> <Spinner animation="grow" size="sm" /></div>)
+  if(!buddy) return (<div className={styles.loading}>Fetching this week's buddy <Spinner animation="grow" size="sm" /> <Spinner animation="grow" size="sm" /> <Spinner animation="grow" size="sm" /></div>)
 
   return (
-    <div>
-      <div>{buddy.firstName} {buddy.lastName}</div>
-      <div>Activity: {activity}</div>
+    <div className={styles.wrapper}>
+      <div className={styles.section}>
+        <div className={styles.pic}></div>
+        <div className={styles.info}>
+          <div>{buddy.firstName} {buddy.lastName}</div>
+        </div>
+      </div>
+      <div className={styles.section}>
+        <div className={styles.pic}></div>
+        <div className={styles.info}>
+          <div>Activity: {activity}</div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,0 +1,28 @@
+.wrapper {
+  width: 800px;
+  max-width: 100%;
+  margin: auto;
+  text-align: left;
+}
+
+.subtitle {
+  color: rgba(0,0,0, .5)
+}
+
+.content {
+  margin-top: 50px;
+}
+
+
+.helpText {
+  color: rgba(0,0,0, .5);
+  margin-top: 50px;
+  text-align: center;
+}
+
+.backButton {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: #007bff;
+}
