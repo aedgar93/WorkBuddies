@@ -1,11 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 import React, { Component } from 'react';
 import styles from './EditCompany.module.css'
-import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../../firebaseComponents'
 import { withAuth } from '../../session'
 import moment from 'moment-timezone'
-import Activity, { EditActivity } from '../../shared/activity'
+import EditActivities from '../../shared/editActivities'
 import CompanyForm from '../../shared/companyForm';
 
 
@@ -15,17 +14,12 @@ class EditCompany extends Component {
     super(props)
     this.state = {
       activityRefs: null,
-      loadingActivies: true,
-      editIndex: -1,
-      adding: null,
 
     }
     this.onSubmit = this.onSubmit.bind(this)
-    this.handleActivitySave = this.handleActivitySave.bind(this)
+    this.handleActivityEdit = this.handleActivityEdit.bind(this)
     this.handleActivityDelete = this.handleActivityDelete.bind(this)
-    this.handleOpenAdd = this.handleOpenAdd.bind(this)
     this.handleAddActivity = this.handleAddActivity.bind(this)
-    this.handleCancelAdd = this.handleCancelAdd.bind(this)
   }
 
   componentDidMount() {
@@ -48,33 +42,23 @@ class EditCompany extends Component {
     })
   }
 
-  handleActivitySave(name, icon) {
-    let ref = this.state.activityRefs[this.state.editIndex]
+  handleActivityEdit(index, {name, icon}) {
+    let ref = this.state.activityRefs[index]
 
     ref.ref.set({
       name,
       icon: icon ? icon : null
     })
 
-    this.setState({ editIndex: -1 })
   }
 
-  handleActivityDelete() {
+  handleActivityDelete(index) {
     // eslint-disable-next-line no-restricted-globals
     if(confirm('Are you sure you want to delete this activity?')) {
-      let ref = this.state.activityRefs[this.state.editIndex]
+      let ref = this.state.activityRefs[index]
       ref.ref.delete()
-      this.setState({editIndex: -1})
     }
 
-  }
-
-  handleOpenAdd() {
-    this.setState({adding: {name: "", icon: null}, editIndex: -1})
-  }
-
-  handleCancelAdd() {
-    this.setState({adding: null})
   }
 
   handleAddActivity(name, icon) {
@@ -89,13 +73,13 @@ class EditCompany extends Component {
   }
 
   render() {
-    const { editIndex, adding, activityRefs } = this.state
+    const { activityRefs } = this.state
+    const activities = activityRefs ? activityRefs.map(activity => activity.data()) : []
 
     return (
       <div className={styles.wrapper}>
         <div className={styles.section}>
           <h2>My Company</h2>
-          { console.log(this.props.auth)}
           <CompanyForm
             name={this.props.auth.company.name}
             day={this.props.auth.company.day}
@@ -108,21 +92,7 @@ class EditCompany extends Component {
           <div className={styles.activities}>
             {
               !activityRefs ? <div>Loading... </div> :
-              <>
-                {
-                  activityRefs.map((ref, index) => {
-                    let activity = ref.data()
-                    return index === editIndex ?
-                      <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={this.handleActivityDelete} onSave={this.handleActivitySave}/> :
-                      <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() => this.setState({editIndex: index, adding: null})} />
-                  })
-                }
-                {
-                  adding ?
-                  <EditActivity name={adding.name} icon={adding.icon} onDelete={this.handleCancelAdd} onSave={this.handleAddActivity} /> :
-                  <Button variant="outline-success" onClick={this.handleOpenAdd} className={styles.addButton} >Add</Button>
-                }
-              </>
+              <EditActivities onDelete={this.handleActivityDelete} onEdit={this.handleActivityEdit} onAdd={this.handleAddActivity} activities={activities}/>
             }
           </div>
         </div>

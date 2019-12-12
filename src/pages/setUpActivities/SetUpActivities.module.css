@@ -3,15 +3,17 @@
 }
 
 .activities {
+  margin-top: 50px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
-.timeColumn {
-  margin: 10px 0;
+.activityContainer {
+  cursor: pointer;
 }
 
-.buttonSpinner {
-  margin-right: 5px;
+.next {
+  margin: 10px 0;
+  float: right;
 }

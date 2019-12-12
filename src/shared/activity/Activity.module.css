@@ -11,6 +11,11 @@
   overflow: hidden;
 }
 
+.selected {
+  border-color: #007bff;
+  box-shadow: 0 0 10px #9ecaed;
+}
+
 .editCard {
   width: 100%;
   cursor: pointer;

@@ -57,7 +57,7 @@ const CreateCompany = ({ history }) => {
         company_uid: companyId,
         admin: true
       })
-      .then(() => { history.push(ROUTES.BASE) })
+      .then(() => { history.push(ROUTES.SET_UP_ACTIVITIES) })
       .catch(() => setError(genericError))
       .finally(() => deferred.resolve())
     })
@@ -70,7 +70,7 @@ const CreateCompany = ({ history }) => {
       { error ? <Alert variant="danger">{ error }</Alert> : null}
       { showCompany ?
         <>
-          <h3 className={styles.title}>
+          <h3>
             Step 1: Set up your company
           </h3>
           <CompanyForm onSubmit={submitCompany} name={company.name} timeZone={company.timeZone} day={company.day} hour={company.hour}/>

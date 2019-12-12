@@ -14,7 +14,7 @@ const EditActivity = ({ name, icon, onDelete, onSave }) => {
   }
 
   const handleSave = () => {
-    onSave(newName, newIcon)
+    onSave({name: newName, icon: newIcon})
   }
 
   return (

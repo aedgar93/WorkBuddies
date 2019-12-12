@@ -16,6 +16,7 @@ import Dashboard from './pages/dashboard'
 import EditEmployees from './pages/editEmployees/EditEmployees';
 import Spinner from 'react-bootstrap/Spinner'
 import CreateCompany from './pages/createCompany';
+import SetUpActivities from './pages/setUpActivities';
 
 class App extends Component {
   constructor(props) {
@@ -80,6 +81,7 @@ class App extends Component {
                         { /* Admin Routes */ }
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
+                        { authUser && authUser.user.admin ? <Route path={ROUTES.SET_UP_ACTIVITIES} component={SetUpActivities}></Route> : null}
 
                         { /* Default */ }
                         { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
