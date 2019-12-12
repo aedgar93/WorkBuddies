@@ -19,7 +19,7 @@ const Dashboard = () => {
       </div>
 
       <div className={styles.section}>
-        <h4>Office Activites</h4>
+        <h4>Office Activities</h4>
       </div>
     </div>
   )

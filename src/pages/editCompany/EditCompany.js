@@ -108,17 +108,21 @@ class EditCompany extends Component {
           <div className={styles.activities}>
             {
               !activityRefs ? <div>Loading... </div> :
-              activityRefs.map((ref, index) => {
-                let activity = ref.data()
-                return index === editIndex ?
-                  <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={this.handleActivityDelete} onSave={this.handleActivitySave}/> :
-                  <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() => this.setState({editIndex: index, adding: null})} />
-              })
-            }
-            {
-              adding ?
-              <EditActivity name={adding.name} icon={adding.icon} onDelete={this.handleCancelAdd} onSave={this.handleAddActivity} /> :
-              <Button variant="outline-success" onClick={this.handleOpenAdd} className={styles.addButton} >Add</Button>
+              <>
+                {
+                  activityRefs.map((ref, index) => {
+                    let activity = ref.data()
+                    return index === editIndex ?
+                      <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={this.handleActivityDelete} onSave={this.handleActivitySave}/> :
+                      <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() => this.setState({editIndex: index, adding: null})} />
+                  })
+                }
+                {
+                  adding ?
+                  <EditActivity name={adding.name} icon={adding.icon} onDelete={this.handleCancelAdd} onSave={this.handleAddActivity} /> :
+                  <Button variant="outline-success" onClick={this.handleOpenAdd} className={styles.addButton} >Add</Button>
+                }
+              </>
             }
           </div>
         </div>
