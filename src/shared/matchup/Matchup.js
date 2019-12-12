@@ -12,10 +12,19 @@ const Matchup = ({ auth, firebase }) => {
   const [error, setError] = useState(null)
   const defaultErrorMessage = 'Oh no! Something went wrong.'
 
+  const getDate = () => {
+    if(auth.company.matchUpTime) return moment(auth.company.matchUpTime).local().format('h a MMM Do')
+    let now = moment().tz(auth.company.timeZone)
+    let nextTime = moment().tz(auth.company.timeZone).isoWeekday(auth.company.day).hour(auth.company.hour).minute(0).second(0).milliseconds(0)
+    if(now.isAfter(nextTime)) {
+      nextTime = nextTime.add(1, 'weeks')
+    }
+    return nextTime.local().format('h a MMM Do')
+  }
   useEffect(() => {
     async function fetchBuddies(){
       //Get your buddy
-      let date = moment(auth.company.matchUpTime).local().format('H a MMM Do')
+      let date = getDate()
 
       if(!auth.company.activeBuddies) {
         return setError(`Please check back at ${date} to find out who your weekly Buddy is!`)
