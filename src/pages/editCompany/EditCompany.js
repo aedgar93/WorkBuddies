@@ -61,7 +61,7 @@ class EditCompany extends Component {
 
   }
 
-  handleAddActivity(name, icon) {
+  handleAddActivity({name, icon}) {
     this.props.auth.companyRef.collection('activities').add({
       name,
       icon
