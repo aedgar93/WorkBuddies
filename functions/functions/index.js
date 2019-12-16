@@ -206,7 +206,7 @@ exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
   return setNextMatchupTime(companyId)
 })
 
-exports.setInitialMatchupTime = functions.database.ref('companies/{companyId}')
+exports.setInitialMatchupTime = functions.firestore.document('companies/{companyId}')
 .onCreate((snapshot, _context) => {
   setNextMatchupTime(snapshot.id)
 });
