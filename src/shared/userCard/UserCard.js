@@ -10,7 +10,7 @@ const UserCard = ({ firstName, lastName, email, slack }) => {
       </div>
       <div className={styles.info}>
           <div className={styles.name}>{firstName} {lastName}</div>
-          { email ? <div className={styles.contact}><i className="la la-envelope"></i><span className={styles.detail}>{email}</span></div> : null}
+          { email ? <div className={styles.contact}><i className="la la-envelope"></i><a className={styles.detail} href={`mailto:${email}`}>{email}</a></div> : null}
           { slack ? <div className={styles.contact}><i className="la la-comment-dots"></i><span className={styles.detail}>Slack: {slack}</span></div> : null}
       </div>
     </div>

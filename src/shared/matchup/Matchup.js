@@ -1,16 +1,18 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from 'react';
-import { withFirebase } from '../../firebaseComponents'
-import { withAuth } from '../../session'
+import React, { useState, useEffect, useContext } from 'react';
 import moment from 'moment-timezone'
 import Spinner from 'react-bootstrap/Spinner'
 import styles from './Matchup.module.css'
+import { AuthUserContext } from '../../session'
+import { FirebaseContext } from '../../firebaseComponents'
 
-const Matchup = ({ auth, firebase }) => {
+const Matchup = () => {
   const [buddy, setBuddy] = useState(null)
   const [activity, setActivity] = useState(null)
   const [error, setError] = useState(null)
   const defaultErrorMessage = 'Oh no! Something went wrong.'
+  const auth = useContext(AuthUserContext)
+  const firebase = useContext(FirebaseContext)
 
   const getDate = () => {
     if(auth.company.matchUpTime) return moment(auth.company.matchUpTime).local().format('h a MMM Do')
@@ -66,4 +68,4 @@ const Matchup = ({ auth, firebase }) => {
   )
 }
 
-export default withAuth(withFirebase(Matchup))
+export default Matchup

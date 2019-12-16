@@ -6,7 +6,7 @@ import {
   Link
 } from 'react-router-dom';
 import { AuthUserContext } from '../../session'
-import {FirebaseContext} from '../../firebaseComponents'
+import { FirebaseContext } from '../../firebaseComponents'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
@@ -16,8 +16,8 @@ import { ROUTES } from '../../utils/constants'
 
 
 const Header = () => {
-  let auth = useContext(AuthUserContext)
-  let firebase = useContext(FirebaseContext)
+  const auth = useContext(AuthUserContext)
+  const firebase = useContext(FirebaseContext)
 
   const signOut = () => {
     firebase.signOut()

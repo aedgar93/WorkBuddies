@@ -11,6 +11,7 @@
   flex-direction: column;
   justify-content: center;
   margin-left: 10px;
+  margin-right: 10px;
 }
 
 .imgContainer {
@@ -27,4 +28,11 @@
 
 .detail {
   margin-left: 5px;
+}
+
+.contact {
+  word-break: break-word;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
 }

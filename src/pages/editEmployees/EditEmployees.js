@@ -1,151 +1,57 @@
 // eslint-disable-next-line no-unused-vars
-import React, { Component } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { withFirebase } from '../../firebaseComponents'
-import { withAuth } from '../../session'
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthUserContext } from '../../session'
+import { FirebaseContext } from '../../firebaseComponents'
 import styles from './EditEmployees.module.css'
 import UserCard from '../../shared/userCard'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import Invites from '../../shared/invites'
 
-class EditEmployees extends Component {
+const EditEmployees = () => {
+  const [userRefs, setUserRefs] = useState([])
+  const auth = useContext(AuthUserContext)
+  const firebase = useContext(FirebaseContext)
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      userRefs: null,
-      inviteRefs: null,
-      invitedEmail: ""
-    }
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-  }
-
-  componentDidMount() {
-    this.usersListener = this.props.firebase.db.collection('users').where('company_uid', '==', this.props.auth.companyRef.id)
+  useEffect(() => {
+    let usersListener = firebase.db.collection('users').where('company_uid', '==', auth.companyRef.id)
     .onSnapshot(snapshot => {
-      if(snapshot && snapshot.docs) this.setState({ userRefs: snapshot.docs })
+      if(snapshot && snapshot.docs) setUserRefs(snapshot.docs)
     })
 
-    this.invitesListener = this.props.firebase.db.collection('invites').where('company_uid', '==', this.props.auth.companyRef.id)
-    .onSnapshot(snapshot => {
-      if(snapshot && snapshot.docs) this.setState({ inviteRefs: snapshot.docs })
-    })
-  }
-
-  componentWillUnmount() {
-    this.usersListener()
-    this.invitesListener()
-  }
-
-  handleSubmit(event) {
-    event.preventDefault()
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) return
-
-    const email = this.state.invitedEmail
-    this.setState({addingUser: true})
-    this.props.firebase.db.collection('invites').add({
-      email: email,
-      company_uid: this.props.auth.companyRef.id,
-      createdAt: new Date().getTime()
-    }).then(result => {
-        this.setState({addingUser: false, invitedEmail: ""})
-    }).catch(_error => {
-      //TODO: error
-      this.setState({ addingUser: false })
-    })
-  }
-
-  handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value})
-  }
-
-  handleDelete(ref) {
-    // eslint-disable-next-line no-restricted-globals
-    if(confirm('Are you sure you want to delete this invite?')) {
-      ref.ref.delete()
+    return function cleanup() {
+      usersListener()
     }
-  }
+  })
 
-  render() {
-    const { userRefs, inviteRefs, addingUser, invitedEmail } = this.state
-    return (
-      <div className={styles.wrapper}>
-        <div className={styles.section}>
-          <h2>Employees</h2>
-          {
-            userRefs ?
-              <Row>
-                {userRefs.map((ref, i) => {
-                  let user = ref.data()
-                  return (
-                    <Col xs={12} s={6} m={6} l={6} xl={6} key={i} className={styles.user}>
-                      <UserCard email={user.email} firstName={user.firstName} lastName={user.lastName} />
-                    </Col>
-                  )
-                })}
-              </Row> :
-              <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
-          }
-        </div>
 
-        <div className={styles.section}>
-          <h2>Invites</h2>
-          <div>
-            {
-              inviteRefs ?
-                <>
-                  <Form onSubmit={this.handleSubmit}>
-                    <div className={styles.inviteForm}>
-                      <Form.Control type="email" required placeholder="Enter an email" name="invitedEmail" className={styles.addInput} onChange={this.handleChange} value={invitedEmail}/>
-                      <Button className={styles.addButton} type="submit">
-                        {
-                          addingUser ?
-                          <Spinner
-                              className={styles.buttonSpinner}
-                              as="span"
-                              animation="border"
-                              size="sm"
-                              role="status"
-                              aria-hidden="true"
-                            />
-                          : null
-                        }
-                        Add
-                      </Button>
-                    </div>
-                  </Form>
-                  <ReactCSSTransitionGroup
-                    transitionName="slideIn"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={300}>
-                      {
-                        inviteRefs.sort((a, b) =>  b.data().createdAt - a.data().createdAt).map(ref => {
-
-                          let invite = ref.data()
-                          return (
-                            <div key={invite.email} className={styles.inviteContainer}>
-                              <div>{invite.email}</div>
-                              <Button variant="outline-danger" onClick={() => this.handleDelete(ref)}>Delete</Button>
-                            </div>
-                          )
-                        })
-                      }
-                  </ReactCSSTransitionGroup>
-                </>
-                :
-                <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
-            }
-
-          </div>
-        </div>
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.section}>
+        <h2>Employees</h2>
+        {
+          userRefs ?
+            <Row>
+              {userRefs.map((ref, i) => {
+                let user = ref.data()
+                return (
+                  <Col xs={12} s={6} m={6} l={6} xl={6} key={i} className={styles.user}>
+                    <UserCard email={user.email} firstName={user.firstName} lastName={user.lastName} />
+                  </Col>
+                )
+              })}
+            </Row> :
+            <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
+        }
       </div>
-    )
-  }
+
+      <div className={styles.section}>
+        <h2>Invites</h2>
+        <Invites />
+      </div>
+    </div>
+  )
 }
 
-export default withAuth(withFirebase(EditEmployees))
+export default EditEmployees
