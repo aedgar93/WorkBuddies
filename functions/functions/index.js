@@ -86,8 +86,9 @@ const getLastBuddy = (userId, previousMatchups) => {
 
 }
 
-const getRandomActivity = () => {
-  return 'Table Tennis'
+const getRandom = (collection) => {
+  if(!collection || collection.length === 0) return null
+  return collection[Math.floor(Math.random()*collection.length)]
 }
 
 const matchup = async (data) => {
@@ -97,6 +98,11 @@ const matchup = async (data) => {
   if (!companyRef) return Promise.reject(new Error("company not found"))
   let companyData = await companyRef.get()
   companyData = companyData.data()
+  let activitiesSnapshot = await companyRef.collection('activities').get()
+
+  const activities = []
+  activitiesSnapshot.forEach(doc => activities.push(doc.data()))
+
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
   let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
   let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
@@ -130,7 +136,7 @@ const matchup = async (data) => {
           }
 
           //get random buddy from remaining options
-          let buddyInfo = usersCopy[Math.floor(Math.random()*usersCopy.length)]
+          let buddyInfo = getRandom(usersCopy)
 
           //remove buddy from original users list
           buddy = users[buddyInfo.originalIndex]
@@ -139,7 +145,7 @@ const matchup = async (data) => {
         }
         newMatchups.push({
           buddies: [user.id, buddy.id],
-          activity: getRandomActivity()
+          activity: getRandom(activities)
         })
       }
       if(users.length === 1) {
@@ -147,7 +153,7 @@ const matchup = async (data) => {
         user = users.pop()
         newMatchups.push({
           buddies: [user.id],
-          activity: getRandomActivity()
+          activity: getRandom(activities)
         })
       }
 
