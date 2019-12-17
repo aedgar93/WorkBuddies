@@ -21,6 +21,9 @@ const pubsub = new PubSub({
   projectId: process.env.GCLOUD_PROJECT,
   keyFilename: './admin-service-account.json'
 });
+sgMail.setApiKey(config && config.mail ? config.mail.key : "");
+sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
+
 
 //INVITE EMAIL
 const inviteEmailContent = () => {
@@ -28,11 +31,15 @@ const inviteEmailContent = () => {
     <p>Welcome to Work Buddies! Please follow this link to join {companyName}: {link}
   `
 }
+const getFromEmail = () => {
+  return functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com'
+}
+
 const foods = ["soup", "coffee", "pancake", "pizza", "sushi", "ramen", "burrito", "gyros", "pasta", "curry", "bratwurst"];
 const generateCode = () => foods[Math.floor(Math.random() * foods.length)] + Math.floor(1000 + Math.random() * 9000);
 const signupLink = `${config && config.host ? config.host : 'http://localhost'}/signup?code=`
 
-sgMail.setApiKey(config && config.mail ? config.mail.key : "");
+
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
@@ -51,7 +58,7 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
 
       const msg = {
         to: inviteSnapshot.data().email,
-        from: functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com',
+        from: getFromEmail(),
         subject: 'You\'re Invited to Work Buddies!',
         html: emailContent,
       };
@@ -91,6 +98,23 @@ const getRandom = (collection) => {
   return collection[Math.floor(Math.random()*collection.length)]
 }
 
+const buddyEmail = "Hello {{buddy1}} and {{buddy2}},<br/><br/> You have been match up as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
+const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
+
+const getPersonalization = (buddy1, buddy2, activity) => {
+  if (!buddy1) return null
+
+  let activityString = activity ? `You activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
+  let to = [{email: buddy1.email}]
+  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString }
+  if (buddy2) {
+    to.push({email: buddy2.email})
+    substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
+  }
+
+  return { to, substitutions, subject: "Your Weekly Buddy" }
+}
+
 const matchup = async (data) => {
   const companyId = data.id
   const firestore = admin.firestore();
@@ -109,6 +133,8 @@ const matchup = async (data) => {
   let previousMatchups = lastBuddiesDoc && lastBuddiesDoc.exists  ? await lastBuddiesDoc.data().matchups : []
 
   let newMatchups = []
+  let emailInfo = []
+  let emailPromises = []
 
   let matchUpUsersPromise = usersRef.get()
     .then(snapshot => {
@@ -143,18 +169,42 @@ const matchup = async (data) => {
           users.splice(buddyInfo.originalIndex, 1)
 
         }
+        let activity = getRandom(activities)
+
+        emailInfo.push(getPersonalization(user.data(), buddy.data(), activity))
         newMatchups.push({
           buddies: [user.id, buddy.id],
-          activity: getRandom(activities)
+          activity: activity
         })
       }
+
+      //Handle emails with buddies
+      if (emailInfo.length) {
+        let msg = {
+          personalizations: emailInfo,
+          from: getFromEmail(),
+          html: buddyEmail
+        }
+        console.info(JSON.stringify(msg))
+        emailPromises.push(sgMail.send(msg))
+      }
+
+
       if(users.length === 1) {
         //handle odd
+        let activity = getRandom(activities)
         user = users.pop()
         newMatchups.push({
           buddies: [user.id],
-          activity: getRandom(activities)
+          activity: activity
         })
+        let msg = {
+          personalizations: [getPersonalization(user.data(), null, activity)],
+          from: getFromEmail(),
+          html: noBuddyEmail
+        }
+        console.info(JSON.stringify(msg))
+        emailPromises.push(sgMail.send(msg))
       }
 
       // eslint-disable-next-line promise/no-nesting
@@ -170,7 +220,7 @@ const matchup = async (data) => {
 
     let setNextMatchupPromise = setNextMatchupTime(companyId)
 
-    return Promise.all([matchUpUsersPromise, setNextMatchupPromise])
+    return Promise.all([matchUpUsersPromise, setNextMatchupPromise].concat(emailPromises))
 }
 
 exports.matchupSub = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
@@ -249,7 +299,7 @@ let publishToTopic = topic =>
     });
 
 
-exports.matchUpScheduler = functions.pubsub.schedule('0 * * * *').onRun((_ctx) => {
+exports.matchUpScheduler = functions.pubsub.schedule('*/5 * * * *').onRun((_ctx) => {
   let timestamp = moment.utc().valueOf();
   return queries.getToMatchUp(timestamp).asyncMap(publishToTopic('matchup'))
 });
