@@ -7,11 +7,11 @@
     "firebase": "^7.2.2",
     "moment-timezone": "^0.5.27",
     "react": "^16.11.0",
-    "react-addons-css-transition-group": "^15.6.2",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.2.0"
+    "react-scripts": "3.2.0",
+    "react-transition-group": "^4.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

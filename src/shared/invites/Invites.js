@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import styles from './Invites.module.css'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import Spinner from 'react-bootstrap/Spinner'
@@ -66,10 +66,18 @@ const Invites = () => {
 
         let invite = ref.data()
         return (
-          <div key={invite.email} className={styles.inviteContainer}>
-            <div>{invite.email}</div>
-            <Button variant="outline-danger" onClick={() => handleDelete(ref)}>Delete</Button>
-          </div>
+          <CSSTransition
+            key={invite.email}
+            classNames="slideIn"
+            timeout={{
+              enter: 500,
+              exit: 300,
+           }}>
+            <div className={styles.inviteContainer}>
+              <div>{invite.email}</div>
+              <Button variant="outline-danger" onClick={() => handleDelete(ref)}>Delete</Button>
+            </div>
+          </CSSTransition>
         )
       }) : null
     )
@@ -100,18 +108,15 @@ const Invites = () => {
                 </Button>
               </div>
             </Form>
+            <TransitionGroup>
+                {
+                  getInvites()
+                }
+            </TransitionGroup>
           </>
           :
           <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
       }
-      <ReactCSSTransitionGroup
-        transitionName="slideIn"
-        transitionEnterTimeout={500}
-        transitionLeaveTimeout={300}>
-          {
-            getInvites()
-          }
-      </ReactCSSTransitionGroup>
     </div>
   )
 }
