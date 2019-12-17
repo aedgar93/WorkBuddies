@@ -14,3 +14,13 @@
 .matchup {
   margin: 20px 0;
 }
+
+.loading {
+  text-align: center;
+}
+
+.activities {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

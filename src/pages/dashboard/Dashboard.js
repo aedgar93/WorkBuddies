@@ -1,9 +1,28 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Matchup from '../../shared/matchup'
 import styles from './Dashboard.module.css'
+import Spinner from 'react-bootstrap/Spinner'
+import { AuthUserContext } from '../../session'
+import Activity from '../../shared/activity'
 
 const Dashboard = () => {
+  const [activities, setActivities] = useState([])
+  const auth = useContext(AuthUserContext)
+
+  useEffect(() => {
+    let listener = auth.companyRef.collection('activities')
+    .onSnapshot(snapshot => {
+      let activities = []
+      snapshot.forEach(doc => activities.push(doc.data()))
+      setActivities(activities)
+    })
+
+    return function cleanup() {
+      listener()
+    }
+  })
+
   return (
     <div className={styles.wrapper}>
       <h2>Work Buddies</h2>
@@ -20,6 +39,22 @@ const Dashboard = () => {
 
       <div className={styles.section}>
         <h4>Office Activities</h4>
+        {
+          !activities ? <div className={styles.loading}><Spinner animation="border" size="lg" variant="primary"/></div> :
+          <>
+            {
+            activities.length === 0 ?
+              <div className={styles.subtext}>It looks like your admin hasn't added any activities for your office yet. Some of our favorite suggestions include grabbing a coffee, playing Ping Pong, or going for a walk.</div> :
+              <div className={styles.activities}>
+                {
+                  activities.map((activity, index) => {
+                    return <Activity key={activity.name + index} name={activity.name} icon={activity.icon}/>
+                  })
+                }
+              </div>
+            }
+          </>
+        }
       </div>
     </div>
   )

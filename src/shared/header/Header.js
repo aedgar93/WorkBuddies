@@ -34,7 +34,7 @@ const Header = () => {
             <Dropdown>
               <Dropdown.Toggle as={Nav.Link}>My Company</Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item as="span"><Link to={ROUTES.EDIT_COMPANY}>Info</Link></Dropdown.Item>
+                <Dropdown.Item as="span"><Link to={ROUTES.EDIT_COMPANY}>Info and Activities</Link></Dropdown.Item>
                 <Dropdown.Item as="span"><Link to={ROUTES.EDIT_EMPLOYEES}>Employees</Link></Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
