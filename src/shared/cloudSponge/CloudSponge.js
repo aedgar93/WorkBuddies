@@ -63,7 +63,6 @@ class CloudSponge extends React.Component {
     }
 
     componentDidMount() {
-      console.log(process.env.REACT_APP_CLOUD_SPONGE_KEY)
         this.addJavascript(`https://api.cloudsponge.com/widget/${process.env.REACT_APP_CLOUD_SPONGE_KEY}.js`, "__cloudsponge_widget_script", () => {
             // calling init attaches the cloudsponge.launch action to any cloudsponge-launch links on the page
             if (window.cloudsponge) {

@@ -84,12 +84,30 @@ const Invites = () => {
     )
   }
 
+  const getContacts = (results) => {
+    let batch = firebase.db.batch();
+    let collection = firebase.db.collection('invites')
+
+
+    results.forEach(contact => {
+      if (!contact.selectedEmail()) return null
+      let invite = {
+        email: contact.selectedEmail(),
+        company_uid: auth.companyRef.id,
+        createdAt: new Date().getTime()
+      }
+      let ref = collection.doc()
+      batch.set(ref, invite)
+    })
+    return batch.commit()
+  }
+
   return (
     <div>
       {
         inviteRefs ?
           <>
-            <CloudSponge>
+            <CloudSponge options={{ afterSubmitContacts: getContacts.bind(this) }}>
               <Button className="cloudsponge-launch">
                   Add From Address Book
               </Button>
