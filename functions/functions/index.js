@@ -12,7 +12,7 @@ var serviceAccount = require("./admin-service-account.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://hr-app-391b3.firebaseio.com"
+  databaseURL: "https://work-buddies-2e620.firebaseio.com"
 });
 
 const config = functions.config()
