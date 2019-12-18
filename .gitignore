@@ -26,3 +26,4 @@ yarn-error.log*
 
 #functions
 functions/node_modules
+src/*_secret.json

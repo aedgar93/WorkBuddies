@@ -40,7 +40,7 @@ const EditActivities = ({ activities, onDelete, onEdit, onAdd, alwaysSelected })
         activities.map((activity, index) => {
           return index === editIndex ?
             <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={activity => handleDeleteActivity(index, activity)} onSave={activity => handleEditActivity(index, activity)}/> :
-            <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() =>  handleStartEdit(index)} selected={alwaysSelected}/>
+            <span className={styles.activityWrapper} key={activity.name + index}><Activity name={activity.name} icon={activity.icon} onClick={() =>  handleStartEdit(index)} selected={alwaysSelected}/></span>
         })
       }
       {

@@ -7,3 +7,7 @@
   box-sizing: border-box;
   height: 75px;
 }
+
+.activityWrapper {
+  cursor: pointer;
+}

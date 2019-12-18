@@ -6,6 +6,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import Spinner from 'react-bootstrap/Spinner'
+import CloudSponge from '../cloudSponge'
 
 
 const Invites = () => {
@@ -88,6 +89,11 @@ const Invites = () => {
       {
         inviteRefs ?
           <>
+            <CloudSponge>
+              <Button className="cloudsponge-launch">
+                  Add From Address Book
+              </Button>
+            </CloudSponge>
             <Form onSubmit={handleSubmit}>
               <div className={styles.inviteForm}>
                 <Form.Control type="email" required placeholder="Enter an email" name="invitedEmail" className={styles.addInput} onChange={handleChange} value={invitedEmail}/>
