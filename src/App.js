@@ -38,6 +38,7 @@ class App extends Component {
         if (this.props.firebase.creatingUserPromise) await this.props.firebase.creatingUserPromise
         this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
         .then(snapshot => {
+          if(!snapshot || !snapshot.docs || snapshot.docs.length === 0) return
           authUser.user = snapshot.docs[0].data()
           authUser.user.id = snapshot.docs[0].id
           localStorage.setItem('authUser', JSON.stringify(authUser));
