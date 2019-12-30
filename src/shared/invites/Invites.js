@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import styles from './Invites.module.css'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import Alert from 'react-bootstrap/Alert'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
@@ -13,6 +14,7 @@ const Invites = () => {
   const [inviteRefs, setInviteRefs] = useState(null)
   const [addingUser, setAddingUser] = useState(false)
   const [invitedEmail, setInvitedEmail] = useState("")
+  const [error, setError] = useState(null)
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
 
@@ -29,11 +31,23 @@ const Invites = () => {
     }
   })
 
+  const getInvitedEmails = () => {
+    return inviteRefs.map(ref => {
+      return ref.data().email
+    })
+  }
+
   const handleSubmit = (event) => {
+    setError(null)
     event.preventDefault()
     const form = event.currentTarget;
     if (form.checkValidity() === false) return
 
+    let existingEmails = getInvitedEmails()
+
+    if (existingEmails.indexOf(invitedEmail) > -1) {
+      return setError({message: 'You have already invited that email address.', type: 'warning'})
+    }
     setAddingUser(true)
     firebase.db.collection('invites').add({
       email: invitedEmail,
@@ -42,8 +56,8 @@ const Invites = () => {
     }).then(_result => {
         setAddingUser(false)
         setInvitedEmail("")
-    }).catch(_error => {
-      //TODO: error
+    }).catch(error => {
+      setError({message: error, type: 'danger'})
       setAddingUser(false)
 
     })
@@ -85,14 +99,17 @@ const Invites = () => {
   }
 
   const getContacts = (results) => {
+    setError(null)
     let batch = firebase.db.batch();
     let collection = firebase.db.collection('invites')
 
-
+    let existingEmails = getInvitedEmails()
     results.forEach(contact => {
-      if (!contact.selectedEmail()) return null
+      let email = contact.selectedEmail()
+      if (!email) return null
+      if (existingEmails.indexOf(email) > -1) return
       let invite = {
-        email: contact.selectedEmail(),
+        email: email,
         company_uid: auth.companyRef.id,
         createdAt: new Date().getTime()
       }
@@ -100,6 +117,9 @@ const Invites = () => {
       batch.set(ref, invite)
     })
     return batch.commit()
+    .catch(_error => {
+      setError({message: error, type: 'danger'})
+    })
   }
 
   return (
@@ -132,6 +152,9 @@ const Invites = () => {
                 </Button>
               </div>
             </Form>
+            {
+              error ? <Alert variant={error.type ? error.type : 'danger'} className={styles.error}>{error.message ? error.message : error}</Alert> : null
+            }
             <TransitionGroup>
                 {
                   getInvites()

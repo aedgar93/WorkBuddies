@@ -30,3 +30,7 @@
   text-align: center;
   display: inline-block;
 }
+
+.error {
+  margin-top: 10px;
+}

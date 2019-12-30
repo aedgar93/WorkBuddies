@@ -35,8 +35,6 @@ const getFromEmail = () => {
   return functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com'
 }
 
-const foods = ["soup", "coffee", "pancake", "pizza", "sushi", "ramen", "burrito", "gyros", "pasta", "curry", "bratwurst"];
-const generateCode = () => foods[Math.floor(Math.random() * foods.length)] + Math.floor(1000 + Math.random() * 9000);
 const signupLink = `${config && config.host ? config.host : 'http://localhost'}/signup?code=`
 
 
@@ -67,7 +65,7 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
     });
 
     function getCode() {
-      let code = generateCode();
+      let code = uuidv1();
       return invitesRef.where('code', '==', code).get()
         .then(snapshot => {
           return !snapshot.docs || snapshot.docs.length === 0 ? code : getCode();
