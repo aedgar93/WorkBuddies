@@ -7,12 +7,16 @@ import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import Modal from 'react-bootstrap/Modal'
 import Alert from 'react-bootstrap/Alert'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 
 const EditAccount = ({history}) => {
   const auth = useContext(AuthUserContext)
   let firebase = useContext(FirebaseContext)
   let [email, setEmail] = useState(auth.user.email)
+  let [firstName, setFirstName] = useState(auth.user.firstName)
+  let [lastName, setLastName] = useState(auth.user.lastName)
   let [valid, setValid] = useState(true)
   let [notifyEmail, setNotifyEmail] = useState(auth.user.notifyEmail)
   let [loading, setLoading] = useState(false)
@@ -90,6 +94,8 @@ const EditAccount = ({history}) => {
 
     promises.push(
       firebase.db.collection('users').doc(auth.user.id).update({
+        firstName,
+        lastName,
         email,
         notifyEmail
       })
@@ -113,9 +119,9 @@ const EditAccount = ({history}) => {
   }
 
   useEffect(() => {
-    let valid = email && email !== ''
+    let valid = email && email !== '' && firstName && firstName !== '' && lastName && lastName !== ''
     setValid(valid)
-  }, [email])
+  }, [email, firstName, lastName])
 
   return (
     <div className={styles.wrapper} onSubmit={handleSubmit}>
@@ -135,6 +141,29 @@ const EditAccount = ({history}) => {
               value={email}
               placeholder="Enter email"
               onChange={e => setEmail(e.target.value)}/>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Name</Form.Label>
+            <Row>
+              <Col>
+                <Form.Control
+                  name="firstName"
+                  value={firstName}
+                  placeholder="First name"
+                  required
+                  onChange={e => setFirstName(e.target.value)}
+                />
+              </Col>
+              <Col>
+                <Form.Control
+                  name="lastName"
+                  value={lastName}
+                  placeholder="Last name"
+                  required
+                  onChange={e => setLastName(e.target.value)}
+                />
+              </Col>
+            </Row>
           </Form.Group>
           <Form.Group controlId="notifications" className={styles.formGroup}>
             <Form.Label>Notification Preferences</Form.Label>
