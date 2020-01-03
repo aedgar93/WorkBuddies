@@ -14,6 +14,7 @@ const AcceptInvite = ({ history, match }) => {
   const [inviteId, setInviteId] = useState(null)
   const [ suggestedEmail, setSuggestedEmail] = useState(null)
   const firebase = useContext(FirebaseContext)
+  console.log(match)
   const code  = match && match.params && match.params.code
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const AcceptInvite = ({ history, match }) => {
       firstName,
       lastName,
       email,
+      notifyEmail: true,
       company_uid: companyId,
       admin: false
     }))

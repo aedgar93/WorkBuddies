@@ -35,7 +35,7 @@ const getFromEmail = () => {
   return functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com'
 }
 
-const signupLink = `${config && config.host ? config.host : 'http://localhost'}/signup?code=`
+const signupLink = `${config && config.host ? config.host : 'http://localhost:3000'}/signup/`
 
 
 

@@ -1,0 +1,27 @@
+.wrapper {
+  text-align: left;
+}
+
+.section {
+  margin-bottom: 50px;
+}
+
+.form {
+  margin-top: 20px;
+}
+
+.button {
+  float: right;
+}
+
+.formGroup {
+  margin: 40px 0;
+}
+
+.formGroup:first-child {
+  margin-top: 20px;
+}
+
+.buttonSpinner {
+  margin-right: 5px;
+}

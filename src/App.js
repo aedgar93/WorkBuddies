@@ -13,11 +13,12 @@ import Header from './shared/header'
 import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
-import EditEmployees from './pages/editEmployees/EditEmployees';
+import EditAccount from './pages/editAccount'
+import EditEmployees from './pages/editEmployees';
 import Spinner from 'react-bootstrap/Spinner'
 import CreateCompany from './pages/createCompany';
 import SetUpActivities from './pages/setUpActivities';
-import SetUpEmployees from './pages/setUpEmployees/SetUpEmployees';
+import SetUpEmployees from './pages/setUpEmployees';
 
 class App extends Component {
   constructor(props) {
@@ -35,12 +36,17 @@ class App extends Component {
   componentDidMount() {
     this.listener = this.props.firebase.auth.onAuthStateChanged(async authUser => {
       if (authUser) {
+        console.log('auth state changing!')
         if (this.props.firebase.creatingUserPromise) await this.props.firebase.creatingUserPromise
         this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
         .then(snapshot => {
           if(!snapshot || !snapshot.docs || snapshot.docs.length === 0) return
           authUser.user = snapshot.docs[0].data()
           authUser.user.id = snapshot.docs[0].id
+          authUser.updateUser = (val) => {
+            authUser.user = val.data()
+            authUser.user.id = val.id
+          }
           localStorage.setItem('authUser', JSON.stringify(authUser));
           localStorage.setItem('user', JSON.stringify(authUser.user));
           let companyRef = this.props.firebase.db.collection('companies').doc(authUser.user.company_uid)
@@ -79,6 +85,9 @@ class App extends Component {
                         { /* Unauth Routes */}
                         { !authUser ? <Route path={[ROUTES.SIGN_UP + '/:code', ROUTES.SIGN_UP]} component={AcceptInvite}></Route> : null }
                         { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
+
+                        { /* Auth Routes */}
+                        { authUser ? <Route path={ROUTES.MY_ACCOUNT} component={EditAccount}></Route> : null}
 
                         { /* Admin Routes */ }
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}

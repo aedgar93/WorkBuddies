@@ -30,6 +30,9 @@ const Header = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link to={ROUTES.BASE} as={Link}>Home</Nav.Link>
+          {
+            auth && auth.user ? <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link}>My Account</Nav.Link> : null
+          }
           { auth && auth.user && auth.user.admin ?
             <Dropdown>
               <Dropdown.Toggle as={Nav.Link}>My Company</Dropdown.Toggle>

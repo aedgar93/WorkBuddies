@@ -54,6 +54,7 @@ const CreateCompany = ({ history }) => {
         firstName,
         lastName,
         email,
+        notifyEmail: true,
         company_uid: companyId,
         admin: true
       })
