@@ -99,14 +99,14 @@ const getRandom = (collection) => {
 const buddyEmail = "Hello {{buddy1}} and {{buddy2}},<br/><br/> You have been match up as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
-const getPersonalization = (buddy1, buddy2, activity) => {
+const getEmailPersonalization = (buddy1, buddy2, activity) => {
   if (!buddy1) return null
-
+  let to = []
   let activityString = activity ? `You activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
-  let to = [{email: buddy1.email}]
+  if(buddy1.notifyEmail) to.push({email: buddy1.email})
   let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString }
   if (buddy2) {
-    to.push({email: buddy2.email})
+    if(buddy2.notifyEmail) to.push({email: buddy2.email})
     substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
   }
 
@@ -169,7 +169,8 @@ const matchup = async (data) => {
         }
         let activity = getRandom(activities)
 
-        emailInfo.push(getPersonalization(user.data(), buddy.data(), activity))
+        let emailPersonalization = getEmailPersonalization(user.data(), buddy.data(), activity)
+        if(emailPersonalization.to && emailPersonalization.to.length) emailInfo.push(emailPersonalization)
         newMatchups.push({
           buddies: [user.id, buddy.id],
           activity: activity
@@ -196,13 +197,16 @@ const matchup = async (data) => {
           buddies: [user.id],
           activity: activity
         })
-        let msg = {
-          personalizations: [getPersonalization(user.data(), null, activity)],
-          from: getFromEmail(),
-          html: noBuddyEmail
+        let userData = user.data()
+        if(userData.notifyEmail) {
+          let msg = {
+            personalizations: [getEmailPersonalization(userData, null, activity)],
+            from: getFromEmail(),
+            html: noBuddyEmail
+          }
+          console.info(JSON.stringify(msg))
+          emailPromises.push(sgMail.send(msg))
         }
-        console.info(JSON.stringify(msg))
-        emailPromises.push(sgMail.send(msg))
       }
 
       // eslint-disable-next-line promise/no-nesting

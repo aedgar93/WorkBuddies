@@ -92,7 +92,7 @@ class App extends Component {
                         { /* Admin Routes */ }
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
                         { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.SET_UP_ACTIVITIES} component={SetUpActivities}></Route> : null}
+                        <Route path={ROUTES.SET_UP_ACTIVITIES} component={SetUpActivities}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
                         { authUser && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
 
                         { /* Default */ }

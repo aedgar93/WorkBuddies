@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 import { AuthUserContext } from '../../session'
 import { ROUTES } from '../../utils/constants'
+import Spinner from 'react-bootstrap/Spinner'
 
 const suggested = [
   {
@@ -93,6 +94,7 @@ const SetUpActivities = ({ history }) => {
     })
   }
 
+  if (!auth) return <Spinner animation="border" size="lg" variant="primary"/>
   return (
     <div className={styles.wrapper}>
       { error ? <Alert variant="danger">{error}</Alert> : null}
