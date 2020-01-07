@@ -11,6 +11,7 @@ const AcceptInvite = ({ history, match }) => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [companyId, setCompanyId] = useState(null)
+  const [ready, setReady] = useState(false)
   const [inviteId, setInviteId] = useState(null)
   const [ suggestedEmail, setSuggestedEmail] = useState(null)
   const firebase = useContext(FirebaseContext)
@@ -18,15 +19,24 @@ const AcceptInvite = ({ history, match }) => {
   const code  = match && match.params && match.params.code
 
   useEffect(() => {
-    //set up
-    firebase.db.collection('invites').where('code', '==', code).get()
-    .then(snapshot => {
-      if(!snapshot.docs || snapshot.docs.length === 0) return history.push(ROUTES.GET_STARTED).state({error: 'Sorry, that invite is no longer valid.'})
-      let data = snapshot.docs[0].data()
-      setCompanyId(data.company_uid)
-      setSuggestedEmail(data.email)
-      setInviteId(snapshot.docs[0].id)
-    })
+    if(code) {
+      //set up
+      firebase.db.collection('invites').where('code', '==', code).get()
+      .then(snapshot => {
+        if(!snapshot.docs || snapshot.docs.length === 0) return history.push(ROUTES.GET_STARTED).state({error: 'Sorry, that invite is no longer valid.'})
+        let data = snapshot.docs[0].data()
+        setCompanyId(data.company_uid)
+        setSuggestedEmail(data.email)
+        setInviteId(snapshot.docs[0].id)
+        setReady(true)
+      })
+      .catch(err => {
+        //TODO: handle error
+        setReady(true)
+      })
+    } else {
+      setReady(true)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -63,7 +73,7 @@ const AcceptInvite = ({ history, match }) => {
   }
 
 
-  if (!companyId) return (<Spinner animation="border" size="lg" variant="primary"/>)
+  if (!ready) return (<Spinner animation="border" size="lg" variant="primary"/>)
   return (
     <div className={styles.wrapper}>
       <h3>Welcome!</h3>

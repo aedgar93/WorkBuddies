@@ -1,9 +1,4 @@
-.wrapper {
-  text-align: left;
-}
-
 .activities {
-  margin-top: 50px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -11,9 +6,4 @@
 
 .activityContainer {
   cursor: pointer;
-}
-
-.next {
-  margin: 10px 0;
-  float: right;
 }

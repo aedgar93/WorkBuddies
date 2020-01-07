@@ -5,9 +5,9 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 
-const SignUpForm = ({loading, onSubmit, suggestedEmail = ""}) => {
+const SignUpForm = ({ loading, onSubmit, suggestedEmail }) => {
   const [validated, setValidated] = useState(false)
-  const [email, setEmail] = useState(suggestedEmail)
+  const [email, setEmail] = useState(suggestedEmail ? suggestedEmail : "")
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [password1, setPassword1] = useState('')
@@ -26,17 +26,7 @@ const SignUpForm = ({loading, onSubmit, suggestedEmail = ""}) => {
 
   return (
     <Form onSubmit={handleSubmit} validated={validated} className={styles.content}>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            required
-            type="email"
-            value={email}
-            placeholder="Enter email"
-            onChange={e => { setEmail(e.target.value,); }}/>
-        </Form.Group>
-
-        <Form.Group>
+       <Form.Group>
           <Form.Label>Name</Form.Label>
           <Row>
             <Col>
@@ -60,6 +50,16 @@ const SignUpForm = ({loading, onSubmit, suggestedEmail = ""}) => {
               />
             </Col>
           </Row>
+        </Form.Group>
+
+        <Form.Group controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control
+            required
+            type="email"
+            value={email}
+            placeholder="Enter email"
+            onChange={e => { setEmail(e.target.value,); }}/>
         </Form.Group>
 
         <Form.Group controlId="formBasicPassword1">

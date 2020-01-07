@@ -19,6 +19,7 @@ const Invites = () => {
   const firebase = useContext(FirebaseContext)
 
   useEffect(() => {
+    if(!auth || !auth.companyRef) return
     let invitesListener = firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
     .onSnapshot(snapshot => {
       if(snapshot.metadata.hasPendingWrites) return
@@ -29,7 +30,8 @@ const Invites = () => {
     return function cleanup() {
       invitesListener()
     }
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ auth ])
 
   const getInvitedEmails = () => {
     return inviteRefs.map(ref => {

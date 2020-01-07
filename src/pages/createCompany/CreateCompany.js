@@ -5,11 +5,13 @@ import { ROUTES } from '../../utils/constants'
 import Alert from 'react-bootstrap/Alert'
 import { FirebaseContext } from '../../firebaseComponents'
 import SignUpForm from '../../shared/signUpForm'
+import SampleActivities from '../../shared/sampleActivities'
 
-const CreateCompany = ({ history }) => {
+const CreateCompany = ({ history, location }) => {
   const [company, setCompany] = useState({})
   const [error, setError] = useState(null)
   const [showCompany, setShowCompany] = useState(true)
+  const [selectedActivities, setSelectedActivities] = useState(location.state.selectedActivities ? location.state.selectedActivities : [])
   const firebase = useContext(FirebaseContext)
   const genericError = 'Something went wrong! Please try again.'
 
@@ -32,10 +34,6 @@ const CreateCompany = ({ history }) => {
     setError(false)
     let {name, hour, day, timeZone } = company
     let { firstName, lastName, email, password1 } = userInfo
-    var deferred = null;
-    firebase.createUserPromise = new Promise(function(resolve, reject){
-      deferred = {resolve: resolve, reject: reject}
-    });
     try {
       var { user } = await firebase.createUserWithEmailAndPassword(email, password1)
     } catch(error) {
@@ -48,6 +46,7 @@ const CreateCompany = ({ history }) => {
       timeZone
     })
     .then(companyRef => {
+      let promises = []
       let companyId = companyRef.id
       firebase.db.collection('users').add({
         auth_id: user.uid,
@@ -58,11 +57,26 @@ const CreateCompany = ({ history }) => {
         company_uid: companyId,
         admin: true
       })
-      .then(() => { history.push(ROUTES.SET_UP_ACTIVITIES) })
-      .catch(() => setError(genericError))
-      .finally(() => deferred.resolve())
+
+      let activityCollection = companyRef.collection('activities')
+      promises.concat(selectedActivities.map(({name, icon}) => {
+        return activityCollection.add({
+          name,
+          icon
+        })
+      }))
+
+      Promise.all(promises)
+      .then(() => { history.push(ROUTES.SET_UP_EMPLOYEES) })
+      .catch((error) => {
+        console.error(error)
+        setError(genericError)
+      })
     })
-    .catch(() => setError(genericError))
+    .catch((error) => {
+      console.error(error)
+      setError(genericError)
+    })
 
   }
 
@@ -72,9 +86,14 @@ const CreateCompany = ({ history }) => {
       { showCompany ?
         <>
           <h3>
-            Step 1: Set up your company
+            Let's create your organization
           </h3>
-          <CompanyForm onSubmit={submitCompany} name={company.name} timeZone={company.timeZone} day={company.day} hour={company.hour}/>
+          <CompanyForm onSubmit={submitCompany} name={company.name} timeZone={company.timeZone} day={company.day} hour={company.hour}>
+            <div className={styles.sampleActivities}>
+              <h3>Pick Activities</h3>
+              <SampleActivities setSelectedActivities={setSelectedActivities} selectedActivities={selectedActivities}/>
+            </div>
+          </CompanyForm>
           <div className={styles.helpText}>
             Looking to join a company? Please contact your company admin and request an invite email.
           </div>
@@ -82,7 +101,7 @@ const CreateCompany = ({ history }) => {
         :
         <>
           <h3 className={styles.title}>
-            Step 2: Create your account
+            Let's get you set up as well
           </h3>
           <button onClick={back} className={styles.backButton}>&lsaquo; Back</button>
           <SignUpForm onSubmit={onSubmit}/>

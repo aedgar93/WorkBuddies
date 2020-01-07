@@ -18,7 +18,6 @@ class Firebase {
     this.auth = app.auth();
     this.db = app.firestore()
     this.firestore = app.firestore
-    this.createUserPromise = false
   }
 
   createUserWithEmailAndPassword = (email, password) =>

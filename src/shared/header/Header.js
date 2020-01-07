@@ -12,15 +12,16 @@ import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Button from 'react-bootstrap/Button'
 import { ROUTES } from '../../utils/constants'
-
-
+import { useHistory } from "react-router-dom";
 
 const Header = () => {
+  const history = useHistory()
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
 
   const signOut = () => {
     firebase.signOut()
+    .then(() => history.push(ROUTES.LANDING_PAGE))
   }
 
   return (
@@ -29,9 +30,13 @@ const Header = () => {
       <Navbar.Toggle />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link to={ROUTES.BASE} as={Link}>Home</Nav.Link>
           {
-            auth && auth.user ? <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link}>My Account</Nav.Link> : null
+            auth && auth.user ?
+            <>
+              <Nav.Link to={ROUTES.BASE} as={Link}>Home</Nav.Link>
+              <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link}>My Account</Nav.Link>
+            </>
+            : null
           }
           { auth && auth.user && auth.user.admin ?
             <Dropdown>
@@ -44,7 +49,12 @@ const Header = () => {
             : null
           }
         </Nav>
-        { auth ? <Button onClick={signOut} variant="outline-light">Sign Out</Button> : null }
+        { auth ? <Button onClick={signOut} variant="outline-light">Sign Out</Button> :
+          <Nav>
+            <Nav.Link as={Link} to={ROUTES.SIGN_IN}>Sign In</Nav.Link>
+            <Nav.Link as={Link} to={ROUTES.SIGN_UP}>Sign Up</Nav.Link>
+          </Nav>
+        }
       </Navbar.Collapse>
     </Navbar>
   )

@@ -11,6 +11,7 @@ const Dashboard = () => {
   const auth = useContext(AuthUserContext)
 
   useEffect(() => {
+    if (auth.waitingForAuth) return
     let listener = auth.companyRef.collection('activities')
     .onSnapshot(snapshot => {
       let activities = []
@@ -21,8 +22,10 @@ const Dashboard = () => {
     return function cleanup() {
       listener()
     }
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth.waitingForAuth])
 
+  if (auth.waitingForAuth) return <Spinner animation="border" size="lg" variant="primary"/>
   return (
     <div className={styles.wrapper}>
       <h2>Work Buddies</h2>

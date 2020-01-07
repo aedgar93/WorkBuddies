@@ -123,6 +123,9 @@ const CompanyForm = (props) => {
             </Col>
           </Row>
         </Form.Group>
+        {
+          props.children
+        }
         <div className={styles.buttonContainer}>
           <Button variant="primary" type="submit" className={styles.button} disabled={!valid}>Submit</Button>
         </div>

@@ -17,8 +17,8 @@ import EditAccount from './pages/editAccount'
 import EditEmployees from './pages/editEmployees';
 import Spinner from 'react-bootstrap/Spinner'
 import CreateCompany from './pages/createCompany';
-import SetUpActivities from './pages/setUpActivities';
 import SetUpEmployees from './pages/setUpEmployees';
+import LandingPage from './pages/landingPage/LandingPage';
 
 class App extends Component {
   constructor(props) {
@@ -37,6 +37,7 @@ class App extends Component {
     this.listener = this.props.firebase.auth.onAuthStateChanged(async authUser => {
       if (authUser) {
         console.log('auth state changing!')
+        this.setState({ authUser : { waitingForAuth: true }})
         if (this.props.firebase.creatingUserPromise) await this.props.firebase.creatingUserPromise
         this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
         .then(snapshot => {
@@ -83,6 +84,7 @@ class App extends Component {
 
                     <Switch>
                         { /* Unauth Routes */}
+                        { !authUser ? <Route path={ROUTES.SIGN_IN} component={SignIn}></Route> : null}
                         { !authUser ? <Route path={[ROUTES.SIGN_UP + '/:code', ROUTES.SIGN_UP]} component={AcceptInvite}></Route> : null }
                         { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
 
@@ -90,13 +92,12 @@ class App extends Component {
                         { authUser ? <Route path={ROUTES.MY_ACCOUNT} component={EditAccount}></Route> : null}
 
                         { /* Admin Routes */ }
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
-                        <Route path={ROUTES.SET_UP_ACTIVITIES} component={SetUpActivities}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
+                        { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
+                        { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
+                        <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
 
                         { /* Default */ }
-                        { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
+                        { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }
                     </Switch>
                 }
               </div>

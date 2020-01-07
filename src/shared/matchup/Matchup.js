@@ -60,9 +60,10 @@ const Matchup = () => {
       </div>
       <div className={styles.section}>
         <div className={styles.pic}></div>
-        <div className={styles.info}>
-          <div>Activity: {activity}</div>
-        </div>
+        { activity ?
+          <div className={styles.info}>
+            <div>Activity: {activity.name}</div>
+          </div> : null }
       </div>
     </div>
   )
