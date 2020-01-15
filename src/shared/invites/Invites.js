@@ -40,6 +40,7 @@ const Invites = () => {
   }
 
   const handleSubmit = (event) => {
+    //TODO: prevent invites for emails that already have accounts
     setError(null)
     event.preventDefault()
     const form = event.currentTarget;

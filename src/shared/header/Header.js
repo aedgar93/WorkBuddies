@@ -20,8 +20,12 @@ const Header = () => {
   const firebase = useContext(FirebaseContext)
 
   const signOut = () => {
+    console.log('signing out')
     firebase.signOut()
-    .then(() => history.push(ROUTES.LANDING_PAGE))
+    .then(() => {
+      console.log('reroute')
+      history.push(ROUTES.LANDING_PAGE)
+    })
   }
 
   return (

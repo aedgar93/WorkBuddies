@@ -15,6 +15,10 @@ const LandingPage = ({ history }) => {
     })
   }
 
+  const signUp = () => {
+    history.push(ROUTES.SIGN_UP)
+  }
+
   return (
     <div className={styles.wrapper}>
       <h1>Work Buddies</h1>
@@ -26,7 +30,7 @@ const LandingPage = ({ history }) => {
       </div>
       <div className={styles.actionsContainer}>
         <Button onClick={next}>Build a better team today</Button>
-        <Button>I have an invite email</Button>
+        <Button onClick={signUp}>I have an invite email</Button>
       </div>
     </div>
   );

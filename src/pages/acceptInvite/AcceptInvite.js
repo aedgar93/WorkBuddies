@@ -6,6 +6,8 @@ import { ROUTES } from '../../utils/constants'
 import Alert from 'react-bootstrap/Alert'
 import Spinner from 'react-bootstrap/Spinner'
 import SignUpForm from '../../shared/signUpForm/SignUpForm';
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
 
 const AcceptInvite = ({ history, match }) => {
   const [error, setError] = useState(null)
@@ -13,10 +15,27 @@ const AcceptInvite = ({ history, match }) => {
   const [companyId, setCompanyId] = useState(null)
   const [ready, setReady] = useState(false)
   const [inviteId, setInviteId] = useState(null)
-  const [ suggestedEmail, setSuggestedEmail] = useState(null)
+  const [suggestedEmail, setSuggestedEmail] = useState(null)
+  const [invites, setInvites] = useState(null)
+  const [showModal, setShowModal] = useState(false)
+  const [ selectInvitePromise, setSelectInvitePromise ] = useState(null)
   const firebase = useContext(FirebaseContext)
-  console.log(match)
   const code  = match && match.params && match.params.code
+
+  const defer = () => {
+    var deferred = {
+      promise: null,
+      resolve: null,
+      reject: null
+    };
+
+    deferred.promise = new Promise((resolve, reject) => {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+
+    return deferred;
+  }
 
   useEffect(() => {
     if(code) {
@@ -40,11 +59,49 @@ const AcceptInvite = ({ history, match }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const inviteSelected = (invite) => {
+    selectInvitePromise.resolve(invite)
+  }
 
+  const openSelectInvite = (docs) => {
+    //TODO: find all invites and make them pick
+    setInvites(null)
+    let promises = []
+    docs.forEach(invite => {
+      promises.push(
+        firebase.db.collection('companies').doc(invite.companyId).get()
+        .then(snapshot => {
+          invite.company = snapshot.data()
+          return invite
+        })
+      )
+    })
+    Promise.all(promises)
+    .then(results => setInvites(results))
+    let deferred = defer()
+    setShowModal(true)
+    setSelectInvitePromise(deferred)
+    return deferred.promise
+  }
 
-  const onSubmit = async (accountInfo) => {
-    setError(null)
-    setLoading(true)
+  const findAssociatedInvites = ({ email }) => {
+      //TODO: find company associated with email address invite
+      return firebase.db.collection('invites').where('email', '==', email).get()
+      .then(snapshot => {
+        if(!snapshot.docs || snapshot.docs.length === 0) {
+          setError("Sorry! We couldn't find any invitations using that email address.")
+          return Promise.reject()
+        } else if(snapshot.docs.length > 1) {
+          return openSelectInvite(snapshot.docs)
+        } else {
+          let doc = snapshot.docs[0]
+          return { companyId: doc.data().companyId, inviteId: doc.id }
+        }
+      })
+
+  }
+
+  const acceptInvite = async (accountInfo, companyId, inviteId) => {
     if (!companyId) return Promise.reject('Company not found')
     if (!inviteId) return Promise.reject('Invite not found')
     let { email, password1, firstName, lastName } = accountInfo
@@ -59,12 +116,24 @@ const AcceptInvite = ({ history, match }) => {
       company_uid: companyId,
       admin: false
     }))
-    promises.push(firebase.db.collection('invites').doc(inviteId).delete())
+    promises.push(firebase.db.collection('invites').doc(inviteId).delete()) //TODO: maybe just move this to cloud function. delete all invites with this email when a user is created
     Promise.all(promises)
     .then(() => {
       history.push(ROUTES.BASE)
     })
     .catch(updateError)
+  }
+
+  const onSubmit = async (accountInfo) => {
+    setError(null)
+    setLoading(true)
+    if (!code) {
+      findAssociatedInvites(accountInfo)
+      .then(({companyId, inviteId}) => acceptInvite(accountInfo, companyId, inviteId))
+    } else {
+      acceptInvite(accountInfo, companyId, inviteId)
+    }
+
   }
 
   const updateError = (error) => {
@@ -77,11 +146,29 @@ const AcceptInvite = ({ history, match }) => {
   return (
     <div className={styles.wrapper}>
       <h3>Welcome!</h3>
-      <div className={styles.subtitle}>Create your account</div>
+      <div className={styles.subtitle}>
+        {
+          code ? "Create your account" : "Already have an invite? Please sign up using the email address where your received your invite."
+        }
+      </div>
       <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail}/>
       {
         error ? <Alert variant="danger" className={styles.alert}>Something went wrong. Please try again.</Alert> : null
       }
+
+    <Modal show={showModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Please select which company you would like to join.</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          {
+            invites ?
+              invites.map(invite => <Button onClick={() => inviteSelected(invite)}>{invite.company.name}</Button>)
+              : "Fetching all invites..."
+          }
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
