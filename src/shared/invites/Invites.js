@@ -19,6 +19,8 @@ const Invites = () => {
   const firebase = useContext(FirebaseContext)
 
   useEffect(() => {
+    console.log('in use effect')
+    console.log(auth)
     if(!auth || !auth.companyRef) return
     let invitesListener = firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
     .onSnapshot(snapshot => {
@@ -31,7 +33,7 @@ const Invites = () => {
       invitesListener()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ auth ])
+  }, [ auth && auth.companyRef && auth.companyRef.id ])
 
   const getInvitedEmails = () => {
     return inviteRefs.map(ref => {
