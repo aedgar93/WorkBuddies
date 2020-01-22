@@ -115,9 +115,18 @@ const getEmailPersonalization = (buddy1, buddy2, activity) => {
 
 const matchup = async (data) => {
   const companyId = data.id
+  let eventId = data.event_id || uuidv1()
+
   const firestore = admin.firestore();
   let companyRef = firestore.collection('companies').doc(companyId);
   if (!companyRef) return Promise.reject(new Error("company not found"))
+
+
+  let existingMatchup = await companyRef.collection('buddies').doc(eventId)
+  if(existingMatchup.exists) return Promise.reject(new Error('duplicate matchup event'))
+
+  let matchupRecord = companyRef.collection('buddies').doc(eventId).set({ loading: true })
+
   let companyData = await companyRef.get()
   companyData = companyData.data()
   let activitiesSnapshot = await companyRef.collection('activities').get()
@@ -210,7 +219,7 @@ const matchup = async (data) => {
       }
 
       // eslint-disable-next-line promise/no-nesting
-      return companyRef.collection('buddies').add({
+      return matchupRecord.set({
         matchups: newMatchups
       })
       .then(snapshot => {
