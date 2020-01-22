@@ -25,3 +25,22 @@
 .buttonSpinner {
   margin-right: 5px;
 }
+
+.profilePic {
+  cursor: pointer;
+  height: 130px;
+  width: 130px;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: rgba(0,0,0, .5);
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+
+}

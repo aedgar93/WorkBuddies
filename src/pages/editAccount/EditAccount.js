@@ -13,7 +13,8 @@ import Col from 'react-bootstrap/Col'
 
 const EditAccount = ({history}) => {
   const auth = useContext(AuthUserContext)
-  let firebase = useContext(FirebaseContext)
+  const firebase = useContext(FirebaseContext)
+  const storage = firebase.storage.ref();
   let [email, setEmail] = useState(auth.user.email)
   let [firstName, setFirstName] = useState(auth.user.firstName)
   let [lastName, setLastName] = useState(auth.user.lastName)
@@ -26,6 +27,9 @@ const EditAccount = ({history}) => {
   let [confirmPasswordLoading, setConfirmPasswordLoading] = useState(false)
   let [message, setMessage] = useState(false)
   let [reauthPromise, setReauthPromise] = useState(null)
+  let [showPicModal, setShowPicModal] = useState(false)
+  let [picLoading, setPicLoading] = useState(false)
+  let [pic, setPic] = useState(null)
 
   const defer = () => {
     var deferred = {
@@ -118,6 +122,38 @@ const EditAccount = ({history}) => {
     })
   }
 
+  const uploadPic = () => {
+    if(!pic) return //TODO better error handling
+    setPicLoading(true)
+    const name = 'profilePics/' + auth.user.id
+    const metadata = { contentType: pic.type };
+    const task = storage.child(name).put(pic, metadata);
+    task
+    .then(snapshot => snapshot.ref.getDownloadURL())
+    .then(async url => {
+      //set url on user
+      try {
+        await firebase.db.collection('users').doc(auth.user.id).update({
+          profilePic: url
+        })
+      } catch(error) {
+        setPicLoading(false)
+        return error //TODO: error handling
+      }
+      return firebase.db.collection('users').doc(auth.user.id).get().then(doc => {
+        if(doc.exists) {
+          auth.updateUser(doc)
+        }
+        setMessage({message : 'Profile Picture Updated!', type: 'success'})
+        setShowPicModal(false)
+      })
+    })
+    .finally(() => setPicLoading(false)) //TODO: error handling
+
+
+
+  }
+
   useEffect(() => {
     let valid = email && email !== '' && firstName && firstName !== '' && lastName && lastName !== ''
     setValid(valid)
@@ -132,6 +168,16 @@ const EditAccount = ({history}) => {
           <Alert variant={message.type ? message.type : 'success'}>{message.message}</Alert>
           : null
         }
+        <div className={styles.about}>
+          <div className={styles.profilePic} onClick={() => setShowPicModal(true)}>
+            {
+              auth.user.profilePic ? <img src={auth.user.profilePic} className={styles.pic} alt="Profile"/> : null
+            }
+            <div className={styles.editPic}>
+              Edit
+            </div>
+          </div>
+        </div>
         <Form className={styles.form}>
           <Form.Group controlId="email" className={styles.formGroup}>
             <Form.Label>Email address</Form.Label>
@@ -212,6 +258,32 @@ const EditAccount = ({history}) => {
           <Button variant="primary" onClick={handlePasswordSubmit} disabled={confirmPasswordLoading || !confirmPassword}>
             {
               confirmPasswordLoading ?
+                <Spinner
+                  className={styles.buttonSpinner}
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                /> : null
+            }
+            Submit
+            </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showPicModal} onHide={() => setShowPicModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Upload a Picture</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* TODO: preview  */}
+          <input type="file" onChange={(e) => setPic(e.target.files[0]) } />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPicModal(false)}>Close</Button>
+          <Button variant="primary" onClick={uploadPic} disabled={picLoading || !pic}>
+            {
+              picLoading ?
                 <Spinner
                   className={styles.buttonSpinner}
                   as="span"
