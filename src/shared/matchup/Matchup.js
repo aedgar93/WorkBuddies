@@ -54,7 +54,7 @@ const Matchup = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.section}>
-        <ProfilePic user={buddy}></ProfilePic>
+        <ProfilePic user={buddy} size="sm"></ProfilePic>
         <div className={styles.info}>
           <div>{buddy.firstName} {buddy.lastName}</div>
         </div>

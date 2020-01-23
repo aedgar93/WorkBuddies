@@ -245,7 +245,7 @@ const EditAccount = ({history}) => {
           </Button>
         </Form>
       </div>
-      <Modal show={showModal} onHide={handleClose}>
+      <Modal show={showModal} onHide={handleClose} centered={true}>
         <Modal.Header closeButton>
           <Modal.Title>Please Enter Your Password</Modal.Title>
         </Modal.Header>
@@ -282,7 +282,7 @@ const EditAccount = ({history}) => {
       </Modal>
 
 
-      <Modal show={showPicModal} onHide={() => setShowPicModal(false)}>
+      <Modal show={showPicModal} onHide={() => setShowPicModal(false)} centered={true}>
         <Modal.Header closeButton>
           <Modal.Title>Upload a Picture</Modal.Title>
         </Modal.Header>

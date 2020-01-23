@@ -10,15 +10,15 @@
   position: relative;
 }
 
-.wrapper[color="1"] {
+.wrapper[data-color="1"] {
   background-color: #AEF3E7;
 }
 
-.wrapper[color="2"] {
+.wrapper[data-color="2"] {
   background-color: #254E70;
 }
 
-.wrapper[color="3"] {
+.wrapper[data-color="3"] {
   background-color: #C33C54;
 }
 
@@ -38,4 +38,16 @@
   color: white;
   text-align: center;
   width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .wrapper[data-size="sm"] {
+    height: 75px;
+    width: 75px;
+  }
+
+  .wrapper[data-size="sm"] .initials{
+    line-height: 75px;
+    font-size: 32px;
+  }
 }

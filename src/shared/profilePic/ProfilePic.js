@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ProfilePic.module.css'
 
-const ProfilePic = ({ onClick, children, user}) => {
+const ProfilePic = ({ onClick, children, user, size}) => {
+  console.log(size)
   let [color, setColor] = useState(null)
 
   useEffect(() => {
@@ -10,7 +11,7 @@ const ProfilePic = ({ onClick, children, user}) => {
   }, [])
 
   return (
-    <div onClick={() => onClick && onClick()} className={styles.wrapper} color={color}>
+    <div onClick={() => onClick && onClick()} className={styles.wrapper} data-color={color} data-size={size}>
       { user.profilePic ?
         <img src={user.profilePic} className={styles.pic} alt="Profile"/>
         :
