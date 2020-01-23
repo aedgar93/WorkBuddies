@@ -5,6 +5,7 @@ import Spinner from 'react-bootstrap/Spinner'
 import styles from './Matchup.module.css'
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
+import ProfilePic from '../profilePic';
 
 const Matchup = () => {
   const [buddy, setBuddy] = useState(null)
@@ -53,7 +54,7 @@ const Matchup = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.section}>
-        <div className={styles.pic}></div>
+        <ProfilePic user={buddy}></ProfilePic>
         <div className={styles.info}>
           <div>{buddy.firstName} {buddy.lastName}</div>
         </div>

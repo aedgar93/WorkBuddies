@@ -9,6 +9,8 @@ import Modal from 'react-bootstrap/Modal'
 import Alert from 'react-bootstrap/Alert'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import AvatarEditor from 'react-avatar-editor'
+import ProfilePic from '../../shared/profilePic'
 
 
 const EditAccount = ({history}) => {
@@ -30,6 +32,8 @@ const EditAccount = ({history}) => {
   let [showPicModal, setShowPicModal] = useState(false)
   let [picLoading, setPicLoading] = useState(false)
   let [pic, setPic] = useState(null)
+  let [editor, setEditor] = useState(null)
+  let [picError, setPicError] = useState(null)
 
   const defer = () => {
     var deferred = {
@@ -45,6 +49,7 @@ const EditAccount = ({history}) => {
 
     return deferred;
   }
+
 
   const handleClose = () => {
     reauthPromise.reject()
@@ -122,36 +127,43 @@ const EditAccount = ({history}) => {
     })
   }
 
+  const openPicModal = () => {
+    setPic(null)
+    setPicLoading(false)
+    setPicError(null)
+    setShowPicModal(true)
+  }
+
   const uploadPic = () => {
-    if(!pic) return //TODO better error handling
-    setPicLoading(true)
-    const name = 'profilePics/' + auth.user.id
-    const metadata = { contentType: pic.type };
-    const task = storage.child(name).put(pic, metadata);
-    task
-    .then(snapshot => snapshot.ref.getDownloadURL())
-    .then(async url => {
-      //set url on user
-      try {
-        await firebase.db.collection('users').doc(auth.user.id).update({
-          profilePic: url
+    try {
+      let pic = editor.getImageScaledToCanvas()
+      if(!pic) return //TODO better error handling
+      setPicLoading(true)
+      pic.toBlob(function(blob){
+        const name = 'profilePics/' + auth.user.id
+        const task = storage.child(name).put(blob);
+        task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(async url => {
+          //set url on user
+          await firebase.db.collection('users').doc(auth.user.id).update({
+            profilePic: url
+          })
+          return firebase.db.collection('users').doc(auth.user.id).get().then(doc => {
+            if(doc.exists) {
+              auth.updateUser(doc)
+            }
+            setMessage({message : 'Profile Picture Updated!', type: 'success'})
+            setShowPicModal(false)
+            setPicLoading(false)
+          })
         })
-      } catch(error) {
-        setPicLoading(false)
-        return error //TODO: error handling
-      }
-      return firebase.db.collection('users').doc(auth.user.id).get().then(doc => {
-        if(doc.exists) {
-          auth.updateUser(doc)
-        }
-        setMessage({message : 'Profile Picture Updated!', type: 'success'})
-        setShowPicModal(false)
-      })
-    })
-    .finally(() => setPicLoading(false)) //TODO: error handling
 
-
-
+      });
+    } catch(_error) {
+      setPicError("Sorry! Something went wrong. Please try again.")
+      setPicLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -169,14 +181,11 @@ const EditAccount = ({history}) => {
           : null
         }
         <div className={styles.about}>
-          <div className={styles.profilePic} onClick={() => setShowPicModal(true)}>
-            {
-              auth.user.profilePic ? <img src={auth.user.profilePic} className={styles.pic} alt="Profile"/> : null
-            }
+          <ProfilePic onClick={openPicModal} user={auth.user}>
             <div className={styles.editPic}>
               Edit
             </div>
-          </div>
+          </ProfilePic>
         </div>
         <Form className={styles.form}>
           <Form.Group controlId="email" className={styles.formGroup}>
@@ -271,13 +280,33 @@ const EditAccount = ({history}) => {
             </Button>
         </Modal.Footer>
       </Modal>
+
+
       <Modal show={showPicModal} onHide={() => setShowPicModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Upload a Picture</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* TODO: preview  */}
+          {
+            picError ? <Alert variant="danger">{picError}</Alert> : null
+          }
           <input type="file" onChange={(e) => setPic(e.target.files[0]) } />
+          {
+            pic ?
+            <div className={styles.profilePreview}>
+              <AvatarEditor
+                ref={setEditor}
+                image={pic}
+                width={250}
+                height={250}
+                border={50}
+                borderRadius={250}
+                scale={1}
+                rotate={0}
+              />
+            </div>
+            : null
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowPicModal(false)}>Close</Button>
