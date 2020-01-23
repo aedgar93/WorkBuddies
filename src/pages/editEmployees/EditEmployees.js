@@ -37,7 +37,7 @@ const EditEmployees = () => {
                 let user = ref.data()
                 return (
                   <Col xs={12} s={6} m={6} l={6} xl={6} key={i} className={styles.user}>
-                    <UserCard email={user.email} firstName={user.firstName} lastName={user.lastName} />
+                    <UserCard user={user}/>
                   </Col>
                 )
               })}
