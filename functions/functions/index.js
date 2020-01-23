@@ -125,7 +125,7 @@ const matchup = async (data) => {
   let existingMatchup = await companyRef.collection('buddies').doc(eventId)
   if(existingMatchup.exists) return Promise.reject(new Error('duplicate matchup event'))
 
-  let matchupRecord = companyRef.collection('buddies').doc(eventId).set({ loading: true })
+  await companyRef.collection('buddies').doc(eventId).set({ loading: true })
 
   let companyData = await companyRef.get()
   companyData = companyData.data()
@@ -219,12 +219,12 @@ const matchup = async (data) => {
       }
 
       // eslint-disable-next-line promise/no-nesting
-      return matchupRecord.set({
+      return companyRef.collection('buddies').doc(eventId).set({
         matchups: newMatchups
       })
-      .then(snapshot => {
+      .then(_snapshot => {
         return companyRef.set({
-          activeBuddies: snapshot.id
+          activeBuddies: eventId
         }, {merge: true})
       })
     })
