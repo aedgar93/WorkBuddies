@@ -60,7 +60,7 @@ const AcceptInvite = ({ history, match }) => {
   }, [])
 
   const inviteSelected = (invite) => {
-    selectInvitePromise.resolve(invite)
+    selectInvitePromise.resolve({inviteId: invite.id, companyId: invite.data().company_uid})
   }
 
   const openSelectInvite = (docs) => {
@@ -68,8 +68,9 @@ const AcceptInvite = ({ history, match }) => {
     setInvites(null)
     let promises = []
     docs.forEach(invite => {
+      if(!invite.data() || !invite.data().company_uid) return
       promises.push(
-        firebase.db.collection('companies').doc(invite.companyId).get()
+        firebase.db.collection('companies').doc(invite.data().company_uid).get()
         .then(snapshot => {
           invite.company = snapshot.data()
           return invite
@@ -85,7 +86,6 @@ const AcceptInvite = ({ history, match }) => {
   }
 
   const findAssociatedInvites = ({ email }) => {
-      //TODO: find company associated with email address invite
       return firebase.db.collection('invites').where('email', '==', email).get()
       .then(snapshot => {
         if(!snapshot.docs || snapshot.docs.length === 0) {
@@ -129,7 +129,10 @@ const AcceptInvite = ({ history, match }) => {
     setLoading(true)
     if (!code) {
       findAssociatedInvites(accountInfo)
-      .then(({companyId, inviteId}) => acceptInvite(accountInfo, companyId, inviteId))
+      .then(({inviteId, companyId}) => {
+        setShowModal(false)
+        return acceptInvite(accountInfo, companyId, inviteId)
+      })
     } else {
       acceptInvite(accountInfo, companyId, inviteId)
     }
@@ -158,13 +161,21 @@ const AcceptInvite = ({ history, match }) => {
 
     <Modal show={showModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Please select which company you would like to join.</Modal.Title>
+          <Modal.Title>Please select the company you would like to join.</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           {
             invites ?
-              invites.map(invite => <Button onClick={() => inviteSelected(invite)}>{invite.company.name}</Button>)
+              invites.map(invite => {
+              return (
+                <div key={invite.id} className={styles.selectCompany}>
+                  <Button
+                    onClick={() => inviteSelected(invite)}>
+                    {invite.company.name}
+                  </Button>
+                </div>
+              )})
               : "Fetching all invites..."
           }
         </Modal.Body>

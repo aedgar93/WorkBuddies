@@ -19,8 +19,6 @@ const Invites = () => {
   const firebase = useContext(FirebaseContext)
 
   useEffect(() => {
-    console.log('in use effect')
-    console.log(auth)
     if(!auth || !auth.companyRef) return
     let invitesListener = firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
     .onSnapshot(snapshot => {
