@@ -5,11 +5,11 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 
-const SignUpForm = ({ loading, onSubmit, suggestedEmail }) => {
+const SignUpForm = ({ loading, onSubmit, suggestedEmail, suggestedFirst, suggestedLast }) => {
   const [validated, setValidated] = useState(false)
   const [email, setEmail] = useState(suggestedEmail ? suggestedEmail : "")
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [firstName, setFirstName] = useState(suggestedFirst ? suggestedFirst : "")
+  const [lastName, setLastName] = useState(suggestedLast ? suggestedLast : "")
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
   const [passwordTouched, setPasswordTouched] = useState(false)

@@ -9,7 +9,7 @@ import SignUpForm from '../../shared/signUpForm/SignUpForm';
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
-const AcceptInvite = ({ history, match }) => {
+const AcceptInvite = ({ history, match, location }) => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [companyId, setCompanyId] = useState(null)
@@ -151,10 +151,11 @@ const AcceptInvite = ({ history, match }) => {
       <h3>Welcome!</h3>
       <div className={styles.subtitle}>
         {
-          code ? "Create your account" : "Already have an invite? Please sign up using the email address where your received your invite."
+          code ? "Invite found! Create your account" : "Already have an invite? Please sign up using the email address where your received your invite."
         }
+        <br/>
       </div>
-      <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail}/>
+      <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail} suggestedFirst={location.state && location.state.firstName} suggestedLast={location.state && location.state.lastName}/>
       {
         error ? <Alert variant="danger" className={styles.alert}>Something went wrong. Please try again.</Alert> : null
       }
