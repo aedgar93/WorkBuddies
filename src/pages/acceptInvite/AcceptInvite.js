@@ -12,30 +12,15 @@ import Button from 'react-bootstrap/Button'
 const AcceptInvite = ({ history, match, location }) => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [companyId, setCompanyId] = useState(null)
   const [ready, setReady] = useState(false)
-  const [inviteId, setInviteId] = useState(null)
   const [suggestedEmail, setSuggestedEmail] = useState(null)
   const [invites, setInvites] = useState(null)
   const [showModal, setShowModal] = useState(false)
-  const [ selectInvitePromise, setSelectInvitePromise ] = useState(null)
+  const [accountInfo, setAccountInfo] = useState(null)
+  const [companyId, setCompanyId] = useState(null)
+  const [inviteId, setInviteId] = useState(null)
   const firebase = useContext(FirebaseContext)
   const code  = match && match.params && match.params.code
-
-  const defer = () => {
-    var deferred = {
-      promise: null,
-      resolve: null,
-      reject: null
-    };
-
-    deferred.promise = new Promise((resolve, reject) => {
-      deferred.resolve = resolve;
-      deferred.reject = reject;
-    });
-
-    return deferred;
-  }
 
   useEffect(() => {
     if(code) {
@@ -59,12 +44,7 @@ const AcceptInvite = ({ history, match, location }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const inviteSelected = (invite) => {
-    selectInvitePromise.resolve({inviteId: invite.id, companyId: invite.data().company_uid})
-  }
-
   const openSelectInvite = (docs) => {
-    //TODO: find all invites and make them pick
     setInvites(null)
     let promises = []
     docs.forEach(invite => {
@@ -79,31 +59,25 @@ const AcceptInvite = ({ history, match, location }) => {
     })
     Promise.all(promises)
     .then(results => setInvites(results))
-    let deferred = defer()
     setShowModal(true)
-    setSelectInvitePromise(deferred)
-    return deferred.promise
   }
 
   const findAssociatedInvites = ({ email }) => {
-      return firebase.db.collection('invites').where('email', '==', email).get()
+    return firebase.db.collection('invites').where('email', '==', email).get()
       .then(snapshot => {
-        if(!snapshot.docs || snapshot.docs.length === 0) {
-          setError("Sorry! We couldn't find any invitations using that email address.")
-          return Promise.reject()
-        } else if(snapshot.docs.length > 1) {
-          return openSelectInvite(snapshot.docs)
-        } else {
-          let doc = snapshot.docs[0]
-          return { companyId: doc.data().companyId, inviteId: doc.id }
-        }
+        return snapshot.docs
       })
-
   }
 
-  const acceptInvite = async (accountInfo, companyId, inviteId) => {
-    if (!companyId) return Promise.reject('Company not found')
-    if (!inviteId) return Promise.reject('Invite not found')
+  const acceptInvite = async (companyId, inviteId) => {
+    if (!companyId) {
+      updateError('Sorry! Something went wrong. Please try again.')
+      return Promise.reject('Company not found')
+    }
+    if (!inviteId) {
+      updateError('Sorry! Something went wrong. Please try again.')
+      return Promise.reject('Invite not found')
+    }
     let { email, password1, firstName, lastName } = accountInfo
     let { user } = await firebase.createUserWithEmailAndPassword(email, password1)
     let promises = []
@@ -125,18 +99,21 @@ const AcceptInvite = ({ history, match, location }) => {
   }
 
   const onSubmit = async (accountInfo) => {
+    setAccountInfo(accountInfo)
     setError(null)
     setLoading(true)
     if (!code) {
-      findAssociatedInvites(accountInfo)
-      .then(({inviteId, companyId}) => {
-        setShowModal(false)
-        return acceptInvite(accountInfo, companyId, inviteId)
-      })
+      let invites = await findAssociatedInvites(accountInfo)
+      if(!invites || invites.length === 0) return updateError("Sorry! We couldn't find any invites for that email address.")
+      else if(invites.length === 1) {
+        let invite = invites[0]
+        return acceptInvite(invite.data().company_uid, invite.id)
+      } else {
+        openSelectInvite(invites)
+      }
     } else {
-      acceptInvite(accountInfo, companyId, inviteId)
+      acceptInvite(companyId, inviteId)
     }
-
   }
 
   const updateError = (error) => {
@@ -172,7 +149,7 @@ const AcceptInvite = ({ history, match, location }) => {
               return (
                 <div key={invite.id} className={styles.selectCompany}>
                   <Button
-                    onClick={() => inviteSelected(invite)}>
+                    onClick={() => acceptInvite(invite.company_uid, invite.id)}>
                     {invite.company.name}
                   </Button>
                 </div>
