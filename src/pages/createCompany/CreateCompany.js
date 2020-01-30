@@ -56,10 +56,15 @@ const CreateCompany = ({ history, location }) => {
   }
 
 
-  const create = async () => {
+  const create = async (info) => {
     setInvites([])
+    let infoToUse = info ? info : userInfo
+    if(!infoToUse) {
+      return setError('Something went wrong! Please try again.')
+    }
+
     let {name, hour, day, timeZone } = company
-    let { firstName, lastName, email, password1 } = userInfo
+    let { firstName, lastName, email, password1 } = infoToUse
     try {
       var { user } = await firebase.createUserWithEmailAndPassword(email, password1)
     } catch(error) {
@@ -105,11 +110,11 @@ const CreateCompany = ({ history, location }) => {
     })
   }
 
-  const onSubmit = async (userInfo) => {
+  const onSubmit = async (info) => {
     setError(false)
-    setUserInfo(userInfo)
-    let existingInvites = await checkInvites(userInfo.email)
-    if (!existingInvites || existingInvites.length === 0) return create()
+    setUserInfo(info)
+    let existingInvites = await checkInvites(info.email)
+    if (!existingInvites || existingInvites.length === 0) return create(info)
 
     //invites already exist, have them either select an invite or submit new company
     setInvites(existingInvites)
