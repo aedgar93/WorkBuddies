@@ -24,6 +24,23 @@ const pubsub = new PubSub({
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
 
+//Delete all invites for an email when a user joins
+exports.inviteAccepted = functions.firestore.document('users/{userId}')
+  .onCreate((userSnapshot, _ctx) => {
+    const firestore = admin.firestore();
+    const invitesRef = firestore.collection('invites');
+    let email = userSnapshot.data().email
+
+    return invitesRef.where('email', '==', email).get()
+    .then(snapshot => {
+      let deletePromises = []
+
+      snapshot.docs.forEach(inviteSnapshot => {
+        invitePromises.push(inviteSnapshot.delete())
+      })
+      return Promise.all(deletePromises)
+    })
+  })
 
 //INVITE EMAIL
 const inviteEmailContent = () => {

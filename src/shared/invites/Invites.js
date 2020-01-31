@@ -20,16 +20,12 @@ const Invites = () => {
 
   useEffect(() => {
     if(!auth || !auth.companyRef) return
-    let invitesListener = firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
-    .onSnapshot(snapshot => {
-      if(snapshot.metadata.hasPendingWrites) return
+    firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
+    .get()
+    .then(snapshot => {
       if(snapshot && snapshot.docs) return setInviteRefs(snapshot.docs.sort((a, b) =>  b.data().createdAt - a.data().createdAt))
       setInviteRefs([])
     })
-
-    return function cleanup() {
-      invitesListener()
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ auth && auth.companyRef && auth.companyRef.id ])
 
@@ -56,7 +52,11 @@ const Invites = () => {
       email: invitedEmail,
       company_uid: auth.companyRef.id,
       createdAt: new Date().getTime()
-    }).then(_result => {
+    }).then(async result => {
+        let invite = await result.get()
+        let invitesCopy = [...inviteRefs]
+        invitesCopy.unshift(invite)
+        setInviteRefs(invitesCopy)
         setAddingUser(false)
         setInvitedEmail("")
     }).catch(error => {
@@ -71,16 +71,19 @@ const Invites = () => {
   }
 
 
-  const handleDelete = (ref) => {
+  const handleDelete = (ref, index) => {
     // eslint-disable-next-line no-restricted-globals
     if(confirm('Are you sure you want to delete this invite?')) {
       ref.ref.delete()
+      let invitesCopy = [...inviteRefs]
+      invitesCopy.splice(index, 1)
+      setInviteRefs(invitesCopy)
     }
   }
 
   const getInvites = () => {
     return (
-      inviteRefs ? inviteRefs.map(ref => {
+      inviteRefs ? inviteRefs.map((ref, i) => {
 
         let invite = ref.data()
         return (
@@ -93,7 +96,7 @@ const Invites = () => {
            }}>
             <div className={styles.inviteContainer}>
               <div>{invite.email}</div>
-              <Button variant="outline-danger" onClick={() => handleDelete(ref)}>Delete</Button>
+              <Button variant="outline-danger" onClick={() => handleDelete(ref, i)}>Delete</Button>
             </div>
           </CSSTransition>
         )

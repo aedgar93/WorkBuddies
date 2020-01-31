@@ -80,8 +80,7 @@ const AcceptInvite = ({ history, match, location }) => {
     }
     let { email, password1, firstName, lastName } = accountInfo
     let { user } = await firebase.createUserWithEmailAndPassword(email, password1)
-    let promises = []
-    promises.push(firebase.db.collection('users').add({
+    firebase.db.collection('users').add({
       auth_id: user.uid,
       firstName,
       lastName,
@@ -89,9 +88,7 @@ const AcceptInvite = ({ history, match, location }) => {
       notifyEmail: true,
       company_uid: companyId,
       admin: false
-    }))
-    promises.push(firebase.db.collection('invites').doc(inviteId).delete()) //TODO: maybe just move this to cloud function. delete all invites with this email when a user is created
-    Promise.all(promises)
+    })
     .then(() => {
       history.push(ROUTES.BASE)
     })
