@@ -20,14 +20,18 @@ const Invites = () => {
 
   useEffect(() => {
     if(!auth || !auth.companyRef) return
+    updateInvites()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ auth && auth.companyRef && auth.companyRef.id ])
+
+  const updateInvites = () => {
     firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
     .get()
     .then(snapshot => {
       if(snapshot && snapshot.docs) return setInviteRefs(snapshot.docs.sort((a, b) =>  b.data().createdAt - a.data().createdAt))
       setInviteRefs([])
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ auth && auth.companyRef && auth.companyRef.id ])
+  }
 
   const getInvitedEmails = () => {
     return inviteRefs.map(ref => {
@@ -123,6 +127,7 @@ const Invites = () => {
       batch.set(ref, invite)
     })
     return batch.commit()
+    .then(updateInvites)
     .catch(_error => {
       setError({message: error, type: 'danger'})
     })
