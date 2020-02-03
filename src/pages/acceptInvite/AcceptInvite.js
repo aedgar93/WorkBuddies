@@ -16,9 +16,9 @@ const AcceptInvite = ({ history, match, location }) => {
   const [suggestedEmail, setSuggestedEmail] = useState(null)
   const [invites, setInvites] = useState(null)
   const [showModal, setShowModal] = useState(false)
-  const [accountInfo, setAccountInfo] = useState(null)
   const [companyId, setCompanyId] = useState(null)
   const [inviteId, setInviteId] = useState(null)
+  const [accountInfo, setAccountInfo] = useState(null)
   const firebase = useContext(FirebaseContext)
   const code  = match && match.params && match.params.code
 
@@ -44,7 +44,7 @@ const AcceptInvite = ({ history, match, location }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const openSelectInvite = (docs) => {
+  const openSelectInvite = (docs, accountInfo) => {
     setInvites(null)
     let promises = []
     docs.forEach(invite => {
@@ -52,14 +52,27 @@ const AcceptInvite = ({ history, match, location }) => {
       promises.push(
         firebase.db.collection('companies').doc(invite.data().company_uid).get()
         .then(snapshot => {
-          invite.company = snapshot.data()
-          return invite
+          let id = invite.id
+          let result = invite.data()
+          result.company = snapshot.data()
+          result.id = id
+          return result
         })
       )
     })
     Promise.all(promises)
-    .then(results => setInvites(results))
-    setShowModal(true)
+    .then(results => {
+      results = results.filter(invite => invite && invite.company)
+      if(results.length === 0) {
+        return updateError("Sorry! We couldn't find any invites for that email address.")
+      } else if(results.length === 1) {
+        let invite = results[0]
+        acceptInvite(invite.data().company_uid, invite.id, accountInfo)
+      } else {
+        setInvites(results)
+        setShowModal(true)
+      }
+    })
   }
 
   const findAssociatedInvites = ({ email }) => {
@@ -69,7 +82,7 @@ const AcceptInvite = ({ history, match, location }) => {
       })
   }
 
-  const acceptInvite = async (companyId, inviteId) => {
+  const acceptInvite = async (companyId, inviteId, info = accountInfo) => {
     if (!companyId) {
       updateError('Sorry! Something went wrong. Please try again.')
       return Promise.reject('Company not found')
@@ -78,7 +91,7 @@ const AcceptInvite = ({ history, match, location }) => {
       updateError('Sorry! Something went wrong. Please try again.')
       return Promise.reject('Invite not found')
     }
-    let { email, password1, firstName, lastName } = accountInfo
+    let { email, password1, firstName, lastName } = info
     let { user } = await firebase.createUserWithEmailAndPassword(email, password1)
     firebase.db.collection('users').add({
       auth_id: user.uid,
@@ -96,20 +109,20 @@ const AcceptInvite = ({ history, match, location }) => {
   }
 
   const onSubmit = async (accountInfo) => {
-    setAccountInfo(accountInfo)
     setError(null)
     setLoading(true)
+    setAccountInfo(accountInfo)
     if (!code) {
       let invites = await findAssociatedInvites(accountInfo)
       if(!invites || invites.length === 0) return updateError("Sorry! We couldn't find any invites for that email address.")
       else if(invites.length === 1) {
         let invite = invites[0]
-        return acceptInvite(invite.data().company_uid, invite.id)
+        return acceptInvite(invite.data().company_uid, invite.id, accountInfo)
       } else {
-        openSelectInvite(invites)
+        openSelectInvite(invites, accountInfo)
       }
     } else {
-      acceptInvite(companyId, inviteId)
+      acceptInvite(companyId, inviteId, accountInfo)
     }
   }
 
