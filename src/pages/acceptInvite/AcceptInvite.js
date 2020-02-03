@@ -92,7 +92,14 @@ const AcceptInvite = ({ history, match, location }) => {
       return Promise.reject('Invite not found')
     }
     let { email, password1, firstName, lastName } = info
-    let { user } = await firebase.createUserWithEmailAndPassword(email, password1)
+    let user
+    try {
+      let result = await firebase.createUserWithEmailAndPassword(email, password1)
+      user = result.user
+    } catch(error) {
+      console.log(error)
+      return updateError(error.message)
+    }
     firebase.db.collection('users').add({
       auth_id: user.uid,
       firstName,
@@ -112,6 +119,8 @@ const AcceptInvite = ({ history, match, location }) => {
     setError(null)
     setLoading(true)
     setAccountInfo(accountInfo)
+    let emailExists = await firebase.doesUserExistForEmail(accountInfo.email)
+    if (emailExists) return updateError('Sorry! There is already an account for that email address.')
     if (!code) {
       let invites = await findAssociatedInvites(accountInfo)
       if(!invites || invites.length === 0) return updateError("Sorry! We couldn't find any invites for that email address.")
@@ -127,7 +136,13 @@ const AcceptInvite = ({ history, match, location }) => {
   }
 
   const updateError = (error) => {
+    setShowModal(false)
     setError(error)
+    setLoading(false)
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
     setLoading(false)
   }
 
@@ -142,12 +157,12 @@ const AcceptInvite = ({ history, match, location }) => {
         }
         <br/>
       </div>
-      <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail} suggestedFirst={location.state && location.state.firstName} suggestedLast={location.state && location.state.lastName}/>
       {
-        error ? <Alert variant="danger" className={styles.alert}>Something went wrong. Please try again.</Alert> : null
+        error ? <Alert variant="danger" className={styles.alert}>{ error }</Alert> : null
       }
+      <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail} suggestedFirst={location.state && location.state.firstName} suggestedLast={location.state && location.state.lastName}/>
 
-    <Modal show={showModal}>
+    <Modal show={showModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>Please select the company you would like to join.</Modal.Title>
         </Modal.Header>

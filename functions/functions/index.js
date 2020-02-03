@@ -33,19 +33,19 @@ exports.inviteAccepted = functions.firestore.document('users/{userId}')
 
     return invitesRef.where('email', '==', email).get()
     .then(snapshot => {
-      let deletePromises = []
+      var batch = firestore.batch()
 
-      snapshot.docs.forEach(inviteSnapshot => {
-        invitePromises.push(inviteSnapshot.delete())
+      snapshot.docs.forEach(doc => {
+        batch.delete(doc.ref)
       })
-      return Promise.all(deletePromises)
+      return batch.commit()
     })
   })
 
 //INVITE EMAIL
 const inviteEmailContent = () => {
   return `
-    <p>Welcome to Work Buddies! Please follow this link to join {companyName}: {link}
+    <p>Welcome to Work Buddies! Please follow this link to join {companyName}: {link}</p>
   `
 }
 const getFromEmail = () => {

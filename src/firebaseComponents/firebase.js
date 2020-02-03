@@ -35,6 +35,11 @@ class Firebase {
   passwordUpdate = password =>
     this.auth.currentUser.updatePassword(password);
 
+  doesUserExistForEmail = async email => {
+    let results = await this.auth.fetchSignInMethodsForEmail(email)
+    return results && results.length > 0
+  }
+
 
 }
 export default Firebase;
