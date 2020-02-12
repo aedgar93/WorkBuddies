@@ -234,8 +234,10 @@ const matchup = async (data) => {
         })
         let userData = user.data()
         if(userData.notifyEmail) {
+          let emailInfo = []
+          addEmailPersonalization(userData, null, activity, emailInfo)
           let msg = {
-            personalizations: [addEmailPersonalization(userData, null, activity)],
+            personalizations: emailInfo,
             from: getFromEmail(),
             html: noBuddyEmail
           }
