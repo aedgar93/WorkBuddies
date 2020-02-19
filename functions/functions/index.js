@@ -113,13 +113,13 @@ const getRandom = (collection) => {
   return collection[Math.floor(Math.random()*collection.length)]
 }
 
-const buddyEmail = "Hello {{buddy1}} and {{buddy2}},<br/><br/> You have been match up as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
+const buddyEmail = "Hello {{buddy1}},<br/><br/> You have been matched up with {{buddy2}} as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
 const addEmailPersonalization = (buddy1, buddy2, activity, emailInfo) => {
   if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
   let to = [{email: buddy1.email}]
-  let activityString = activity ? `You activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
+  let activityString = activity ? `Your activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
   let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString }
   if (buddy2) {
     substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
@@ -132,6 +132,19 @@ const notify = (buddy1, buddy2, activity, emailInfo) => {
   if (!buddy1) return null
   addEmailPersonalization(buddy1, buddy2, activity, emailInfo)
   return null
+}
+
+const getOddManOutIndex = (previousMatchups, users) => {
+  let single = previousMatchups.find(matchup => {
+    return matchup.buddies && matchup.buddies.length === 1
+  })
+  if (!single) return -1
+  let singleId = single.buddies[0]
+
+  let oddManOut = users.findIndex(user => {
+    return user.id === singleId
+  })
+  return oddManOut
 }
 
 const matchup = async (data) => {
@@ -165,14 +178,22 @@ const matchup = async (data) => {
   let emailPromises = []
 
   let matchUpUsersPromise = usersRef.get()
-    .then(snapshot => {
+    .then(async snapshot => {
       const users = []
       snapshot.forEach(user => users.push(user))
 
-      //TODO: if someone didn't have a partner last time, match them up first this time
+      // If someone wasn't matched up last time, match them first this time
+      let oddManOutIndex = getOddManOutIndex(previousMatchups, users)
       while (users.length > 1) {
         let buddy = null
-        let user = users.pop()
+        let user = null
+        if(oddManOutIndex >=0 && oddManOutIndex < users.length) {
+          user = users[oddManOutIndex]
+          users.splice(oddManOutIndex, 1)
+          oddManOutIndex = -1
+        } else {
+          user = users.pop()
+        }
         if(users.length === 1) {
           buddy = users.pop()
         } else {
@@ -200,10 +221,12 @@ const matchup = async (data) => {
         let activity = getRandom(activities)
 
         //buddy 1 notifications
-        notify(user, buddy, activity, emailInfo)
+        let userData = user ? user.data() : null
+        let buddyData = buddy ? buddy.data() : null
+        notify(userData, buddyData, activity, emailInfo)
 
         //buddy2 notifications
-        notify(buddy, user, activity, emailInfo)
+        notify(buddyData, userData, activity, emailInfo)
 
         newMatchups.push({
           buddies: [user.id, buddy.id],
@@ -212,6 +235,8 @@ const matchup = async (data) => {
       }
       // end of matching up loop
 
+
+      let allMessages = []
       //Handle emails with buddies
       if (emailInfo.length) {
         let msg = {
@@ -219,8 +244,7 @@ const matchup = async (data) => {
           from: getFromEmail(),
           html: buddyEmail
         }
-        console.info(JSON.stringify(msg))
-        emailPromises.push(sgMail.send(msg))
+        allMessages.push(msg)
       }
 
 
@@ -241,11 +265,15 @@ const matchup = async (data) => {
             from: getFromEmail(),
             html: noBuddyEmail
           }
-          console.info(JSON.stringify(msg))
-          emailPromises.push(sgMail.send(msg))
+          allMessages.push(msg)
         }
       }
 
+      //double check existing matchup
+      let existingMatchup = await companyRef.collection('buddies').doc(eventId).get()
+      if (existingMatchup && !existingMatchup.data().loading) return null
+
+      emailPromises = allMessages.forEach(msg => sgMail.send(msg))
       // eslint-disable-next-line promise/no-nesting
       return companyRef.collection('buddies').doc(eventId).set({
         matchups: newMatchups
