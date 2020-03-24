@@ -52,22 +52,21 @@ const getFromEmail = () => {
   return functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com'
 }
 
-const signupLink = `${config && config.host ? config.host : 'http://localhost:3000'}/signup/`
+const signupLink = `${config && config.host ? config.host : 'http://localhost:3000'}/signup`
 
 
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
     const firestore = admin.firestore();
-    const invitesRef = firestore.collection('invites');
     const companiesRef = firestore.collection('companies');
+    const data = inviteSnapshot.data()
 
-    return Promise.all([getCode(), companiesRef.doc(inviteSnapshot.data().company_uid).get()]).then(results => {
-      let code = results[0];
-      let companyRef = results[1];
+    return companiesRef.doc(data.company_uid).get().then(results => {
+      let companyRef = results;
 
       let emailContent = inviteEmailContent();
-      let link = signupLink + code
+      let link = `${signupLink}?email=${encodeURIComponent(data.email)}` //TODO: check what type of invite first
       emailContent = emailContent.replace('{link}', link);
       emailContent = emailContent.replace('{companyName}', companyRef.data().name);
 
@@ -78,16 +77,8 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
         html: emailContent,
       };
 
-      return Promise.all([inviteSnapshot.ref.update({ code }), sgMail.send(msg)]);
+      return sgMail.send(msg);
     });
-
-    function getCode() {
-      let code = uuidv1();
-      return invitesRef.where('code', '==', code).get()
-        .then(snapshot => {
-          return !snapshot.docs || snapshot.docs.length === 0 ? code : getCode();
-        });
-    }
   });
 
   //END INVITE EMAIL

@@ -89,7 +89,7 @@ class App extends Component {
                     <Switch>
                         { /* Unauth Routes */}
                         { !authUser ? <Route path={ROUTES.SIGN_IN} component={SignIn}></Route> : null}
-                        { !authUser ? <Route path={[ROUTES.SIGN_UP + '/:code', ROUTES.SIGN_UP]} component={AcceptInvite}></Route> : null }
+                        { !authUser ? <Route path={ROUTES.SIGN_UP} component={AcceptInvite}></Route> : null }
                         { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
 
                         { /* Auth Routes */}
