@@ -24,7 +24,7 @@ const Header = () => {
     firebase.signOut()
     .then(() => {
       console.log('reroute')
-      history.push(ROUTES.LANDING_PAGE)
+      history.push(ROUTES.BASE)
     })
   }
 
