@@ -42,12 +42,11 @@ class EditCompany extends Component {
     })
   }
 
-  handleActivityEdit(index, {name, icon}) {
+  handleActivityEdit(index, {name}) {
     let ref = this.state.activityRefs[index]
 
     ref.ref.set({
-      name,
-      icon: icon ? icon : null
+      name
     })
 
   }
@@ -61,10 +60,9 @@ class EditCompany extends Component {
 
   }
 
-  handleAddActivity({name, icon}) {
+  handleAddActivity({name}) {
     this.props.auth.companyRef.collection('activities').add({
-      name,
-      icon
+      name
     }).then(ref => {
       this.setState({adding: null})
     }).catch(error => {

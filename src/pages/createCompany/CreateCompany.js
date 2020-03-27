@@ -90,10 +90,9 @@ const CreateCompany = ({ history, location }) => {
       })
 
       let activityCollection = companyRef.collection('activities')
-      promises.concat(selectedActivities.map(({name, icon}) => {
+      promises.concat(selectedActivities.map(({name}) => {
         return activityCollection.add({
-          name,
-          icon
+          name
         })
       }))
 

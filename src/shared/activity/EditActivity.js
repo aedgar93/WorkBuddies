@@ -1,27 +1,20 @@
 import React, { useState } from 'react'
 import styles from './Activity.module.css'
 
-const EditActivity = ({ name, icon, onDelete, onSave }) => {
+const EditActivity = ({ name, onDelete, onSave }) => {
   const [newName, setNewName] = useState(name);
-  const [newIcon] = useState(icon);
 
-  // const pickIcon = () => {
-  //   return
-  // }
 
   const handleDelete = () => {
       onDelete()
   }
 
   const handleSave = () => {
-    onSave({name: newName, icon: newIcon})
+    onSave({name: newName })
   }
 
   return (
     <div className={[styles.card, styles.editCard].join(' ')}>
-      <div className={styles.iconContainer}>
-        { icon ? <img className={styles.icon} src={icon} alt="Activity Icon"/> : <div className={styles.editIcon}>Select an image</div> }
-      </div>
       <div className={styles.editName}>
         <input
           className={styles.input}

@@ -21,14 +21,6 @@
   cursor: pointer;
 }
 
-.iconContainer {
-  height: 100%;
-  width: 75px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  background: rgba(0,0,0,.125);
-  display: flex;
-}
 
 .name {
   align-self: center;
@@ -51,13 +43,6 @@
   padding-left: 5px;
   text-align: center;
   box-sizing: border-box;
-}
-
-.editIcon {
-  color: rgba(0,0,0,.5);
-  font-size: 12px;
-  text-align: center;
-  align-self: center;
 }
 
 .action {

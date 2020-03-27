@@ -28,7 +28,7 @@ const SampleActivities = ({ setSelectedActivities, selectedActivities }) => {
         suggested.map((activity, index) => {
           return (
             <div className={styles.activityContainer} key={activity.name + index}>
-              <Activity name={activity.name} icon={activity.icon} onClick={() => toggleActivity(activity)} selected={selectedActivities.findIndex(act => act.name === activity.name) > -1} selectable={true}/>
+              <Activity name={activity.name} onClick={() => toggleActivity(activity)} selected={selectedActivities.findIndex(act => act.name === activity.name) > -1} selectable={true}/>
             </div>
           )
         })

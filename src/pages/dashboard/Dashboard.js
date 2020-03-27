@@ -51,7 +51,7 @@ const Dashboard = () => {
               <div className={styles.activities}>
                 {
                   activities.map((activity, index) => {
-                    return <Activity key={activity.name + index} name={activity.name} icon={activity.icon}/>
+                    return <Activity key={activity.name + index} name={activity.name}/>
                   })
                 }
               </div>

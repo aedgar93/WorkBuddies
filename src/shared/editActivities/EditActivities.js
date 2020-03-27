@@ -18,15 +18,15 @@ const EditActivities = ({ activities, onDelete, onEdit, onAdd, alwaysSelected })
     setEditIndex(null)
   }
 
-  const handleAddActivity = (name, icon) => {
-    onAdd(name, icon)
+  const handleAddActivity = (name) => {
+    onAdd(name)
     setAdding(null)
   }
 
 
   const handleOpenAdd = () => {
     setEditIndex(null)
-    setAdding({name: "", icon: ""})
+    setAdding({name: ""})
   }
 
   const handleStartEdit = (index) => {
@@ -39,13 +39,13 @@ const EditActivities = ({ activities, onDelete, onEdit, onAdd, alwaysSelected })
       {
         activities.map((activity, index) => {
           return index === editIndex ?
-            <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={activity => handleDeleteActivity(index, activity)} onSave={activity => handleEditActivity(index, activity)}/> :
-            <span className={styles.activityWrapper} key={activity.name + index}><Activity name={activity.name} icon={activity.icon} onClick={() =>  handleStartEdit(index)} selected={alwaysSelected}/></span>
+            <EditActivity key={activity.name + index} name={activity.name}  onDelete={activity => handleDeleteActivity(index, activity)} onSave={activity => handleEditActivity(index, activity)}/> :
+            <span className={styles.activityWrapper} key={activity.name + index}><Activity name={activity.name}  onClick={() =>  handleStartEdit(index)} selected={alwaysSelected}/></span>
         })
       }
       {
         adding ?
-        <EditActivity name={adding.name} icon={adding.icon} onDelete={() => setAdding(null)} onSave={handleAddActivity} /> :
+        <EditActivity name={adding.name} onDelete={() => setAdding(null)} onSave={handleAddActivity} /> :
         <Button variant="outline-success" onClick={handleOpenAdd} className={styles.addButton} >Add</Button>
       }
     </>
