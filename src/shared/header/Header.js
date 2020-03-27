@@ -10,9 +10,11 @@ import { FirebaseContext } from '../../firebaseComponents'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
-import Button from 'react-bootstrap/Button'
 import { ROUTES } from '../../utils/constants'
 import { useHistory } from "react-router-dom";
+import logo from '../../assets/images/logo.svg'
+import styles from './Header.module.css'
+
 
 const Header = () => {
   const history = useHistory()
@@ -29,8 +31,10 @@ const Header = () => {
   }
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Navbar.Brand to={ROUTES.BASE} as={Link}>Work Buddies</Navbar.Brand>
+    <Navbar className={styles.navBar} variant="light" expand="lg">
+      <Navbar.Brand to={ROUTES.BASE} as={Link} className={styles.logoContainer}>
+        <img src={logo} className={styles.logo} alt="Work Buddies logo"/>
+      </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
@@ -53,10 +57,10 @@ const Header = () => {
             : null
           }
         </Nav>
-        { auth ? <Button onClick={signOut} variant="outline-light">Sign Out</Button> :
+        { auth ? <Nav.Link onClick={signOut} className={styles.navLink} bsPrefix="wb-navlink">Log Out</Nav.Link> :
           <Nav>
-            <Nav.Link as={Link} to={ROUTES.SIGN_IN}>Sign In</Nav.Link>
-            <Nav.Link as={Link} to={ROUTES.SIGN_UP}>Sign Up</Nav.Link>
+            <Nav.Link as={Link} to={ROUTES.SIGN_UP} className={`${styles.navLink} ${styles.signUp}`} bsPrefix="wb-navlink">Sign Up</Nav.Link>
+            <Nav.Link as={Link} to={ROUTES.SIGN_IN} className={`${styles.navLink} ${styles.login}`} bsPrefix="wb-navlink">Login</Nav.Link>
           </Nav>
         }
       </Navbar.Collapse>

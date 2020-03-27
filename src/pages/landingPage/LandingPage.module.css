@@ -1,5 +1,58 @@
+.topSection {
+  margin:100px 0;
+  padding-bottom: 100px;
+  position: relative;
+}
+
+.topSectionInner {
+  max-width: 800px;
+  margin: 0 auto;
+  z-index: 3;
+  position: relative;
+}
+
+.bg1, .bg2 {
+  position: absolute;
+  z-index: 1;
+  width: 410px;
+  height: 410px;
+}
+
+.bg1 {
+  top: 40px;
+  right: 75px;
+}
+
+.bg2 {
+  bottom: 90px;
+  left: 100px;
+}
+
 .actionsContainer {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-around;
+  margin-top: 80px;
+}
+
+.instructions {
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.activitiesContainer {
+  margin-top: 80px;
+}
+
+.submit {
+  margin-bottom: 40px;
+  font-size: 18px;
+  font-weight: bold;
+  width: 340px;
+  height: 60px;
+}
+
+.link {
+  text-decoration: underline;
+  font-size: 18px;
+  font-weight: bold;
 }

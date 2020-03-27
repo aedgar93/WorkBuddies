@@ -1,0 +1,29 @@
+.navBar {
+  padding: 41px 63px;
+}
+
+.logoContainer {
+  padding: 0;
+}
+
+.logo {
+  width: 255px;
+}
+
+
+.navLink {
+  padding: 0;
+  color: var(--primary);
+}
+
+.navLink:hover {
+  text-decoration: none;
+}
+
+.signUp {
+  margin-right: 83px;
+}
+
+.login {
+  margin-right: 57px;
+}

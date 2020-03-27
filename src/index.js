@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './bootstrap-custom.scss';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import Firebase, { FirebaseContext } from './firebaseComponents'
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>

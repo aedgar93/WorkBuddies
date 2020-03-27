@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SampleActivities.module.css'
 import suggested from '../../utils/sampleActivities'
-import Activity from '../../shared/activity'
-
+import Button from 'react-bootstrap/Button'
 
 const SampleActivities = ({ setSelectedActivities, selectedActivities }) => {
 
@@ -28,7 +27,7 @@ const SampleActivities = ({ setSelectedActivities, selectedActivities }) => {
         suggested.map((activity, index) => {
           return (
             <div className={styles.activityContainer} key={activity.name + index}>
-              <Activity name={activity.name} onClick={() => toggleActivity(activity)} selected={selectedActivities.findIndex(act => act.name === activity.name) > -1} selectable={true}/>
+              <Button onClick={() => toggleActivity(activity)} className={`${styles.button} ${selectedActivities.findIndex(act => act.name === activity.name) > -1 ? styles.active : ""}`} bsPrefix="wb-button">{activity.name}</Button>
             </div>
           )
         })
