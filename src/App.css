@@ -6,7 +6,9 @@
 
 #root, body, html, .App {
   height: 100%;
-  background:var(--bg)	;
+  width: 100%;
+  background:var(--bg);
+  color: var(--primary-dark);
 }
 
 h1 {
@@ -41,6 +43,7 @@ h1 {
 .content {
   margin: 0 auto;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 .slideIn-enter {
@@ -60,7 +63,4 @@ h1 {
 
 
 @media only screen and (max-width: 600px) {
-  .content {
-    padding: 20px;
-  }
 }

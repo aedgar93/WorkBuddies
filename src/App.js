@@ -10,6 +10,7 @@ import SignIn from './pages/signIn'
 import AcceptInvite from './pages/acceptInvite'
 import EditCompany from './pages/editCompany'
 import Header from './shared/header'
+import Footer from './shared/footer'
 import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
@@ -107,7 +108,7 @@ class App extends Component {
               </div>
             </Router>
           </>
-
+          <Footer />
         </div>
       </AuthUserContext.Provider>
     );

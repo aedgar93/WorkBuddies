@@ -1,5 +1,5 @@
 .topSection {
-  margin:100px 0;
+  margin:0;
   padding-bottom: 100px;
   position: relative;
 }
@@ -55,4 +55,31 @@
   text-decoration: underline;
   font-size: 18px;
   font-weight: bold;
+}
+
+
+.bottomSection {
+  background: white;
+  padding: 0 20px 20px 20px;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.blurb {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 300px;
+  margin: 75px 10px;
+}
+
+.icon {
+  margin: 0 auto 28px auto;
+}
+
+@media (max-width: 415px) {
+  .blurb {
+    margin: 20px 10px;
+  }
 }
