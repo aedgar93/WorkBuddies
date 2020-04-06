@@ -1,38 +1,23 @@
 import React, { useState, useContext } from 'react'
 import styles from './CreateCompany.module.css'
-import CompanyForm from '../../shared/companyForm'
 import { ROUTES } from '../../utils/constants'
 import Alert from 'react-bootstrap/Alert'
 import { FirebaseContext } from '../../firebaseComponents'
 import SignUpForm from '../../shared/signUpForm'
-import SampleActivities from '../../shared/sampleActivities'
+import moment from 'moment-timezone'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
+import suggestedActivities from '../../utils/sampleActivities'
+
 
 const CreateCompany = ({ history, location }) => {
-  const [company, setCompany] = useState({})
   const [error, setError] = useState(null)
-  const [showCompany, setShowCompany] = useState(true)
-  const [selectedActivities, setSelectedActivities] = useState(location.state && location.state.selectedActivities ? location.state.selectedActivities : [])
-  const [userInfo, setUserInfo] = useState(null)
   const [invites, setInvites] = useState([])
+  const [loading, setLoading] = useState(false)
   const firebase = useContext(FirebaseContext)
   const genericError = 'Something went wrong! Please try again.'
 
-  const submitCompany = (company) => {
-    let {name, hour, day, timeZone } = company
-    let valid = name && typeof hour === 'number' && typeof day === 'number' && timeZone
-    setError(!valid)
-    if (valid) {
-      setCompany(company)
-      setShowCompany(false)
-    }
-  }
 
-  const back = () => {
-    setError(false)
-    setShowCompany(true)
-  }
 
   const checkInvites = (email) => {
     return firebase.db.collection('invites').where('email', '==', email).get()
@@ -55,26 +40,33 @@ const CreateCompany = ({ history, location }) => {
     })
   }
 
+  const updateError = (error) => {
+    setLoading(false)
+    setError(error ? error : genericError)
+  }
+
 
   const create = async (info) => {
     setInvites([])
-    let infoToUse = info ? info : userInfo
-    if(!infoToUse) {
-      return setError('Something went wrong! Please try again.')
+    if(!info) {
+      return updateError()
     }
 
-    let {name, hour, day, timeZone } = company
-    let { firstName, lastName, email, password1 } = infoToUse
+    let { firstName, lastName, email, password1, companyName } = info
+    if (!companyName) {
+      return updateError('Please add a name for your company.')
+    }
+
     try {
       var { user } = await firebase.createUserWithEmailAndPassword(email, password1)
     } catch(error) {
-      return setError(error.message)
+      return updateError(error.message)
     }
     firebase.db.collection('companies').add({
-      name,
-      hour,
-      day,
-      timeZone
+      name: companyName,
+      hour: 9,
+      day: 1,
+      timeZone: moment.tz.guess()
     })
     .then(companyRef => {
       let promises = []
@@ -90,28 +82,28 @@ const CreateCompany = ({ history, location }) => {
       })
 
       let activityCollection = companyRef.collection('activities')
-      promises.concat(selectedActivities.map(({name}) => {
+      promises.concat(suggestedActivities.map(({name}) => {
         return activityCollection.add({
           name
         })
       }))
 
       Promise.all(promises)
-      .then(() => { history.push(ROUTES.SET_UP_EMPLOYEES) })
+      .then(() => { history.push(ROUTES.SET_UP_EMPLOYEES) }) //TODO: explaining route
       .catch((error) => {
         console.error(error)
-        setError(genericError)
+        updateError(genericError)
       })
     })
     .catch((error) => {
       console.error(error)
-      setError(genericError)
+      updateError(genericError)
     })
   }
 
   const onSubmit = async (info) => {
     setError(false)
-    setUserInfo(info)
+    setLoading(true)
     let existingInvites = await checkInvites(info.email)
     if (!existingInvites || existingInvites.length === 0) return create(info)
 
@@ -121,36 +113,18 @@ const CreateCompany = ({ history, location }) => {
 
   const goToInvite = (invite) => {
     history.push({
-      pathname: ROUTES.SIGN_UP + '/' + invite.code,
-      state: userInfo
+      pathname: ROUTES.SIGN_UP + '/' + invite.code
     })
   }
 
   return (
-    <div className={styles.wrapper}>
+  <div className={styles.wrapper}>
       { error ? <Alert variant="danger">{ error }</Alert> : null}
-      { showCompany ?
-        <>
-          <h3>
-            Let's create your organization
-          </h3>
-          <CompanyForm onSubmit={submitCompany} name={company.name} timeZone={company.timeZone} day={company.day} hour={company.hour}>
-            <div className={styles.sampleActivities}>
-              <h3>Pick Activities</h3>
-              <SampleActivities setSelectedActivities={setSelectedActivities} selectedActivities={selectedActivities}/>
-            </div>
-          </CompanyForm>
-          <div className={styles.helpText}>
-            Looking to join a company? Please contact your company admin and request an invite email.
-          </div>
-        </>
-        :
         <>
           <h3 className={styles.title}>
-            Let's get you set up as well
+            Start using Work Buddies!
           </h3>
-          <button onClick={back} className={styles.backButton}>&lsaquo; Back</button>
-          <SignUpForm onSubmit={onSubmit}/>
+          <SignUpForm onSubmit={onSubmit} showCompanyName={true} loading={loading}/>
 
           <Modal show={invites && invites.length >= 1}>
             <Modal.Header closeButton>
@@ -176,7 +150,6 @@ const CreateCompany = ({ history, location }) => {
             </Modal.Body>
           </Modal>
         </>
-      }
     </div>
   )
 }

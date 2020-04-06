@@ -5,23 +5,27 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 
-const SignUpForm = ({ loading, onSubmit, suggestedEmail  }) => {
+const SignUpForm = ({ loading, onSubmit, suggestedEmail, showCompanyName  }) => {
   const [validated, setValidated] = useState(false)
   const [email, setEmail] = useState(suggestedEmail ? suggestedEmail : "")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
+  const [companyName, setCompanyName] = useState("")
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
   const [passwordTouched, setPasswordTouched] = useState(false)
 
   useEffect(() => {
     let valid = email && email !== '' && password1 !== '' && password2 !== '' && password1 === password2 && firstName !== '' && lastName !== ''
+    if (showCompanyName) {
+      valid = valid && companyName && companyName !== ''
+    }
     setValidated(valid)
-  }, [email, password1, password2, firstName, lastName])
+  }, [email, password1, password2, firstName, lastName, companyName, showCompanyName])
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    onSubmit({ email, password1, password2, firstName, lastName })
+    onSubmit({ email, password1, password2, firstName, lastName, companyName })
   }
 
   return (
@@ -50,6 +54,16 @@ const SignUpForm = ({ loading, onSubmit, suggestedEmail  }) => {
               />
             </Col>
           </Row>
+        </Form.Group>
+
+        <Form.Group controlId="formBasicCompany">
+          <Form.Label>Company Name</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            value={companyName}
+            placeholder="Company Name"
+            onChange={e => { setCompanyName(e.target.value,); }}/>
         </Form.Group>
 
         <Form.Group controlId="formBasicEmail">
