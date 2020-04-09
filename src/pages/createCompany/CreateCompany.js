@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button'
 import suggestedActivities from '../../utils/sampleActivities'
 
 
-const CreateCompany = ({ history, location }) => {
+const CreateCompany = ({ history }) => {
   const [error, setError] = useState(null)
   const [invites, setInvites] = useState([])
   const [loading, setLoading] = useState(false)
@@ -89,7 +89,7 @@ const CreateCompany = ({ history, location }) => {
       }))
 
       Promise.all(promises)
-      .then(() => { history.push(ROUTES.SET_UP_EMPLOYEES) }) //TODO: explaining route
+      .then(() => { history.push(ROUTES.WELCOME) })
       .catch((error) => {
         console.error(error)
         updateError(genericError)

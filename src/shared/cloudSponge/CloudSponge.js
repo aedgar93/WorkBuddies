@@ -2,6 +2,15 @@ import React from 'react'
 
 //options can be found at https://www.cloudsponge.com/developer/address-book-widget/javascript-callbacks/
 class CloudSponge extends React.Component {
+
+    constructor(props) {
+      super(props)
+      this.updateOptions = (options) => {
+        if (window.cloudsponge) {
+          window.cloudsponge.init(options)
+        }
+      }
+    }
     // adds an async script tag to the page and invokes a callback when the script has loaded
     addJavascript(src, id, callback) {
       if (id && document.getElementById(id)) {

@@ -7,7 +7,8 @@ const ROUTES = {
   EDIT_COMPANY: '/edit_company',
   EDIT_EMPLOYEES: '/edit_employees',
   SET_UP_ACTIVITIES: '/set_up_activities',
-  SET_UP_EMPLOYEES: '/set_up_employees'
+  SET_UP_EMPLOYEES: '/set_up_employees',
+  WELCOME: '/welcome'
 }
 
 export {

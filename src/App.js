@@ -19,7 +19,8 @@ import EditEmployees from './pages/editEmployees';
 import Spinner from 'react-bootstrap/Spinner'
 import CreateCompany from './pages/createCompany';
 import SetUpEmployees from './pages/setUpEmployees';
-import LandingPage from './pages/landingPage/LandingPage';
+import LandingPage from './pages/landingPage';
+import Welcome from './pages/welcome'
 
 class App extends Component {
   constructor(props) {
@@ -99,7 +100,9 @@ class App extends Component {
                         { /* Admin Routes */ }
                         { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
                         { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
-                        <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
+                        { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
+
+                        <Route path={ROUTES.WELCOME} component={Welcome}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
 
                         { /* Default */ }
                         { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }

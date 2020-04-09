@@ -7,10 +7,14 @@ import UserCard from '../../shared/userCard'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
-import Invites from '../../shared/invites'
+import SendInvites from '../../shared/sendInvites'
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Button from 'react-bootstrap/Button'
 
 const EditEmployees = () => {
   const [userRefs, setUserRefs] = useState([])
+  const [inviteRefs, setInviteRefs] = useState(null)
+  const [updating, setUpdating] = useState(false)
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
 
@@ -23,7 +27,64 @@ const EditEmployees = () => {
     return function cleanup() {
       usersListener()
     }
-  })
+  }, [])
+
+
+  useEffect(() => {
+    if(!auth || !auth.companyRef) return
+    updateInvites()
+    console.log('use effect')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ auth && auth.companyRef && auth.companyRef.id ])
+
+  const updateInvites = () => {
+    console.log('here')
+    setUpdating(true)
+    firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
+    .get()
+    .then(snapshot => {
+      setUpdating(false)
+      if(snapshot && snapshot.docs) return setInviteRefs(snapshot.docs.sort((a, b) =>  b.data().createdAt - a.data().createdAt))
+      setInviteRefs([])
+    }).catch(() => setUpdating(false))
+  }
+
+  const handleDeleteInvite = (ref, index) => {
+    // eslint-disable-next-line no-restricted-globals
+    if(confirm('Are you sure you want to delete this invite?')) {
+      ref.ref.delete()
+      let invitesCopy = [...inviteRefs]
+      invitesCopy.splice(index, 1)
+      setInviteRefs(invitesCopy)
+    }
+  }
+
+  const getInvites = () => {
+    return (
+      inviteRefs ? inviteRefs.map((ref, i) => {
+
+        let invite = ref.data()
+        return (
+          <CSSTransition
+            key={`${invite.email}_${invite.name}`}
+            classNames="slideIn"
+            timeout={{
+              enter: 500,
+              exit: 300,
+           }}>
+            <div className={styles.inviteContainer}>
+              <div>
+                {invite.name}
+                <br/>
+                {invite.email}
+              </div>
+              <Button variant="outline-danger" onClick={() => handleDeleteInvite(ref, i)}>Delete</Button>
+            </div>
+          </CSSTransition>
+        )
+      }) : null
+    )
+  }
 
 
   return (
@@ -48,7 +109,15 @@ const EditEmployees = () => {
 
       <div className={styles.section}>
         <h2>Invites</h2>
-        <Invites />
+        <SendInvites onSubmit={updateInvites}/>
+        {
+          updating ? <Spinner /> : null
+        }
+        <TransitionGroup>
+          {
+            getInvites()
+          }
+        </TransitionGroup>
       </div>
     </div>
   )

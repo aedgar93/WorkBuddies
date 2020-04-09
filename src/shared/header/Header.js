@@ -36,33 +36,31 @@ const Header = () => {
         <img src={logo} className={styles.logo} alt="Work Buddies logo"/>
       </Navbar.Brand>
       <Navbar.Toggle />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
+      <Navbar.Collapse className={styles.nav}>
+        <Nav>
           {
             auth && auth.user ?
             <>
-              <Nav.Link to={ROUTES.BASE} as={Link}>Home</Nav.Link>
-              <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link}>My Account</Nav.Link>
+              <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link} className={styles.navLink}>Profile</Nav.Link>
+              { auth && auth.user && auth.user.admin ?
+                <Dropdown>
+                  <Dropdown.Toggle as={Nav.Link} className={styles.navLink}>My Company</Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item as="span"><Link to={ROUTES.EDIT_COMPANY}>Info and Activities</Link></Dropdown.Item>
+                    <Dropdown.Item as="span"><Link to={ROUTES.EDIT_EMPLOYEES}>Employees</Link></Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+                : null
+              }
+              <Nav.Link onClick={signOut} className={styles.navLink}>Log Out</Nav.Link>
             </>
-            : null
-          }
-          { auth && auth.user && auth.user.admin ?
-            <Dropdown>
-              <Dropdown.Toggle as={Nav.Link}>My Company</Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item as="span"><Link to={ROUTES.EDIT_COMPANY}>Info and Activities</Link></Dropdown.Item>
-                <Dropdown.Item as="span"><Link to={ROUTES.EDIT_EMPLOYEES}>Employees</Link></Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            : null
+            :
+            <>
+              <Nav.Link as={Link} to={ROUTES.SIGN_UP} className={`${styles.navLink} ${styles.signUp}`}>Sign Up</Nav.Link>
+              <Nav.Link as={Link} to={ROUTES.SIGN_IN} className={`${styles.navLink} ${styles.login}`}>Login</Nav.Link>
+            </>
           }
         </Nav>
-        { auth ? <Nav.Link onClick={signOut} className={styles.navLink} bsPrefix="wb-navlink">Log Out</Nav.Link> :
-          <Nav>
-            <Nav.Link as={Link} to={ROUTES.SIGN_UP} className={`${styles.navLink} ${styles.signUp}`} bsPrefix="wb-navlink">Sign Up</Nav.Link>
-            <Nav.Link as={Link} to={ROUTES.SIGN_IN} className={`${styles.navLink} ${styles.login}`} bsPrefix="wb-navlink">Login</Nav.Link>
-          </Nav>
-        }
       </Navbar.Collapse>
     </Navbar>
   )

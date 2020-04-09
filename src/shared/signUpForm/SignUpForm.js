@@ -56,16 +56,6 @@ const SignUpForm = ({ loading, onSubmit, suggestedEmail, showCompanyName  }) => 
           </Row>
         </Form.Group>
 
-        <Form.Group controlId="formBasicCompany">
-          <Form.Label>Company Name</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            value={companyName}
-            placeholder="Company Name"
-            onChange={e => { setCompanyName(e.target.value,); }}/>
-        </Form.Group>
-
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -74,6 +64,16 @@ const SignUpForm = ({ loading, onSubmit, suggestedEmail, showCompanyName  }) => 
             value={email}
             placeholder="Enter email"
             onChange={e => { setEmail(e.target.value,); }}/>
+        </Form.Group>
+
+        <Form.Group controlId="formBasicCompany">
+          <Form.Label>Company Name</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            value={companyName}
+            placeholder="Company Name"
+            onChange={e => { setCompanyName(e.target.value,); }}/>
         </Form.Group>
 
         <Form.Group controlId="formBasicPassword1">
