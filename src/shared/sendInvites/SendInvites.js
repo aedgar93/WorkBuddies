@@ -46,6 +46,7 @@ const SendInvites = ({ onNext, onSubmit }) => {
       batch.set(ref, {
         email: invite.email,
         name: invite.name,
+        invitedBy: auth.user.id,
         company_uid: auth.companyRef.id,
         createdAt: new Date().getTime()
       })

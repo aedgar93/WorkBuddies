@@ -13,14 +13,33 @@ const AcceptInvite = ({ history, location }) => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [ready, setReady] = useState(false)
-  const [suggestedEmail] = useState(new URLSearchParams(location.search).get('email'))
+  const [suggestedEmail, setSuggestedEmail] = useState()
   const [invites, setInvites] = useState(null)
+  const [inviteFromLink, setInviteFromLink] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState(null)
   const firebase = useContext(FirebaseContext)
 
   useEffect(() => {
+    let id = new URLSearchParams(location.search).get('id')
+      //TODO: set id to localstorage
+    if(id) {
+      firebase.db.collection('invites').doc(id).get()
+      .then(snapshot => {
+        if(snapshot && snapshot.exists) {
+          setInviteFromLink(snapshot)
+          if(snapshot.data().email) {
+            setSuggestedEmail(snapshot.data().email)
+          }
+        }
+        setReady(true)
+      }).catch(_error => {
+        setReady(true)
+        setError('Sorry! Your invite link has expired. ')
+      })
+    } else {
       setReady(true)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -58,7 +77,11 @@ const AcceptInvite = ({ history, location }) => {
   const findAssociatedInvites = ({ email }) => {
     return firebase.db.collection('invites').where('email', '==', email).get()
       .then(snapshot => {
-        return snapshot.docs
+        let results = snapshot.docs || []
+        if(inviteFromLink) {
+          results.push(inviteFromLink)
+        }
+        return results
       })
   }
 
@@ -102,7 +125,7 @@ const AcceptInvite = ({ history, location }) => {
     let emailExists = await firebase.doesUserExistForEmail(accountInfo.email)
     if (emailExists) return updateError('Sorry! There is already an account for that email address.')
     let invites = await findAssociatedInvites(accountInfo)
-    if(!invites || invites.length === 0) return updateError("Sorry! We couldn't find any invites for that email address.")
+    if(!invites || invites.length === 0) return updateError("Sorry! We couldn't find any invites for that email address. Please enter an email address associated with an invite, or follow the link provided in the invite.")
     else if(invites.length === 1) {
       let invite = invites[0]
       return acceptInvite(invite.data().company_uid, invite.id, accountInfo)
@@ -127,10 +150,6 @@ const AcceptInvite = ({ history, location }) => {
   return (
     <div className={styles.wrapper}>
       <h3>Welcome!</h3>
-      <div className={styles.subtitle}>
-        Already have an invite? Please sign up using the email address where your received your invite.
-        <br/>
-      </div>
       {
         error ? <Alert variant="danger" className={styles.alert}>{ error }</Alert> : null
       }

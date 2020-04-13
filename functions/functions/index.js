@@ -5,7 +5,7 @@ const moment = require('moment-timezone');
 const initQueries = require('./queries.js');
 const uuidv1 = require('uuid/v1');
 const { PubSub } = require('@google-cloud/pubsub');
-
+const inviteEmailContent = require('./emails/invite.js')
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
 var serviceAccount = require("./admin-service-account.json");
@@ -21,6 +21,8 @@ const pubsub = new PubSub({
   projectId: process.env.GCLOUD_PROJECT,
   keyFilename: './admin-service-account.json'
 });
+
+console.log(config.mail)
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
 
@@ -43,32 +45,32 @@ exports.inviteAccepted = functions.firestore.document('users/{userId}')
   })
 
 //INVITE EMAIL
-const inviteEmailContent = () => {
-  return `
-    <p>Welcome to Work Buddies! Please follow this link to join {companyName}: {link}</p>
-  `
-}
 const getFromEmail = () => {
-  return functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com'
+  return config && config.mail ? config.mail.email : 'annadesiree11@gmail.com'
 }
 
-const signupLink = `${config && config.host ? config.host : 'http://localhost:3000'}/signup`
+const signupLink = `${config && config.host && typeof config.host == 'string' ? config.host : 'http://localhost:3000'}/signup`
 
 
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
     const firestore = admin.firestore();
-    const companiesRef = firestore.collection('companies');
+    const adminRef = firestore.collection('users');
     const data = inviteSnapshot.data()
 
-    return companiesRef.doc(data.company_uid).get().then(results => {
-      let companyRef = results;
+    return adminRef.doc(data.invitedBy).get().then(results => {
+      let admin = results.data();
 
-      let emailContent = inviteEmailContent();
-      let link = `${signupLink}?email=${encodeURIComponent(data.email)}` //TODO: check what type of invite first
-      emailContent = emailContent.replace('{link}', link);
-      emailContent = emailContent.replace('{companyName}', companyRef.data().name);
+      let emailContent = inviteEmailContent()
+      let link = `${signupLink}?id=${encodeURIComponent(inviteSnapshot.id)}`
+      emailContent = emailContent.replace('{{link}}', link);
+      if(inviteSnapshot.data().name) {
+        emailContent = emailContent.replace('{{greeting}}', `Hi ${inviteSnapshot.data().name},`)
+      } else {
+        emailContent = emailContent.replace('{{greeting}}', 'Hi,')
+      }
+      emailContent = emailContent.replace('{{admin_name}}', admin.firstName);
 
       const msg = {
         to: inviteSnapshot.data().email,
