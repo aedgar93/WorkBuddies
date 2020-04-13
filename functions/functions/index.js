@@ -106,16 +106,17 @@ const getRandom = (collection) => {
   return collection[Math.floor(Math.random()*collection.length)]
 }
 
-const buddyEmail = "Hello {{buddy1}},<br/><br/> You have been matched up with {{buddy2}} as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
+const buddyEmail = "Hello {{buddy1}},<br/><br/> You have been matched up with {{buddy2}} {{links}} as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
 const addEmailPersonalization = (buddy1, buddy2, activity, emailInfo) => {
   if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
   let to = [{email: buddy1.email}]
   let activityString = activity ? `Your activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
-  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString }
+  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: ''}
   if (buddy2) {
     substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
+    if(buddy2.email) substitutions.links = `<a href="mailto:${buddy2.email}">email<a>`
   }
 
   return emailInfo.push({ to, substitutions, subject: "Your Weekly Buddy" })

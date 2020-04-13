@@ -21,16 +21,18 @@ const AcceptInvite = ({ history, location }) => {
   const firebase = useContext(FirebaseContext)
 
   useEffect(() => {
-    let id = new URLSearchParams(location.search).get('id')
-      //TODO: set id to localstorage
+    let id = new URLSearchParams(location.search).get('id') || localStorage.getItem('inviteId')
     if(id) {
       firebase.db.collection('invites').doc(id).get()
       .then(snapshot => {
         if(snapshot && snapshot.exists) {
           setInviteFromLink(snapshot)
+          localStorage.setItem('inviteId', id)
           if(snapshot.data().email) {
             setSuggestedEmail(snapshot.data().email)
           }
+        } else {
+          localStorage.removeItem('inviteId')
         }
         setReady(true)
       }).catch(_error => {
@@ -103,6 +105,7 @@ const AcceptInvite = ({ history, location }) => {
       console.log(error)
       return updateError(error.message)
     }
+    localStorage.removeItem('inviteId')
     firebase.db.collection('users').add({
       auth_id: user.uid,
       firstName,
