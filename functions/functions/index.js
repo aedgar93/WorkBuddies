@@ -141,6 +141,11 @@ const getOddManOutIndex = (previousMatchups, users) => {
   return oddManOut
 }
 
+const getMatchups = async (companyRef, companyData) => {
+  let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
+  let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
+  return {doc: lastBuddiesDoc, matchups: lastBuddiesDoc && lastBuddiesDoc.exists  ? await lastBuddiesDoc.data().matchups : [], ref: lastBuddiesRef}
+}
 const matchup = async (data) => {
   const companyId = data.id
   let eventId = data.event_id || uuidv1()
@@ -163,9 +168,8 @@ const matchup = async (data) => {
   activitiesSnapshot.forEach(doc => activities.push(doc.data()))
 
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
-  let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
-  let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
-  let previousMatchups = lastBuddiesDoc && lastBuddiesDoc.exists  ? await lastBuddiesDoc.data().matchups : []
+  let previousMatchupsInfo = await getMatchups(companyRef, companyData)
+  let previousMatchups = previousMatchupsInfo.matchups
 
   let newMatchups = []
   let emailInfo = []
@@ -175,6 +179,7 @@ const matchup = async (data) => {
     .then(async snapshot => {
       const users = []
       snapshot.forEach(user => users.push(user))
+      if(users.length === 1) return null //no matchup if there is only one person
 
       // If someone wasn't matched up last time, match them first this time
       let oddManOutIndex = getOddManOutIndex(previousMatchups, users)
@@ -294,6 +299,80 @@ exports.matchup = functions.https.onCall((data, _ctx) => {
   return matchup(data)
 })
 // END GENERATE MATCHUPS
+
+
+//Matchup on new user
+exports.newUserHandler = functions.firestore.document('users/{userId}')
+  .onCreate(async (userSnapshot, _ctx) => {
+    //get company
+    let user = userSnapshot.data()
+    if(user.admin) return null
+    let companyId = user.company_uid
+    console.log(companyId)
+    const firestore = admin.firestore();
+    const companyRef = firestore.collection('companies').doc(companyId)
+    if (!companyRef) return Promise.reject(new Error("company not found"))
+
+    let companyData = await companyRef.get()
+    companyData = companyData.data()
+
+    if(!companyData.activeBuddies) {
+    //if no matchup, create one and match people up
+      return matchup({id: companyId})
+    } else {
+      //get current matchup
+      let { ref, matchups } = await getMatchups(companyRef, companyData)
+      let usersRef = await firestore.collection('users').where('company_uid', '==', companyId).get()
+      let users = []
+      usersRef.forEach(user => users.push(user))
+
+      //check if there is an odd man out
+      let single = matchups.find(matchup => {
+        return matchup.buddies && matchup.buddies.length === 1
+      })
+
+      let buddy
+      let activity
+      if (single) {
+        let buddyId = single.buddies[0]
+        buddy = users.find(user => user.id === buddyId)
+        activity = single.activity
+        single.buddies.push(userSnapshot.id)
+      } else {
+        console.log('no single')
+        //check if there are any users not in a matchup at all
+        let buddiesInMatchup = []
+        matchups.forEach(matchup => {
+          buddiesInMatchup.push(matchup.buddies[0])
+          if(matchup.buddies.length > 1) buddiesInMatchup.push(matchup.buddies[1])
+        })
+
+        buddy = users.find(user => buddiesInMatchup.indexOf(user.id) === -1)
+        console.log('buddy', buddy)
+        if(!buddy) return null
+        activity = matchups[0].activity //just use the first activity so we don't have to fetch them all
+        matchups.push({buddies: [userSnapshot.id, buddy.id], activity})
+      }
+
+
+      let emailInfo = []
+      addEmailPersonalization(user, buddy.data(), activity, emailInfo)
+      addEmailPersonalization(buddy.data(), user, activity, emailInfo)
+
+      let msg = {
+        personalizations: emailInfo,
+        from: getFromEmail(),
+        html: buddyEmail
+      }
+
+      console.log(matchups)
+      return ref.set({matchups})
+      .then(() => {
+        //send email
+        return sgMail.send(msg)
+      })
+    }
+  })
 
 
 // TRIGGER MATCHUPS

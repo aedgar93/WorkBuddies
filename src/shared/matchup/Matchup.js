@@ -57,14 +57,8 @@ const Matchup = () => {
         <ProfilePic user={buddy} size="sm"></ProfilePic>
         <div className={styles.info}>
           <div>{buddy.firstName} {buddy.lastName}</div>
+          { activity ? <div>Activity: {activity.name}</div> : null }
         </div>
-      </div>
-      <div className={styles.section}>
-        <div className={styles.pic}></div>
-        { activity ?
-          <div className={styles.info}>
-            <div>Activity: {activity.name}</div>
-          </div> : null }
       </div>
     </div>
   )
