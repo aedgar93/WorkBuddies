@@ -739,8 +739,8 @@ module.exports = function() {
                                     <td valign="top" class="mcnTextContent"
                                       style="padding-top: 0;padding-left: 18px;padding-bottom: 9px;padding-right: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
 
-                                      <div style="text-align: right;">
-                                        <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;">
+                                      <div style="text-align: right;width: 100%;">
+                                        <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;">
                                           {{profilePic}}
                                         </div>
                                       </div>
