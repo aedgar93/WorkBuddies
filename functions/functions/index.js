@@ -6,6 +6,7 @@ const initQueries = require('./queries.js');
 const uuidv1 = require('uuid/v1');
 const { PubSub } = require('@google-cloud/pubsub');
 const inviteEmailContent = require('./emails/invite.js')
+const buddyEmailContent = require('./emails/matchup.js')
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
 var serviceAccount = require("./admin-service-account.json");
@@ -109,14 +110,20 @@ const getRandom = (collection) => {
 const buddyEmail = "Hello {{buddy1}},<br/><br/> You have been matched up with {{buddy2}} {{links}} as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
+//{{profilePic}}
 const addEmailPersonalization = (buddy1, buddy2, activity, emailInfo) => {
   if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
   let to = [{email: buddy1.email}]
   let activityString = activity ? `Your activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
-  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: ''}
+  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: ''}
   if (buddy2) {
     substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
-    if(buddy2.email) substitutions.links = `<a href="mailto:${buddy2.email}">email<a>`
+    if(buddy2.profilePic) {
+      substitutions.profilePic = `<img src=${buddy2.profilePic} style="width:93px;height:93px;"/>`
+    } else {
+      substitutions.profilePic = `<div style="line-height: 93px; font-size: 72px; padding-left: -3px; letter-spacing: -6px; color: white; text-align: center; width: 100%;}>${buddy2.firstName[0]}${buddy2.lastName[0]}</div>`
+    }
+    if(buddy2.email) substitutions.links = `<a href="mailto:${buddy2.email}"><img src="http://work-buddies-app.herokuapp.com/email_icon.png" style="width:22px;height:22px;"/><a>`
   }
 
   return emailInfo.push({ to, substitutions, subject: "Your Weekly Buddy" })
@@ -241,7 +248,7 @@ const matchup = async (data) => {
         let msg = {
           personalizations: emailInfo,
           from: getFromEmail(),
-          html: buddyEmail
+          html: buddyEmail()
         }
         allMessages.push(msg)
       }
