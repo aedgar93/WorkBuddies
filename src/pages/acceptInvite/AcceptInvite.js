@@ -81,7 +81,10 @@ const AcceptInvite = ({ history, location }) => {
       .then(snapshot => {
         let results = snapshot.docs || []
         if(inviteFromLink) {
+          console.log(results)
+          results = results.filter(invite => invite.id !== inviteFromLink.id)
           results.push(inviteFromLink)
+          console.log(results)
         }
         return results
       })

@@ -36,7 +36,7 @@ const Matchup = () => {
       let matchup = snapshot.data().matchups.find(matchup => {
         return matchup.buddies.indexOf(auth.user.id) > -1
       })
-      if(!matchup || matchup.buddies.length === 1) return setError(`Sorry, it looks like you haven't been matched up with a buddy this week. Please check back at ${date} to find out who your next weekly Buddy is!`)
+      if(!matchup || matchup.buddies.length === 1) return setError(`Sorry, it looks like you haven't been matched up with a buddy yet.`)
 
       let buddyId = matchup.buddies.indexOf(auth.user.id) === 0 ? matchup.buddies[1] : matchup.buddies[0]
       let buddySnapshot = await firebase.db.collection('users').doc(buddyId).get()
@@ -45,7 +45,7 @@ const Matchup = () => {
         setBuddy(buddySnapshot.data())
         setActivity(matchup.activity)
       } else {
-        return setError(`Sorry, it looks like you haven't been matched up with a buddy this week. Please check back at ${date} to find out who your next weekly Buddy is!`)
+        return setError(`Sorry, it looks like you haven't been matched up with a buddy yet.`)
       }
     }
     fetchBuddies()
