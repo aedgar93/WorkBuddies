@@ -30,7 +30,7 @@ const Matchup = () => {
       let date = getDate()
 
       if(!auth.company.activeBuddies) {
-        return setError(`Please check back at ${date} to find out who your weekly Buddy is!`)
+        return setError(`We are working on finding you a buddy!`)
       }
       let snapshot = await auth.companyRef.collection('buddies').doc(auth.company.activeBuddies).get()
       let matchup = snapshot.data().matchups.find(matchup => {
