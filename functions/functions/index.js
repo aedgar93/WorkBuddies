@@ -50,7 +50,7 @@ const getFromEmail = () => {
   return config && config.mail ? config.mail.email : 'annadesiree11@gmail.com'
 }
 
-const signupLink = `${config && config.host && typeof config.host == 'string' ? config.host : 'http://localhost:3000'}/signup`
+const signupLink = `${config && config.host && config.host.url ? config.host.url : 'http://localhost:3000'}/signup`
 
 
 
