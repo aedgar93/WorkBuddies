@@ -355,7 +355,7 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
           if(matchup.buddies.length > 1) buddiesInMatchup.push(matchup.buddies[1])
         })
 
-        buddy = users.find(user => buddiesInMatchup.indexOf(user.id) === -1)
+        buddy = users.find(buddy => buddiesInMatchup.indexOf(buddy.id) === -1 && buddy.id !== userSnapshot.id)
         console.log('buddy', buddy)
         if(!buddy) return null
         activity = matchups[0].activity //just use the first activity so we don't have to fetch them all
@@ -370,7 +370,7 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
       let msg = {
         personalizations: emailInfo,
         from: getFromEmail(),
-        html: buddyEmail
+        html: buddyEmailContent()
       }
 
       console.log(matchups)
