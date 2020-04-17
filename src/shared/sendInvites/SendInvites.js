@@ -42,6 +42,7 @@ const SendInvites = ({ onNext, onSubmit }) => {
     setLoading(true)
 
     pendingInvites.forEach(invite => {
+      if(!invite.email) return
       let ref = collection.doc()
       batch.set(ref, {
         email: invite.email,

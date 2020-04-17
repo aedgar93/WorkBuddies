@@ -1,6 +1,4 @@
-module.exports = function() {
-  return  `
-  <!doctype html>
+<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:o="urn:schemas-microsoft-com:office:office">
 
@@ -20,40 +18,39 @@ module.exports = function() {
   <title></title>
 
   <style type="text/css">
-  .otherActivityContainer {
-    border: 1px solid #97D4FF;
-    border-radius: 9px;
-    padding-top: 32px;
-    padding-right: 32px;
-    padding-bottom: 50px;
-    padding-left: 32px;
-    mso-line-height-rule: exactly;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    word-break: break-word;
-    font-size: 16px;
-    line-height: 150%;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: left;
-  }
+    .otherActivityContainer {
+      border: 1px solid #97D4FF;
+      border-radius: 9px;
+      padding-top: 32px;
+      padding-right: 32px;
+      padding-bottom: 50px;
+      padding-left: 32px;
+      mso-line-height-rule: exactly;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      word-break: break-word;
+      font-size: 16px;
+      line-height: 150%;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: left;
+    }
 
-  .activity {
-    padding: 17px 29px;
-    border-radius:25px;
-    background:#F3FAFF;
-    color:#777777;
-    font-size:14px;
-    font-weight: bold;
-    text-align:center;
-    margin: 0 10px;
-    white-space: no-wrap;
-  }
+    .activity {
+      padding: 17px 29px;
+      border-radius:25px;
+      background:#F3FAFF;
+      color:#777777;
+      font-size:14px;
+      font-weight: bold;
+      text-align:center;
+    }
 
-  .activityTD {
-    line-height: 65px;
-    text-align: center;
-    margin: 0 10px;
-  }
+    .activityTD {
+      line-height: 65px;
+      text-align: center;
+      margin: 0 10px;
+    }
+
     p {
       margin: 10px 0;
       padding: 0;
@@ -730,8 +727,8 @@ module.exports = function() {
                                         <br>
                                         <span style="font-family:arial,helvetica neue,helvetica,sans-serif"><span
                                             style="font-size:34px"><strong><span style="color:#2E2460">This Week,
-                                                Let's</span> <span style="color:#7F68FF">{{activityString}}</span> <span
-                                                style="color:#2E2460">with&nbsp;{{buddy2}}:</span></strong></span></span>
+                                                Let's</span> <span style="color:#7F68FF">Ping Pong</span> <span
+                                                style="color:#2E2460">with&nbsp;Billy2 Bob2:</span></strong></span></span>
                                       </h1>
 
                                     </td>
@@ -775,7 +772,7 @@ module.exports = function() {
 
                                       <div style="text-align: right;width: 100%;">
                                         <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;">
-                                          {{profilePic}}
+                                          <div style="line-height: 93px; font-size: 72px; padding-left: -3px; letter-spacing: -6px; color: white; text-align: center; width: 100%;">BB</div>
                                         </div>
                                       </div>
 
@@ -801,9 +798,9 @@ module.exports = function() {
 
                                       <span style="color:#4A4A4A"><span
                                           style="font-family:arial,helvetica neue,helvetica,sans-serif"><span
-                                            style="font-size:24px"><strong>{{buddy2}}</strong> {{links}}</span><br>
-                                          <span style="font-size:18px"><strong>{{department}}</strong></span><br>
-                                          <span style="font-size:18px">{{about}}</span></span></span>
+                                            style="font-size:24px"><strong>Billy2 Bob2</strong> <a href="mailto:annadesiree11+billybob@gmail.com"><img src="http://work-buddies-app.herokuapp.com/email_icon.png" style="width:22px;height:22px;"></img><a></span><br>
+                                          <span style="font-size:18px"><strong></strong></span><br>
+                                          <span style="font-size:18px"></span></span></span>
                                     </td>
                                   </tr>
                                 </tbody>
@@ -851,7 +848,41 @@ module.exports = function() {
                                   </tr>
                                 </tbody>
                               </table>
-                              {{activitiesHTML}}
+
+  <table align="left" border="0" cellpadding="0" cellspacing="0"
+    style="max-width: 100%;min-width: 100%;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;padding-top: 60px;"
+    width="100%" class="mcnTextContentContainer">
+    <tbody>
+      <tr>
+
+        <td valign="top" class="otherActivityContainer">
+          <div style="test-align: left; font-size: 20px;color: #5B5B5B;padding-bottom:50px;">Other Suggested Activities:</div>
+          <table align="left" border="0" cellpadding="0" cellspacing="10"
+            style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
+            width="100%" class="mcnTextContentContainer">
+            <tbody>
+              <tr>
+                <td class="activityTD">
+
+                      <span class="activity" >Grab a Coffee</span>
+
+                      <span class="activity">Go for a walk</span>
+
+                      <span class="activity">Jenga</span>
+
+                      <span class="activity">Ping Pong</span>
+
+                      <span class="activity">Video Games</span>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
                               <!--[if mso]>
         </td>
         <![endif]-->
@@ -943,8 +974,7 @@ module.exports = function() {
       </tr>
     </table>
   </center>
-</body>
+<p>If you&#39;d like to unsubscribe and stop receiving these emails <a href="https://u6962370.ct.sendgrid.net/wf/unsubscribe?upn=ySaqLgMqLscOGlngyrPGcDQuI4LRHhrzanNALOPMPx6Dj66fs6FaV9AVRwDLH9eYYeaGXIgnlOV5EKjLp3AYUln4DhTbXvVjG7gbE9h0z7VyJezO9HtpZm-2F-2BAt6o-2FyYe-2BWDVVFyb1neKVq9ehd7uS-2BL-2FYw4xkhtidWdXlk1MocY05Wi49EPl9SOmiH8mtRcsF6F4QltztTmFpXT6eYiYO7WOtR8RoABA-2BMrG8PJxDF6UgU1XlOQGC4agw2pzytYB"> click here </a>.</p>
+<img src="https://u6962370.ct.sendgrid.net/wf/open?upn=ySaqLgMqLscOGlngyrPGcDQuI4LRHhrzanNALOPMPx6Dj66fs6FaV9AVRwDLH9eYYeaGXIgnlOV5EKjLp3AYUm2Vubt496x4r1rjt8v7munTuT-2F2t8XcUhDZ-2BUMQJAJGfTBh3cEchp2b1-2F5xdtJhv9-2BoDv3-2BbqCgv3Qg-2FztBEw7PF7qohpKX-2BOEj-2Fggqm8Goli2WBz5XOB6md-2FdXUItu7AVajqAcntuodfFqVOpOsDfFQYhQzyurwwruj7bDX7q9pf1RSZzFOCBFciqEbVdc1A-3D-3D" alt="" width="1" height="1" border="0" style="height:1px !important;width:1px !important;border-width:0 !important;margin-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margin-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-right:0 !important;padding-left:0 !important;"/></body>
 
 </html>
-
-`}

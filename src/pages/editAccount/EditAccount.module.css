@@ -17,11 +17,17 @@
 }
 
 .formGroup {
-  margin: 40px 0;
+  margin: 10px 0;
 }
 
 .formGroup:first-child {
   margin-top: 20px;
+}
+
+.label {
+  margin: 0 0 6px 0;
+  font-size: 15px;
+  line-height: 16px;;
 }
 
 .buttonSpinner {

@@ -20,6 +20,8 @@ const EditAccount = ({history}) => {
   let [email, setEmail] = useState(auth.user.email)
   let [firstName, setFirstName] = useState(auth.user.firstName)
   let [lastName, setLastName] = useState(auth.user.lastName)
+  let [department, setDepartment] = useState(auth.user.department ? auth.user.department : null)
+  let [about, setAbout] = useState(auth.user.about ? auth.user.about : null)
   let [valid, setValid] = useState(true)
   let [notifyEmail, setNotifyEmail] = useState(auth.user.notifyEmail)
   let [loading, setLoading] = useState(false)
@@ -106,7 +108,9 @@ const EditAccount = ({history}) => {
         firstName,
         lastName,
         email,
-        notifyEmail
+        notifyEmail,
+        department,
+        about
       })
     )
 
@@ -125,6 +129,13 @@ const EditAccount = ({history}) => {
     .finally(() => {
       setLoading(false)
     })
+  }
+
+  const updateNotifyEmail = (val) => {
+    setNotifyEmail(val)
+    firebase.db.collection('users').doc(auth.user.id).update({
+      notifyEmail: val
+    }, {merge : true })
   }
 
   const openPicModal = () => {
@@ -188,17 +199,8 @@ const EditAccount = ({history}) => {
           </ProfilePic>
         </div>
         <Form className={styles.form}>
-          <Form.Group controlId="email" className={styles.formGroup}>
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              required
-              type="email"
-              value={email}
-              placeholder="Enter email"
-              onChange={e => setEmail(e.target.value)}/>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Name</Form.Label>
+          <Form.Group className={styles.formGroup} bsPrefix="wb">
+            <Form.Label className={styles.label} bsPrefix="wb">Name</Form.Label>
             <Row>
               <Col>
                 <Form.Control
@@ -220,14 +222,30 @@ const EditAccount = ({history}) => {
               </Col>
             </Row>
           </Form.Group>
-          <Form.Group controlId="notifications" className={styles.formGroup}>
-            <Form.Label>Notification Preferences</Form.Label>
-            <Form.Check
-              checked={notifyEmail}
-              type="checkbox"
-              label="Email"
-              onChange={e => setNotifyEmail(e.target.checked)}
-              />
+          <Form.Group controlId="email" className={styles.formGroup} bsPrefix="wb">
+            <Form.Label className={styles.label} bsPrefix="wb">Email address</Form.Label>
+            <Form.Control
+              required
+              type="email"
+              value={email}
+              placeholder="Enter email"
+              onChange={e => setEmail(e.target.value)}/>
+          </Form.Group>
+          <Form.Group controlId="department" className={styles.formGroup} bsPrefix="wb">
+            <Form.Label className={styles.label} bsPrefix="wb">Department</Form.Label>
+            <Form.Control
+              type="text"
+              value={department}
+              placeholder="Department"
+              onChange={e => setDepartment(e.target.value)}/>
+          </Form.Group>
+          <Form.Group controlId="aboutMe" className={styles.formGroup} bsPrefix="wb">
+            <Form.Label className={styles.label} bsPrefix="wb">About Me</Form.Label>
+            <Form.Control
+              type="text"
+              value={about}
+              placeholder="Tell us a little about yourself"
+              onChange={e => setAbout(e.target.value)}/>
           </Form.Group>
           <Button variant="primary" type="submit" className={styles.button} disabled={!valid || loading}>
             {
@@ -243,6 +261,19 @@ const EditAccount = ({history}) => {
             }
             Submit
           </Button>
+        </Form>
+      </div>
+      <div className={styles.section}>
+        <Form>
+          <Form.Group controlId="notifications" className={styles.formGroup} bsPrefix="wb">
+            <Form.Label className={styles.label} bsPrefix="wb">Notification Preferences</Form.Label>
+            <Form.Check
+              checked={notifyEmail}
+              type="checkbox"
+              label="Email"
+              onChange={e => updateNotifyEmail(e.target.checked)}
+              />
+          </Form.Group>
         </Form>
       </div>
       <Modal show={showModal} onHide={handleClose} centered={true}>

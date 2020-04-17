@@ -109,12 +109,44 @@ const getRandom = (collection) => {
 
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
+const getActivitiesHTML = (activities) => {
+  return `
+  <table align="left" border="0" cellpadding="0" cellspacing="0"
+    style="max-width: 100%;min-width: 100%;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;padding-top: 60px;"
+    width="100%" class="mcnTextContentContainer">
+    <tbody>
+      <tr>
+
+        <td valign="top" class="otherActivityContainer">
+          <div style="test-align: left; font-size: 20px;color: #5B5B5B;padding-bottom:50px;">Other Suggested Activities:</div>
+          <table align="left" border="0" cellpadding="0" cellspacing="10"
+            style="max-width: 100%;min-width: 100%;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
+            width="100%" class="mcnTextContentContainer">
+            <tbody>
+              <tr>
+                <td class="activityTD">
+                  ${activities.map(activity => {
+                    return `
+                      <span class="activity">${activity.name}</span>
+                    `
+                  }).join(" ")}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  `
+}
+
 //{{profilePic}}
-const addEmailPersonalization = (buddy1, buddy2, activity, emailInfo) => {
+const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, emailInfo) => {
   if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
   let to = [{email: buddy1.email}]
   let activityString = activity ? activity.name : "Grab a Coffee"
-  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', description: ''}
+  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', about: '', activitiesHTML}
   if (buddy2) {
     substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
     if(buddy2.profilePic) {
@@ -125,18 +157,21 @@ const addEmailPersonalization = (buddy1, buddy2, activity, emailInfo) => {
     if(buddy2.department) substitutions.department = buddy2.department
     if(buddy2.description) substitutions.description = buddy2.description
     if(buddy2.email) substitutions.links = `<a href="mailto:${buddy2.email}"><img src="http://work-buddies-app.herokuapp.com/email_icon.png" style="width:22px;height:22px;"></img><a>`
+    if(buddy2.department) substitutions.department = buddy2.department
+    if(buddy2.about) substitutions.about = buddy2.about
   }
 
   return emailInfo.push({ to, substitutions, subject: "Your Weekly Buddy" })
 }
 
-const notify = (buddy1, buddy2, activity, emailInfo) => {
+const notify = (buddy1, buddy2, activity, activitiesHTML, emailInfo) => {
   if (!buddy1) return null
-  addEmailPersonalization(buddy1, buddy2, activity, emailInfo)
+  addEmailPersonalization(buddy1, buddy2, activity, activitiesHTML, emailInfo)
   return null
 }
 
 const getOddManOutIndex = (previousMatchups, users) => {
+  if(!previousMatchups) return -1
   let single = previousMatchups.find(matchup => {
     return matchup.buddies && matchup.buddies.length === 1
   })
@@ -152,7 +187,8 @@ const getOddManOutIndex = (previousMatchups, users) => {
 const getMatchups = async (companyRef, companyData) => {
   let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
   let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
-  return {doc: lastBuddiesDoc, matchups: lastBuddiesDoc && lastBuddiesDoc.exists  ? await lastBuddiesDoc.data().matchups : [], ref: lastBuddiesRef}
+  let matchups = lastBuddiesDoc && lastBuddiesDoc.exists ? lastBuddiesDoc.data().matchups : []
+  return {doc: lastBuddiesDoc, matchups, ref: lastBuddiesRef}
 }
 const matchup = async (data) => {
   const companyId = data.id
@@ -174,10 +210,12 @@ const matchup = async (data) => {
 
   const activities = []
   activitiesSnapshot.forEach(doc => activities.push(doc.data()))
+  let activitiesHTML = getActivitiesHTML(activities)
 
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
   let previousMatchupsInfo = await getMatchups(companyRef, companyData)
   let previousMatchups = previousMatchupsInfo.matchups
+  console.log(previousMatchupsInfo)
 
   let newMatchups = []
   let emailInfo = []
@@ -230,10 +268,10 @@ const matchup = async (data) => {
         //buddy 1 notifications
         let userData = user ? user.data() : null
         let buddyData = buddy ? buddy.data() : null
-        notify(userData, buddyData, activity, emailInfo)
+        notify(userData, buddyData, activity, activitiesHTML, emailInfo)
 
         //buddy2 notifications
-        notify(buddyData, userData, activity, emailInfo)
+        notify(buddyData, userData, activity,  activitiesHTML, emailInfo)
 
         newMatchups.push({
           buddies: [user.id, buddy.id],
@@ -321,6 +359,12 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
     const companyRef = firestore.collection('companies').doc(companyId)
     if (!companyRef) return Promise.reject(new Error("company not found"))
 
+    let activitiesSnapshot = await companyRef.collection('activities').get()
+
+    const activities = []
+    activitiesSnapshot.forEach(doc => activities.push(doc.data()))
+    let activitiesHTML = getActivitiesHTML(activities)
+
     let companyData = await companyRef.get()
     companyData = companyData.data()
 
@@ -364,8 +408,8 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
 
 
       let emailInfo = []
-      addEmailPersonalization(user, buddy.data(), activity, emailInfo)
-      addEmailPersonalization(buddy.data(), user, activity, emailInfo)
+      addEmailPersonalization(user, buddy.data(), activity, activitiesHTML, emailInfo)
+      addEmailPersonalization(buddy.data(), user, activity, activitiesHTML, emailInfo)
 
       let msg = {
         personalizations: emailInfo,
