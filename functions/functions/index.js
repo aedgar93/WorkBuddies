@@ -147,7 +147,7 @@ const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, email
   let activityString = activity ? activity.name : "Grab a Coffee"
   let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', about: '', activitiesHTML}
   if (buddy2) {
-    substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
+    substitutions["buddy2"] = `${buddy2.firstName}`
     if(buddy2.profilePic) {
       substitutions.profilePic = `<img src=${buddy2.profilePic} style="width:93px;height:93px;"></img>`
     } else {
@@ -155,7 +155,12 @@ const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, email
     }
     if(buddy2.department) substitutions.department = buddy2.department
     if(buddy2.description) substitutions.description = buddy2.description
-    if(buddy2.email) substitutions.links = `<a href="mailto:${buddy2.email}"><img src="http://work-buddies-app.herokuapp.com/email_icon.png" style="width:22px;height:22px;"></img><a>`
+    if(buddy2.email) substitutions.links = `<td class="contactButtonTD">
+        <a class="contactButton" href="mailto:${buddy2.email}">
+          <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
+            <span class="contactText">Email</span
+        <a>
+      </td>`
     if(buddy2.department) substitutions.department = buddy2.department
     if(buddy2.about) substitutions.about = buddy2.about
   }

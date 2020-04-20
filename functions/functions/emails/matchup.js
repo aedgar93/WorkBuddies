@@ -20,40 +20,8 @@ module.exports = function() {
   <title></title>
 
   <style type="text/css">
-  .otherActivityContainer {
-    border: 1px solid #97D4FF;
-    border-radius: 9px;
-    padding-top: 32px;
-    padding-right: 32px;
-    padding-bottom: 50px;
-    padding-left: 32px;
-    mso-line-height-rule: exactly;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    word-break: break-word;
-    font-size: 16px;
-    line-height: 150%;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: left;
-  }
 
-  .activity {
-    padding: 17px 29px;
-    border-radius:25px;
-    background:#F3FAFF;
-    color:#777777;
-    font-size:14px;
-    font-weight: bold;
-    text-align:center;
-    margin: 0 10px;
-    white-space: no-wrap;
-  }
 
-  .activityTD {
-    line-height: 65px;
-    text-align: center;
-    margin: 0 10px;
-  }
     p {
       margin: 10px 0;
       padding: 0;
@@ -161,7 +129,7 @@ module.exports = function() {
     }
 
     .templateContainer {
-      max-width: 900px !important;
+      max-width: 880px !important;
     }
 
     a.mcnButton {
@@ -203,6 +171,7 @@ module.exports = function() {
       line-height: 125%;
       letter-spacing: normal;
       text-align: left;
+      margin-bottom: 75px;
     }
 
     h2 {
@@ -352,7 +321,7 @@ module.exports = function() {
 
     @media only screen and (min-width:768px) {
       .templateContainer {
-        width: 900px !important;
+        width: 880px !important;
       }
 
     }
@@ -596,6 +565,163 @@ module.exports = function() {
       }
 
     }
+
+    .photoTable {
+      max-width: 180px;
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .profileImgText {
+      line-height: 93px;
+      font-size: 56px;
+      margin-left: -2px;
+      letter-spacing: -6px;
+      color: white;
+      text-align: center;
+      width: 100%;
+    }
+    .contactTable {
+      min-height:109px;
+      max-width: 690px;
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      margin-bottom: 50px;
+    }
+
+    .name {
+      font-size: 24px;
+      font-family: Arial, Helvetica, sans-serif;
+      margin-bottom: 20px;
+      color: #4A4A4A;
+    }
+
+    .department {
+      font-family: Arial;
+      font-size: 18px;
+      color: #4A4A4A;
+      margin-bottom: 10px;
+    }
+
+    .about {
+      font-family: Arial;
+      font-size: 18px;
+      color: #4A4A4A;
+    }
+
+    .contactDetailsTable {
+      max-width: 690px;
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      margin-bottom: 50px;
+    }
+
+    .otherActivityContainer {
+      border: 1px solid #97D4FF;
+      border-radius: 9px;
+      padding-top: 32px;
+      padding-right: 32px;
+      padding-bottom: 50px;
+      padding-left: 32px;
+      mso-line-height-rule: exactly;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      word-break: break-word;
+      font-size: 16px;
+      line-height: 150%;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: left;
+    }
+
+    .activity {
+      padding: 17px 29px;
+      border-radius: 25px;
+      background: #F3FAFF;
+      color: #777777;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .activityTD {
+      line-height: 65px;
+      text-align: center;
+      margin: 0 10px;
+    }
+
+    .contactTD {
+      border: 1px solid #7F68FF;
+      border-radius: 9px;
+      background: #F7F6FE;
+      padding: 20px 25px;
+      color: #7F68FF;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .contactDescription {
+      padding-right: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .contactButton {
+      background: #7F68FF;
+      color: white !important;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 25px;
+      line-height: 30px;
+      height: 30px;
+      width: 96px;
+      display: inline-block;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .contactButtonTD {
+      min-width: 120px;
+      border-collapse: separate;
+    }
+
+    .contactText {
+      color: white;
+      text-decoration: none;
+      margin-left: 5px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .contactIcon {
+      vertical-align: text-top;
+      width: 22px;
+    }
+
+    .lightBulb {
+      height: 22px;
+      vertical-align: text-bottom;
+      margin-right: 3px;
+    }
+
+    .blurbTD {
+      line-height: 22px;
+      background:#F7F6FE;
+      color: #7F68FF;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 15px;
+      padding: 12px;
+    }
   </style>
 </head>
 
@@ -605,7 +731,7 @@ module.exports = function() {
 -->
   <center>
     <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable"
-      style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;background-color: #ffffff;">
+      style="border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 10px;width: 100%;background-color: #ffffff;">
       <tr>
         <td align="center" valign="top" id="bodyCell"
           style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;border-top: 0;">
@@ -616,12 +742,12 @@ module.exports = function() {
               <td align="center" valign="top" id="templatePreheader"
                 style="background:#ffffff none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #ffffff;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 9px;padding-bottom: 9px;">
                 <!--[if (gte mso 9)|(IE)]>
-                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="900" style="width:900px;">
+                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="880" style="width:880px;">
                                     <tr>
-                                    <td align="center" valign="top" width="900" style="width:900px;">
+                                    <td align="center" valign="top" width="880" style="width:880px;">
                                     <![endif]-->
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer"
-                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 900px !important;">
+                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 880px !important;">
                   <tr>
                     <td valign="top" class="preheaderContainer"
                       style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
@@ -639,12 +765,12 @@ module.exports = function() {
               <td align="center" valign="top" id="templateHeader"
                 style="background:#FFFFFF none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #FFFFFF;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 9px;padding-bottom: 0;">
                 <!--[if (gte mso 9)|(IE)]>
-                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="900" style="width:900px;">
+                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="880" style="width:880px;">
                                     <tr>
-                                    <td align="center" valign="top" width="900" style="width:900px;">
+                                    <td align="center" valign="top" width="880" style="width:880px;">
                                     <![endif]-->
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer"
-                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 900px !important;">
+                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 880px !important;">
                   <tr>
                     <td valign="top" class="headerContainer"
                       style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
@@ -693,12 +819,12 @@ module.exports = function() {
               <td align="center" valign="top" id="templateBody"
                 style="background:#ffffff none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #ffffff;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 9px;padding-bottom: 9px;">
                 <!--[if (gte mso 9)|(IE)]>
-                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="900" style="width:900px;">
+                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="880" style="width:880px;">
                                     <tr>
-                                    <td align="center" valign="top" width="900" style="width:900px;">
+                                    <td align="center" valign="top" width="880" style="width:880px;">
                                     <![endif]-->
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer"
-                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 900px !important;">
+                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 880px !important;">
                   <tr>
                     <td valign="top" class="bodyContainer"
                       style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
@@ -714,7 +840,7 @@ module.exports = function() {
         <![endif]-->
 
                               <!--[if mso]>
-        <td valign="top" width="900" style="width:900px;">
+        <td valign="top" width="880" style="width:880px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
                                 style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
@@ -726,7 +852,7 @@ module.exports = function() {
                                       style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
 
                                       <h1
-                                        style="text-align: left;display: block;margin: 0;padding: 0;color: #202020;font-family: Helvetica;font-size: 26px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;">
+                                      style="text-align: left;display: block;padding: 0;color: #202020;font-family: Arial;font-size: 34px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;">
                                         <br>
                                         <span style="font-family:arial,helvetica neue,helvetica,sans-serif"><span
                                             style="font-size:34px"><strong><span style="color:#2E2460">This Week,
@@ -765,8 +891,7 @@ module.exports = function() {
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
-                                style="max-width: 450px;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                                width="100%" class="mcnTextContentContainer">
+                                width="100%" class="photoTable">
                                 <tbody>
                                   <tr>
 
@@ -791,19 +916,15 @@ module.exports = function() {
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
-                                style="max-width: 450px;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                                width="100%" class="mcnTextContentContainer">
+                                class="contactTable">
                                 <tbody>
                                   <tr>
 
                                     <td valign="top" class="mcnTextContent"
                                       style="padding-top: 0;padding-left: 18px;padding-bottom: 9px;padding-right: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
-
-                                      <span style="color:#4A4A4A"><span
-                                          style="font-family:arial,helvetica neue,helvetica,sans-serif"><span
-                                            style="font-size:24px"><strong>{{buddy2}}</strong> {{links}}</span><br>
-                                          <span style="font-size:18px"><strong>{{department}}</strong></span><br>
-                                          <span style="font-size:18px">{{about}}</span></span></span>
+                                      <div class="name"><strong>{{buddy2}}</strong></div>
+                                      <div class="department"><strong>{{department}}</strong></div>
+                                      <div class="about">{{about}}</div>
                                     </td>
                                   </tr>
                                 </tbody>
@@ -816,6 +937,26 @@ module.exports = function() {
         </tr>
         </table>
         <![endif]-->
+                              <table align="right" border="0" cellpadding="0" cellspacing="0"
+                              width="100%" class="contactDetailsTable">
+                              <tbody>
+                                <tr>
+
+                                  <td valign="center" class="contactTD">
+                                    <table>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <span class="contactDescription">Contact {{buddy2}} to get started</span>
+                                          </td>
+                                          {{links}}
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
                             </td>
                           </tr>
                         </tbody>
@@ -832,7 +973,7 @@ module.exports = function() {
         <![endif]-->
 
                               <!--[if mso]>
-        <td valign="top" width="900" style="width:900px;">
+        <td valign="top" width="880" style="width:880px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
                                 style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
@@ -840,12 +981,16 @@ module.exports = function() {
                                 <tbody>
                                   <tr>
 
-                                    <td valign="top" class="mcnTextContent"
-                                      style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+                                    <td valign="top" class="blurbTD">
 
-                                      <div style="text-align: center;"><span style="font-size:16px"><span
-                                            style="color:#7F68FF">You and your buddy can do whatever you'd like, as long
-                                            as you spend a few minutes together this week.</span></span></div>
+                                      <div style="text-align: center;">
+                                        <span style="font-size:16px">
+                                          <span style="color:#7F68FF">
+                                            <img src="http://work-buddies-app.herokuapp.com/bulb_icon.png" class="lightBulb"></img>
+                                            You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.
+                                          </span>
+                                        </span>
+                                      </div>
 
                                     </td>
                                   </tr>
@@ -878,12 +1023,12 @@ module.exports = function() {
               <td align="center" valign="top" id="templateFooter"
                 style="background:#ffffff none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #ffffff;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 30px;padding-bottom: 9px;">
                 <!--[if (gte mso 9)|(IE)]>
-                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="900" style="width:900px;">
+                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="880" style="width:880px;">
                                     <tr>
-                                    <td align="center" valign="top" width="900" style="width:900px;">
+                                    <td align="center" valign="top" width="880" style="width:880px;">
                                     <![endif]-->
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer"
-                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 900px !important;">
+                  style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 880px !important;">
                   <tr>
                     <td valign="top" class="footerContainer"
                       style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
@@ -899,7 +1044,7 @@ module.exports = function() {
         <![endif]-->
 
                               <!--[if mso]>
-        <td valign="top" width="900" style="width:900px;">
+        <td valign="top" width="880" style="width:880px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
                                 style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
