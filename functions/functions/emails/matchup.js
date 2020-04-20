@@ -162,10 +162,11 @@ module.exports = function() {
       border-top: 0;
     }
 
+
     h1 {
       color: #202020;
-      font-family: Helvetica;
-      font-size: 26px;
+      font-family: Arial;
+      font-size: 34px;
       font-style: normal;
       font-weight: bold;
       line-height: 125%;
@@ -478,14 +479,6 @@ module.exports = function() {
     }
 
     @media only screen and (max-width: 480px) {
-      h1 {
-        font-size: 22px !important;
-        line-height: 125% !important;
-      }
-
-    }
-
-    @media only screen and (max-width: 480px) {
       h2 {
         font-size: 20px !important;
         line-height: 125% !important;
@@ -566,8 +559,24 @@ module.exports = function() {
 
     }
 
+    .logo {
+      max-width: 90px;
+      padding-bottom: 0;
+      display: inline !important;
+      vertical-align: bottom;
+      border: 0;
+      height: auto;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    .logoContainer {
+      margin-bottom: 51px;
+    }
+
     .photoTable {
-      max-width: 180px;
+      max-width: 150px;
       border-collapse: collapse;
       mso-table-lspace: 0pt;
       mso-table-rspace: 0pt;
@@ -586,13 +595,19 @@ module.exports = function() {
     }
     .contactTable {
       min-height:109px;
-      max-width: 690px;
+      max-width: 700px;
+      width: 50%;
       border-collapse: collapse;
       mso-table-lspace: 0pt;
       mso-table-rspace: 0pt;
       -ms-text-size-adjust: 100%;
       -webkit-text-size-adjust: 100%;
       margin-bottom: 50px;
+      text-align: left;
+    }
+
+    .contactInfo {
+      padding-left: 20px;
     }
 
     .name {
@@ -615,8 +630,22 @@ module.exports = function() {
       color: #4A4A4A;
     }
 
-    .contactDetailsTable {
+    .contactDetailsTableDesktop {
+      display: table;
       max-width: 690px;
+      width: 100%;
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      margin-bottom: 50px;
+    }
+
+    .contactDetailsTableMobile {
+      display: none;
+      max-width: 690px;
+      width: 100%;
       border-collapse: separate;
       mso-table-lspace: 0pt;
       mso-table-rspace: 0pt;
@@ -640,6 +669,13 @@ module.exports = function() {
       line-height: 150%;
       font-family: Arial, Helvetica, sans-serif;
       text-align: left;
+    }
+
+    .otherActivityTitle {
+      text-align: left;
+      font-size: 20px;
+      color: #5B5B5B;
+      padding-bottom:50px;
     }
 
     .activity {
@@ -671,13 +707,11 @@ module.exports = function() {
 
     .contactDescription {
       padding-right: 10px;
-      font-size: 18px;
-      font-weight: bold;
     }
 
     .contactButton {
       background: #7F68FF;
-      color: white !important;
+      color: white;
       text-decoration: none;
       padding: 10px;
       border-radius: 25px;
@@ -686,7 +720,6 @@ module.exports = function() {
       width: 96px;
       display: inline-block;
       text-align: center;
-      font-size: 16px;
     }
 
     .contactButtonTD {
@@ -694,16 +727,9 @@ module.exports = function() {
       border-collapse: separate;
     }
 
-    .contactText {
-      color: white;
-      text-decoration: none;
-      margin-left: 5px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
     .contactIcon {
-      vertical-align: text-top;
-      width: 22px;
+      vertical-align: middle;
+      height: 20px;
     }
 
     .lightBulb {
@@ -722,6 +748,101 @@ module.exports = function() {
       border-radius: 15px;
       padding: 12px;
     }
+
+    #bodyTable {
+      padding: 10px;
+    }
+
+    .profileImgContainer {
+      text-align: right;
+      width: 100%;
+    }
+
+    @media only screen and (max-width: 480px) {
+      .logo {
+        width: 46px;
+      }
+
+      .logoContainer {
+        margin-bottom: 16px;
+      }
+
+      .contactDetailsTableMobile {
+        display: table;
+      }
+
+      .contactDetailsTableDesktop {
+        display: none;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 50px;
+        line-height: 27px;
+      }
+
+      #bodyTable {
+        padding: 10px 25px !important;
+      }
+
+      .photoTable {
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .profileImgContainer {
+        text-align: center;
+      }
+
+      .contactTable {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      .contactInfo {
+        padding-left: 0;
+      }
+
+      .name {
+        margin-bottom: 22px;
+        font-size: 22px;
+      }
+
+      .department {
+        font-size: 16px;
+      }
+
+      .about {
+        font-size: 16px;
+      }
+
+      .contactDescription {
+        text-align: center;
+      }
+
+      .contactButtonTD {
+        text-align: center;
+        padding-top: 15px;
+      }
+
+      .otherActivityContainer {
+        padding-right: 15px;
+        padding-left: 15px;
+        padding-bottom: 33px;
+      }
+
+      .otherActivityTitle {
+        font-size: 18px;
+        padding-bottom: 15px;
+      }
+
+      .activity {
+        font-size: 12px;
+        padding: 15px 25px;
+      }
+    }
   </style>
 </head>
 
@@ -731,7 +852,7 @@ module.exports = function() {
 -->
   <center>
     <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable"
-      style="border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 10px;width: 100%;background-color: #ffffff;">
+      style="border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;width: 100%;background-color: #ffffff;">
       <tr>
         <td align="center" valign="top" id="bodyCell"
           style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;border-top: 0;">
@@ -777,32 +898,26 @@ module.exports = function() {
                       <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock"
                         style="min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                         <tbody class="mcnImageBlockOuter">
-                          <tr>
-                            <td valign="top"
-                              style="padding: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                              class="mcnImageBlockInner">
-                              <table align="left" width="100%" border="0" cellpadding="0" cellspacing="0"
-                                class="mcnImageContentContainer"
-                                style="min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
-                                <tbody>
-                                  <tr>
-                                    <td class="mcnImageContent" valign="top"
-                                      style="padding-right: 9px;padding-left: 9px;padding-top: 0;padding-bottom: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                        <tr>
+                          <td valign="top" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                            <table align="left" width="100%" border="0" cellpadding="0" cellspacing="0"
+                              class="logoContainer"
+                              style="min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                              <tbody>
+                                <tr>
+                                  <td valign="top">
 
 
-                                      <img align="left" alt=""
-                                        src="http://work-buddies-app.herokuapp.com/logo_small.png"
-                                        width="50.400000000000006"
-                                        style="max-width: 90px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;"
-                                        class="mcnImage">
-
-
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </td>
-                          </tr>
+                                    <img align="left" alt=""
+                                      src="http://work-buddies-app.herokuapp.com/logo_small.png"
+                                      width="50.400000000000006"
+                                      class="logo">
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
                         </tbody>
                       </table>
                     </td>
@@ -844,20 +959,16 @@ module.exports = function() {
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
                                 style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                                width="100%" class="mcnTextContentContainer">
+                                width="100%">
                                 <tbody>
                                   <tr>
 
-                                    <td valign="top" class="mcnTextContent"
-                                      style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+                                    <td valign="top">
 
-                                      <h1
-                                      style="text-align: left;display: block;padding: 0;color: #202020;font-family: Arial;font-size: 34px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;">
-                                        <br>
-                                        <span style="font-family:arial,helvetica neue,helvetica,sans-serif"><span
-                                            style="font-size:34px"><strong><span style="color:#2E2460">This Week,
+                                      <h1>
+                                        <strong><span style="color:#2E2460">This Week,
                                                 Let's</span> <span style="color:#7F68FF">{{activityString}}</span> <span
-                                                style="color:#2E2460">with&nbsp;{{buddy2}}:</span></strong></span></span>
+                                                style="color:#2E2460">with&nbsp;{{buddy2}}:</span></strong>
                                       </h1>
 
                                     </td>
@@ -895,10 +1006,10 @@ module.exports = function() {
                                 <tbody>
                                   <tr>
 
-                                    <td valign="top" class="mcnTextContent"
-                                      style="padding-top: 0;padding-left: 18px;padding-bottom: 9px;padding-right: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+                                    <td valign="top"
+                                      style="padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
 
-                                      <div style="text-align: right;width: 100%;">
+                                      <div class="profileImgContainer">
                                         <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;">
                                           {{profilePic}}
                                         </div>
@@ -915,13 +1026,13 @@ module.exports = function() {
                               <!--[if mso]>
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
-                              <table align="left" border="0" cellpadding="0" cellspacing="0"
+                              <table align="right" border="0" cellpadding="0" cellspacing="0"
                                 class="contactTable">
                                 <tbody>
                                   <tr>
 
-                                    <td valign="top" class="mcnTextContent"
-                                      style="padding-top: 0;padding-left: 18px;padding-bottom: 9px;padding-right: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+                                    <td valign="top" class="contactInfo"
+                                      style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
                                       <div class="name"><strong>{{buddy2}}</strong></div>
                                       <div class="department"><strong>{{department}}</strong></div>
                                       <div class="about">{{about}}</div>
@@ -937,8 +1048,8 @@ module.exports = function() {
         </tr>
         </table>
         <![endif]-->
-                              <table align="right" border="0" cellpadding="0" cellspacing="0"
-                              width="100%" class="contactDetailsTable">
+                      <table align="right" border="0" cellpadding="0" cellspacing="0"
+                              width="100%" class="contactDetailsTableDesktop">
                               <tbody>
                                 <tr>
 
@@ -957,6 +1068,28 @@ module.exports = function() {
                                 </tr>
                               </tbody>
                             </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <table align="right" border="0" cellpadding="0" cellspacing="0"
+                      width="100%" class="contactDetailsTableMobile">
+                        <tbody>
+                          <tr>
+
+                            <td valign="center" class="contactTD">
+                              <table>
+                                <tbody>
+                                  <tr>
+                                    <td style="text-align: center;">
+                                      <span class="contactDescription">Contact Anna Desiree Edgar Super Long Name to get started</span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    {{links}}
+                                  </tr>
+                                </tbody>
+                              </table>
                             </td>
                           </tr>
                         </tbody>

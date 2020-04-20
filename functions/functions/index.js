@@ -118,7 +118,7 @@ const getActivitiesHTML = (activities) => {
       <tr>
 
         <td valign="top" class="otherActivityContainer">
-          <div style="test-align: left; font-size: 20px;color: #5B5B5B;padding-bottom:50px;">Other Suggested Activities:</div>
+          <div class="otherActivityTitle">Other Suggested Activities:</div>
           <table align="left" border="0" cellpadding="0" cellspacing="10"
             style="max-width: 100%;min-width: 100%;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
             width="100%" class="mcnTextContentContainer">
@@ -158,8 +158,8 @@ const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, email
     if(buddy2.email) substitutions.links = `<td class="contactButtonTD">
         <a class="contactButton" href="mailto:${buddy2.email}">
           <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
-            <span class="contactText">Email</span
-        <a>
+            <span class="contactText">Email</span>
+        </a>
       </td>`
     if(buddy2.department) substitutions.department = buddy2.department
     if(buddy2.about) substitutions.about = buddy2.about
@@ -219,7 +219,6 @@ const matchup = async (data) => {
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
   let previousMatchupsInfo = await getMatchups(companyRef, companyData)
   let previousMatchups = previousMatchupsInfo.matchups
-  console.log(previousMatchupsInfo)
 
   let newMatchups = []
   let emailInfo = []
