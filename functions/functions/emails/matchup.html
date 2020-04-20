@@ -18,6 +18,45 @@
   <title></title>
 
   <style type="text/css">
+
+    .photoTable {
+      max-width: 200px;
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .profileImgText {
+      line-height: 93px;
+      font-size: 56px;
+      padding-left: -3px;
+      letter-spacing: -6px;
+      color: white;
+      text-align: center;
+      width: 100%;
+    }
+    .contactTable {
+      min-height:109px;
+      max-width: 700px;
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .contactDetailsTable {
+      max-width: 700px;
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      margin-bottom: 50px;
+    }
+
     .otherActivityContainer {
       border: 1px solid #97D4FF;
       border-radius: 9px;
@@ -54,8 +93,33 @@
     .contactTD {
       border: 1px solid #7F68FF;
       border-radius: 9px;
+      background: #7F68FF07;
+      padding: 20px 25px;
+      color: #7F68FF;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .contactDescription {
+      padding-right: 10px;
+    }
+
+    .contactButton {
       background: #7F68FF;
-      line-height: 38px;
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 25px;
+      line-height: 30px;
+      height: 30px;
+      width: 96px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .contactButtonTD {
+      min-width: 120px;
+      border-collapse: separate;
     }
 
     .contactIcon {
@@ -775,8 +839,7 @@
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
-                                style="max-width: 450px;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                                width="100%" class="mcnTextContentContainer">
+                                width="100%" class="photoTable">
                                 <tbody>
                                   <tr>
 
@@ -786,8 +849,7 @@
                                       <div style="text-align: right;width: 100%;">
                                         <div
                                           style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;">
-                                          <div
-                                            style="line-height: 93px; font-size: 72px; padding-left: -3px; letter-spacing: -6px; color: white; text-align: center; width: 100%;">
+                                          <div class="profileImgText">
                                             BB</div>
                                         </div>
                                       </div>
@@ -804,8 +866,7 @@
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
-                                style="min-height:109px;max-width: 450px;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                                width="100%" class="mcnTextContentContainer">
+                                width="100%" class="contactTable">
                                 <tbody>
                                   <tr>
 
@@ -822,21 +883,26 @@
                                 </tbody>
                               </table>
                               <table align="right" border="0" cellpadding="0" cellspacing="0"
-                              style="max-width: 450px;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-                              width="100%" class="mcnTextContentContainer">
+                              width="100%" class="contactDetailsTable">
                               <tbody>
                                 <tr>
 
-                                  <td valign="top" class="contactTD">
-                                    <span>Contact Anna to get started</span>
-                                    <span class="contactButton">
-                                      <a
-                                        href="mailto:annadesiree11+billybob@gmail.com">
-                                        <img
-                                          src="http://work-buddies-app.herokuapp.com/email_icon.png"
-                                          class="contactIcon"></img>
-                                      <a>
-                                    </span>
+                                  <td valign="center" class="contactTD">
+                                    <table>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <span class="contactDescription">Contact Anna Desiree Edgar Super Long Name to get started</span>
+                                          </td>
+                                          <td class="contactButtonTD">
+                                            <a class="contactButton" href="mailto:annadesiree11+billybob@gmail.com">
+                                              <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
+                                                Email
+                                            <a>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
                                   </td>
                                 </tr>
                               </tbody>

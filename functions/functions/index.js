@@ -151,7 +151,7 @@ const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, email
     if(buddy2.profilePic) {
       substitutions.profilePic = `<img src=${buddy2.profilePic} style="width:93px;height:93px;"></img>`
     } else {
-      substitutions.profilePic = `<div style="line-height: 93px; font-size: 54px; margin-left: -3px; letter-spacing: -6px; color: white; text-align: center; width: 100%;">${buddy2.firstName[0]}${buddy2.lastName[0]}</div>`
+      substitutions.profilePic = `<div class="profileImgText">${buddy2.firstName[0]}${buddy2.lastName[0]}</div>`
     }
     if(buddy2.department) substitutions.department = buddy2.department
     if(buddy2.description) substitutions.description = buddy2.description
