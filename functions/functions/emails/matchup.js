@@ -665,7 +665,7 @@ module.exports = function() {
 
 
                                       <img align="left" alt=""
-                                        src="https://mcusercontent.com/13e8757f915c60d5856f71d24/images/930e073a-04f6-44ac-acdd-7922eb3a59fa.png"
+                                        src="http://work-buddies-app.herokuapp.com/logo_small.png"
                                         width="50.400000000000006"
                                         style="max-width: 90px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;"
                                         class="mcnImage">
