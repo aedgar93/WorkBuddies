@@ -20,6 +20,309 @@ module.exports = function() {
   <title></title>
 
   <style type="text/css">
+  .logo {
+    max-width: 90px;
+    padding-bottom: 0;
+    display: inline !important;
+    vertical-align: bottom;
+    border: 0;
+    height: auto;
+    outline: none;
+    text-decoration: none;
+    -ms-interpolation-mode: bicubic;
+  }
+
+  .logoContainer {
+    margin-bottom: 51px;
+  }
+
+  .photoTable {
+    max-width: 150px;
+    border-collapse: collapse;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .profileImgText {
+    line-height: 93px;
+    font-size: 56px;
+    margin-left: -2px;
+    letter-spacing: -6px;
+    color: white;
+    text-align: center;
+    width: 100%;
+  }
+  .contactTable {
+    min-height:109px;
+    max-width: 700px;
+    width: 50%;
+    border-collapse: collapse;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    margin-bottom: 50px;
+    margin-left: 50px;
+    text-align: left;
+  }
+
+  .contactText {
+    color: white;
+  }
+
+  .contactInfo {
+    padding-left: 20px;
+  }
+
+  .name {
+    font-size: 24px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 20px;
+    color: #4A4A4A;
+  }
+
+  .department {
+    font-family: Arial;
+    font-size: 18px;
+    color: #4A4A4A;
+    margin-bottom: 10px;
+  }
+
+  .about {
+    font-family: Arial;
+    font-size: 18px;
+    color: #4A4A4A;
+  }
+
+  .contactDetailsTableDesktop {
+    display: table;
+    max-width: 690px;
+    width: 100%;
+    border-collapse: separate;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    margin-bottom: 50px;
+  }
+
+  .contactDetailsTableMobile {
+    display: none;
+    max-width: 690px;
+    width: 100%;
+    border-collapse: separate;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    margin-bottom: 50px;
+  }
+
+  .otherActivityContainer {
+    border: 1px solid #97D4FF;
+    border-radius: 9px;
+    padding-top: 32px;
+    padding-right: 32px;
+    padding-bottom: 50px;
+    padding-left: 32px;
+    mso-line-height-rule: exactly;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    word-break: break-word;
+    font-size: 16px;
+    line-height: 150%;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+  }
+
+  .otherActivityTitle {
+    text-align: left;
+    font-size: 20px;
+    color: #5B5B5B;
+    padding-bottom:50px;
+  }
+
+  .activity {
+    padding: 17px 29px;
+    border-radius: 25px;
+    background: #F3FAFF;
+    color: #777777;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .activityTD {
+    line-height: 65px;
+    text-align: center;
+    margin: 0 10px;
+  }
+
+  .contactTD {
+    border: 1px solid #7F68FF;
+    border-radius: 9px;
+    background: #F7F6FE;
+    padding: 20px 25px;
+    color: #7F68FF;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .contactDescription {
+    padding-right: 10px;
+  }
+
+  .contactButton {
+    background: #7F68FF;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 25px;
+    line-height: 30px;
+    height: 30px;
+    width: 96px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .contactButtonTD {
+    min-width: 120px;
+    border-collapse: separate;
+  }
+
+  .contactIcon {
+    vertical-align: middle;
+    height: 20px;
+  }
+
+  .lightBulb {
+    height: 22px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+  }
+
+  .blurbTD {
+    line-height: 22px;
+    background:#F7F6FE;
+    color: #7F68FF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 15px;
+    padding: 12px;
+  }
+
+  #bodyTable {
+    padding: 10px;
+  }
+
+  .profileImgContainer {
+    text-align: right;
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 480px) {
+    .logo {
+      width: 46px;
+    }
+
+    .logoContainer {
+      margin-bottom: 16px;
+    }
+
+    .contactDetailsTableMobile {
+      display: table;
+    }
+
+    .contactDetailsTableDesktop {
+      display: none;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 50px;
+      line-height: 27px;
+    }
+
+    #bodyTable {
+      padding: 10px 15px !important;
+    }
+
+    .photoTable {
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .profileImgContainer {
+      text-align: center;
+    }
+
+    .contactTable {
+      text-align: center;
+      margin-bottom: 28px;
+      margin-left: 0;
+      margin-right: 0;
+      width: 100%;
+    }
+
+    .contactTD table {
+      margin: 0;
+      width: 100%;
+    }
+
+    .contactInfo {
+      padding-left: 0;
+      text-align: center;
+    }
+
+    .name {
+      margin-bottom: 22px;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .department {
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .about {
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .contactDescription {
+      text-align: center;
+    }
+
+    .contactButtonTD {
+      text-align: center;
+      padding-top: 15px;
+    }
+
+    .otherActivityContainer {
+      padding-right: 15px;
+      padding-left: 15px;
+      padding-bottom: 33px;
+    }
+
+    .otherActivityTitle {
+      font-size: 18px;
+      padding-bottom: 15px;
+    }
+
+    .activity {
+      font-size: 12px;
+      padding: 15px 25px;
+    }
+  }
+  </style>
+  <style type="text/css">
 
 
     p {
@@ -559,290 +862,7 @@ module.exports = function() {
 
     }
 
-    .logo {
-      max-width: 90px;
-      padding-bottom: 0;
-      display: inline !important;
-      vertical-align: bottom;
-      border: 0;
-      height: auto;
-      outline: none;
-      text-decoration: none;
-      -ms-interpolation-mode: bicubic;
-    }
 
-    .logoContainer {
-      margin-bottom: 51px;
-    }
-
-    .photoTable {
-      max-width: 150px;
-      border-collapse: collapse;
-      mso-table-lspace: 0pt;
-      mso-table-rspace: 0pt;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-    }
-
-    .profileImgText {
-      line-height: 93px;
-      font-size: 56px;
-      margin-left: -2px;
-      letter-spacing: -6px;
-      color: white;
-      text-align: center;
-      width: 100%;
-    }
-    .contactTable {
-      min-height:109px;
-      max-width: 700px;
-      width: 50%;
-      border-collapse: collapse;
-      mso-table-lspace: 0pt;
-      mso-table-rspace: 0pt;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-      margin-bottom: 50px;
-      text-align: left;
-    }
-
-    .contactInfo {
-      padding-left: 20px;
-    }
-
-    .name {
-      font-size: 24px;
-      font-family: Arial, Helvetica, sans-serif;
-      margin-bottom: 20px;
-      color: #4A4A4A;
-    }
-
-    .department {
-      font-family: Arial;
-      font-size: 18px;
-      color: #4A4A4A;
-      margin-bottom: 10px;
-    }
-
-    .about {
-      font-family: Arial;
-      font-size: 18px;
-      color: #4A4A4A;
-    }
-
-    .contactDetailsTableDesktop {
-      display: table;
-      max-width: 690px;
-      width: 100%;
-      border-collapse: separate;
-      mso-table-lspace: 0pt;
-      mso-table-rspace: 0pt;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-      margin-bottom: 50px;
-    }
-
-    .contactDetailsTableMobile {
-      display: none;
-      max-width: 690px;
-      width: 100%;
-      border-collapse: separate;
-      mso-table-lspace: 0pt;
-      mso-table-rspace: 0pt;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-      margin-bottom: 50px;
-    }
-
-    .otherActivityContainer {
-      border: 1px solid #97D4FF;
-      border-radius: 9px;
-      padding-top: 32px;
-      padding-right: 32px;
-      padding-bottom: 50px;
-      padding-left: 32px;
-      mso-line-height-rule: exactly;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-      word-break: break-word;
-      font-size: 16px;
-      line-height: 150%;
-      font-family: Arial, Helvetica, sans-serif;
-      text-align: left;
-    }
-
-    .otherActivityTitle {
-      text-align: left;
-      font-size: 20px;
-      color: #5B5B5B;
-      padding-bottom:50px;
-    }
-
-    .activity {
-      padding: 17px 29px;
-      border-radius: 25px;
-      background: #F3FAFF;
-      color: #777777;
-      font-size: 14px;
-      font-weight: bold;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .activityTD {
-      line-height: 65px;
-      text-align: center;
-      margin: 0 10px;
-    }
-
-    .contactTD {
-      border: 1px solid #7F68FF;
-      border-radius: 9px;
-      background: #F7F6FE;
-      padding: 20px 25px;
-      color: #7F68FF;
-      font-weight: bold;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .contactDescription {
-      padding-right: 10px;
-    }
-
-    .contactButton {
-      background: #7F68FF;
-      color: white;
-      text-decoration: none;
-      padding: 10px;
-      border-radius: 25px;
-      line-height: 30px;
-      height: 30px;
-      width: 96px;
-      display: inline-block;
-      text-align: center;
-    }
-
-    .contactButtonTD {
-      min-width: 120px;
-      border-collapse: separate;
-    }
-
-    .contactIcon {
-      vertical-align: middle;
-      height: 20px;
-    }
-
-    .lightBulb {
-      height: 22px;
-      vertical-align: text-bottom;
-      margin-right: 3px;
-    }
-
-    .blurbTD {
-      line-height: 22px;
-      background:#F7F6FE;
-      color: #7F68FF;
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: bold;
-      font-size: 16px;
-      border-radius: 15px;
-      padding: 12px;
-    }
-
-    #bodyTable {
-      padding: 10px;
-    }
-
-    .profileImgContainer {
-      text-align: right;
-      width: 100%;
-    }
-
-    @media only screen and (max-width: 480px) {
-      .logo {
-        width: 46px;
-      }
-
-      .logoContainer {
-        margin-bottom: 16px;
-      }
-
-      .contactDetailsTableMobile {
-        display: table;
-      }
-
-      .contactDetailsTableDesktop {
-        display: none;
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-bottom: 50px;
-        line-height: 27px;
-      }
-
-      #bodyTable {
-        padding: 10px 25px !important;
-      }
-
-      .photoTable {
-        width: 100%;
-        max-width: 100%;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-
-      .profileImgContainer {
-        text-align: center;
-      }
-
-      .contactTable {
-        text-align: center;
-        margin-bottom: 28px;
-      }
-
-      .contactInfo {
-        padding-left: 0;
-      }
-
-      .name {
-        margin-bottom: 22px;
-        font-size: 22px;
-      }
-
-      .department {
-        font-size: 16px;
-      }
-
-      .about {
-        font-size: 16px;
-      }
-
-      .contactDescription {
-        text-align: center;
-      }
-
-      .contactButtonTD {
-        text-align: center;
-        padding-top: 15px;
-      }
-
-      .otherActivityContainer {
-        padding-right: 15px;
-        padding-left: 15px;
-        padding-bottom: 33px;
-      }
-
-      .otherActivityTitle {
-        font-size: 18px;
-        padding-bottom: 15px;
-      }
-
-      .activity {
-        font-size: 12px;
-        padding: 15px 25px;
-      }
-    }
   </style>
 </head>
 
@@ -1026,7 +1046,7 @@ module.exports = function() {
                               <!--[if mso]>
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
-                              <table align="right" border="0" cellpadding="0" cellspacing="0"
+                              <table align="left" border="0" cellpadding="0" cellspacing="0"
                                 class="contactTable">
                                 <tbody>
                                   <tr>
@@ -1082,7 +1102,7 @@ module.exports = function() {
                                 <tbody>
                                   <tr>
                                     <td style="text-align: center;">
-                                      <span class="contactDescription">Contact Anna Desiree Edgar Super Long Name to get started</span>
+                                      <span class="contactDescription">Contact {{buddy2}} to get started</span>
                                     </td>
                                   </tr>
                                   <tr>
