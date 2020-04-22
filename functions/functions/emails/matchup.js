@@ -98,7 +98,8 @@ module.exports = function() {
 
   .contactDetailsTableDesktop {
     display: table;
-    max-width: 690px;
+    width: 100%;
+    empty-cells: show;
     width: 100%;
     border-collapse: separate;
     mso-table-lspace: 0pt;
@@ -110,14 +111,10 @@ module.exports = function() {
 
   .contactDetailsTableMobile {
     display: none;
-    max-width: 690px;
-    width: 100%;
-    border-collapse: separate;
-    mso-table-lspace: 0pt;
-    mso-table-rspace: 0pt;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    margin-bottom: 50px;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    font-size: 0;
   }
 
   .otherActivityContainer {
@@ -169,10 +166,21 @@ module.exports = function() {
     color: #7F68FF;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
+    width:1%;
+    white-space:nowrap;
+  }
+
+  .contactTDFiller {
+    width: 200px;
   }
 
   .contactDescription {
     padding-right: 10px;
+    color: #7F68FF;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    white-space:nowrap;
   }
 
   .contactButton {
@@ -235,10 +243,20 @@ module.exports = function() {
 
     .contactDetailsTableMobile {
       display: table;
+      visibility: visible;
+      max-width: 690px;
+      width: 100%;
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      margin-bottom: 50px;
     }
 
     .contactDetailsTableDesktop {
       display: none;
+      visibility: hidden;
     }
 
     h1 {
@@ -1022,15 +1040,15 @@ module.exports = function() {
         <td valign="top" width="450" style="width:450px;">
         <![endif]-->
                               <table align="left" border="0" cellpadding="0" cellspacing="0"
-                                width="100%" class="photoTable">
-                                <tbody>
-                                  <tr>
+                                width="100%" class="photoTable" style="mso-hide:all;">
+                                <tbody style="mso-hide:all;">
+                                  <tr style="mso-hide:all;">
 
                                     <td valign="top"
-                                      style="padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+                                      style="mso-hide:all;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
 
-                                      <div class="profileImgContainer">
-                                        <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;">
+                                      <div class="profileImgContainer" style="mso-hide:all;">
+                                        <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;mso-hide:all;">
                                           {{profilePic}}
                                         </div>
                                       </div>
@@ -1072,6 +1090,7 @@ module.exports = function() {
                               width="100%" class="contactDetailsTableDesktop">
                               <tbody>
                                 <tr>
+                                  <td class="contactTDFiller">&nbsp;</td>
 
                                   <td valign="center" class="contactTD">
                                     <table>
@@ -1085,6 +1104,7 @@ module.exports = function() {
                                       </tbody>
                                     </table>
                                   </td>
+                                  <td>&nbsp;</td>
                                 </tr>
                               </tbody>
                             </table>
@@ -1093,19 +1113,19 @@ module.exports = function() {
                         </tbody>
                       </table>
                       <table align="right" border="0" cellpadding="0" cellspacing="0"
-                      width="100%" class="contactDetailsTableMobile">
-                        <tbody>
-                          <tr>
+                      width="100%" class="contactDetailsTableMobile" style="mso-hide:all;">
+                        <tbody style="mso-hide:all;">
+                          <tr style="mso-hide:all;">
 
-                            <td valign="center" class="contactTD">
-                              <table>
-                                <tbody>
-                                  <tr>
-                                    <td style="text-align: center;">
-                                      <span class="contactDescription">Contact {{buddy2}} to get started</span>
+                            <td valign="center" class="contactTD" style="mso-hide:all;">
+                              <table style="mso-hide:all;">
+                                <tbody style="mso-hide:all;">
+                                  <tr style="mso-hide:all;">
+                                    <td style="text-align: center;mso-hide:all;">
+                                      <span class="contactDescription" style="mso-hide:all;">Contact {{buddy2}} to get started</span>
                                     </td>
                                   </tr>
-                                  <tr>
+                                  <tr style="mso-hide:all;">
                                     {{links}}
                                   </tr>
                                 </tbody>
