@@ -156,8 +156,10 @@ const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, email
     if(buddy2.department) substitutions.department = buddy2.department
     if(buddy2.description) substitutions.description = buddy2.description
     if(buddy2.email) {
+      let subject = "I'm your weekly buddy"
+      let body = `Hello ${buddy2.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week to ${activityString}. Can we schedule a time this week to do our activity?%0D%0A %0D%0ASincerely, ${buddy1.firstName}`
       substitutions.links = `<td class="contactButtonTD">
-        <a class="contactButton" href="mailto:${buddy2.email}">
+        <a class="contactButton" href="mailto:${buddy2.email}?subject=${subject}&body=${body}">
           <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
             <span class="contactText">Email</span>
         </a>
