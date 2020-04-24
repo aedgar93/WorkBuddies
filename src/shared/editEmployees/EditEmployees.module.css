@@ -37,9 +37,21 @@
 .email {
   margin: 0 25px;
   flex-grow: 1;
+  word-wrap: break-word;
+  overflow: hidden;
 }
 
 .delete {
   justify-self: flex-end;
   margin: auto;
+}
+
+@media only screen and (max-width: 480px) {
+  .inviteContainer {
+    flex-direction: column;
+  }
+
+  .name, .email, .delete {
+    margin: 5px 0;
+  }
 }

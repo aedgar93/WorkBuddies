@@ -17,6 +17,10 @@
 
 .navLink {
   color: var(--primary) !important;
+  font-weight: bold;
+  padding: 0;
+  margin: 0 22px;
+  font-size: 18px;
 }
 
 .navLink:hover {
@@ -29,4 +33,14 @@
 
 .login {
   margin-right: 57px;
+}
+
+@media only screen and (max-width: 480px) {
+  .logo {
+    width: 50px;
+  }
+
+  .navBar {
+    padding: 25px;
+  }
 }

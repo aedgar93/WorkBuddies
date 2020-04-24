@@ -184,89 +184,96 @@ const EditAccount = ({history}) => {
 
   return (
     <div className={styles.wrapper} onSubmit={handleSubmit}>
-      <div className={styles.section}>
-        <h2>My Account</h2>
+      <div className={styles.purpleLine}>
+
+
+        <div className={styles.section}>
         {
           message ?
           <Alert variant={message.type ? message.type : 'success'}>{message.message}</Alert>
           : null
         }
-        <div className={styles.about}>
-          <ProfilePic onClick={openPicModal} user={auth.user}>
-            <div className={styles.editPic}>
-              Edit
-            </div>
-          </ProfilePic>
+        <div className={styles.content}>
+
+          <div className={styles.about}>
+            <div className={styles.title}>Profile</div>
+            <ProfilePic onClick={openPicModal} user={auth.user}>
+              <div className={styles.editPic}>
+                Edit
+              </div>
+            </ProfilePic>
+          </div>
+          <Form className={styles.form}>
+            <Form.Group className={styles.formGroup} bsPrefix="wb">
+              <Form.Label className={styles.label} bsPrefix="wb">Name</Form.Label>
+              <Row>
+                <Col>
+                  <Form.Control
+                    name="firstName"
+                    value={firstName}
+                    placeholder="First name"
+                    required
+                    onChange={e => setFirstName(e.target.value)}
+                  />
+                </Col>
+                <Col>
+                  <Form.Control
+                    name="lastName"
+                    value={lastName}
+                    placeholder="Last name"
+                    required
+                    onChange={e => setLastName(e.target.value)}
+                  />
+                </Col>
+              </Row>
+            </Form.Group>
+            <Form.Group controlId="email" className={styles.formGroup} bsPrefix="wb">
+              <Form.Label className={styles.label} bsPrefix="wb">Email address</Form.Label>
+              <Form.Control
+                required
+                type="email"
+                value={email}
+                placeholder="Enter email"
+                onChange={e => setEmail(e.target.value)}/>
+            </Form.Group>
+            <Form.Group controlId="department" className={styles.formGroup} bsPrefix="wb">
+              <Form.Label className={styles.label} bsPrefix="wb">Department</Form.Label>
+              <Form.Control
+                type="text"
+                value={department}
+                placeholder="Department"
+                onChange={e => setDepartment(e.target.value)}/>
+            </Form.Group>
+            <Form.Group controlId="aboutMe" className={styles.formGroup} bsPrefix="wb">
+              <Form.Label className={styles.label} bsPrefix="wb">About Me</Form.Label>
+              <Form.Control
+                type="text"
+                value={about}
+                placeholder="Tell us a little about yourself"
+                onChange={e => setAbout(e.target.value)}/>
+            </Form.Group>
+            <Button variant="primary" type="submit" className={styles.button} disabled={!valid || loading}>
+              {
+                loading ?
+                  <Spinner
+                    className={styles.buttonSpinner}
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  /> : null
+              }
+              Submit
+            </Button>
+          </Form>
         </div>
-        <Form className={styles.form}>
-          <Form.Group className={styles.formGroup} bsPrefix="wb">
-            <Form.Label className={styles.label} bsPrefix="wb">Name</Form.Label>
-            <Row>
-              <Col>
-                <Form.Control
-                  name="firstName"
-                  value={firstName}
-                  placeholder="First name"
-                  required
-                  onChange={e => setFirstName(e.target.value)}
-                />
-              </Col>
-              <Col>
-                <Form.Control
-                  name="lastName"
-                  value={lastName}
-                  placeholder="Last name"
-                  required
-                  onChange={e => setLastName(e.target.value)}
-                />
-              </Col>
-            </Row>
-          </Form.Group>
-          <Form.Group controlId="email" className={styles.formGroup} bsPrefix="wb">
-            <Form.Label className={styles.label} bsPrefix="wb">Email address</Form.Label>
-            <Form.Control
-              required
-              type="email"
-              value={email}
-              placeholder="Enter email"
-              onChange={e => setEmail(e.target.value)}/>
-          </Form.Group>
-          <Form.Group controlId="department" className={styles.formGroup} bsPrefix="wb">
-            <Form.Label className={styles.label} bsPrefix="wb">Department</Form.Label>
-            <Form.Control
-              type="text"
-              value={department}
-              placeholder="Department"
-              onChange={e => setDepartment(e.target.value)}/>
-          </Form.Group>
-          <Form.Group controlId="aboutMe" className={styles.formGroup} bsPrefix="wb">
-            <Form.Label className={styles.label} bsPrefix="wb">About Me</Form.Label>
-            <Form.Control
-              type="text"
-              value={about}
-              placeholder="Tell us a little about yourself"
-              onChange={e => setAbout(e.target.value)}/>
-          </Form.Group>
-          <Button variant="primary" type="submit" className={styles.button} disabled={!valid || loading}>
-            {
-              loading ?
-                <Spinner
-                  className={styles.buttonSpinner}
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                /> : null
-            }
-            Submit
-          </Button>
-        </Form>
+      </div>
       </div>
       <div className={styles.section}>
         <Form>
           <Form.Group controlId="notifications" className={styles.formGroup} bsPrefix="wb">
-            <Form.Label className={styles.label} bsPrefix="wb">Notification Preferences</Form.Label>
+            <div className={styles.title}>Notification</div>
             <Form.Check
               checked={notifyEmail}
               type="checkbox"

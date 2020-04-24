@@ -45,3 +45,15 @@
   border-color: var(--primary-dark);
   stroke: var(--primary-dark);
 }
+
+@media only screen and (max-width: 480px) {
+  .card {
+    margin: 10px 5px;
+    padding: 10px;
+  }
+
+  .name {
+    padding: 0 5px;
+    font-size: 12px;
+  }
+}

@@ -15,16 +15,18 @@ const ProfilePic = ({ onClick, children, user, size}) => {
     initialsStyle.left = size/2 * .07 * -1 + 'px'
   }
   return (
-    <div onClick={() => onClick && onClick()} className={styles.wrapper} data-size={size} style={style}>
-      { user.profilePic ?
-        <img src={user.profilePic} className={styles.pic} alt="Profile"/>
-        :
-        <div className={styles.initials} style={initialsStyle}>
-          {user.firstName[0]} {user.lastName[0]}
-        </div>
-      }
-      { children }
-    </div>
+    <>
+      <div onClick={() => onClick && onClick()} className={`${styles.wrapper} ${onClick ? styles.clickable : null}`} data-size={size} style={style}>
+        { user.profilePic ?
+          <img src={user.profilePic} className={styles.pic} alt="Profile"/>
+          :
+          <div className={styles.initials} style={initialsStyle}>
+            {user.firstName[0]} {user.lastName[0]}
+          </div>
+        }
+      </div>
+      <div onClick={() => onClick && onClick()}>{ children }</div>
+    </>
   );
 }
 

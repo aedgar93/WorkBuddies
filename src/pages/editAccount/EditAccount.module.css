@@ -1,15 +1,36 @@
 .wrapper {
   text-align: left;
-  max-width: 900px;
-  margin: 0 auto;
+}
+
+.purpleLine {
+  background-color: var(--primary-light);
+}
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+  color: #2E2460;
+  letter-spacing: -0.25px;
+  margin-bottom: 25px;
+}
+
+.about {
+  margin-right: 100px;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
 }
 
 .section {
-  margin-bottom: 50px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 20px;
 }
 
 .form {
-  margin-top: 20px;
+  flex-grow: 1;
 }
 
 .button {
@@ -35,14 +56,28 @@
 }
 
 .editPic {
-  position: absolute;
   width: 100%;
-  color: white;
-  bottom: 15px;
+  color: var(--primary-color);
   text-align: center;
-  background-color: rgba(0, 0, 0, .5);
-  line-height: 25px;
-  font-size: 20px;
+  margin-top: 10px;
+  font-weight: bold;
   cursor: pointer;
-  z-index: 2;
 }
+
+@media only screen and (max-width: 480px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .about {
+    width: 100%;
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .title {
+    text-align: left;
+  }
+}
+
+

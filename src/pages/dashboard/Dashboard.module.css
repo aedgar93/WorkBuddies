@@ -226,3 +226,43 @@
   font-weight: bold;
   font-size: 18px;
 }
+
+@media only screen and (max-width: 480px) {
+  .matchup {
+    flex-direction: column;
+  }
+
+  .info {
+    margin-top: 30px;
+  }
+
+  .picWrapper {
+    margin: 0;
+  }
+
+  .activityText {
+    max-width: 100px;
+  }
+
+  .activitiesText {
+    font-size: 16px;
+  }
+
+  .dropDownIcon {
+    width: 20px;
+  }
+
+  .rightIcon {
+    width: 8px;
+    height: 12px;
+  }
+
+  .downIcon {
+    width: 12px;
+    height: 8px;
+  }
+
+  .activities {
+    margin-top: 20px;
+  }
+}

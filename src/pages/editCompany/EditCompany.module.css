@@ -9,7 +9,7 @@
 }
 
 .purpleLine {
-  background: #DAE4FF;
+  background: var(--primary-light)
 }
 
 .whiteLine {
@@ -48,4 +48,10 @@
 
 .buttonSpinner {
   margin-right: 5px;
+}
+
+@media only screen and (max-width: 480px) {
+  .companySection {
+    flex-direction: column;
+  }
 }

@@ -13,6 +13,7 @@
   justify-content: center;
   margin-left: 10px;
   margin-right: 10px;
+  flex-grow: 1;
 }
 
 .name {
