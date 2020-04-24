@@ -4,3 +4,16 @@ $theme-colors: (
 );
 
 @import '~bootstrap/scss/bootstrap.scss';
+
+.alert-primary {
+  color: #7F68FF;
+  background-color: #7F68FF15;
+  font-weight: bold;
+}
+
+.alert {
+  font-size: 18px;
+  line-height: 22px;
+  border-radius: 15px;
+  border: none;
+}

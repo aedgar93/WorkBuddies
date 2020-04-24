@@ -3,11 +3,6 @@ import React, { useEffect, useState } from 'react';
 import styles from './ProfilePic.module.css'
 
 const ProfilePic = ({ onClick, children, user, size}) => {
-  let [color, setColor] = useState(null)
-
-  useEffect(() => {
-    setColor(Math.floor(Math.random() * 3) + 1  )
-  }, [])
 
   let style = {}
   let initialsStyle = {}
@@ -18,7 +13,7 @@ const ProfilePic = ({ onClick, children, user, size}) => {
     initialsStyle.fontSize = size/2
   }
   return (
-    <div onClick={() => onClick && onClick()} className={styles.wrapper} data-color={color} data-size={size} style={style}>
+    <div onClick={() => onClick && onClick()} className={styles.wrapper} data-size={size} style={style}>
       { user.profilePic ?
         <img src={user.profilePic} className={styles.pic} alt="Profile"/>
         :

@@ -6,7 +6,7 @@ import { ROUTES } from '../../utils/constants'
 const SetUpEmployees = ({history}) => {
 
   const handleDone = () => {
-    history.push(ROUTES.BASE)
+    history.push(ROUTES.BASE, {showInviteAlert: true})
   }
 
 

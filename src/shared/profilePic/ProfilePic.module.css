@@ -8,19 +8,9 @@
   flex-shrink: 0;
   align-self: center;
   position: relative;
+  background-color: var(--primary-dark);
 }
 
-.wrapper[data-color="1"] {
-  background-color: #AEF3E7;
-}
-
-.wrapper[data-color="2"] {
-  background-color: #254E70;
-}
-
-.wrapper[data-color="3"] {
-  background-color: #C33C54;
-}
 
 .pic {
   width: 100%;
@@ -33,8 +23,8 @@
   top: 0;
   line-height: 130px;
   font-size: 72px;
-  left: -3px;
-  letter-spacing: -6px;
+  left: -5px;
+  letter-spacing: -12px;
   color: white;
   text-align: center;
   width: 100%;

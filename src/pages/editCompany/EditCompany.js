@@ -60,7 +60,7 @@ class EditCompany extends Component {
 
   }
 
-  handleAddActivity({name}) {
+  handleAddActivity(name) {
     this.props.auth.companyRef.collection('activities').add({
       name
     }).then(ref => {
@@ -90,7 +90,7 @@ class EditCompany extends Component {
           <div className={styles.activities}>
             {
               !activityRefs ? <div>Loading... </div> :
-              <EditActivities onDelete={this.handleActivityDelete} onEdit={this.handleActivityEdit} onAdd={this.handleAddActivity} activities={activities}/>
+              <EditActivities onDelete={this.handleActivityDelete} onAdd={this.handleAddActivity} activities={activities}/>
             }
           </div>
         </div>

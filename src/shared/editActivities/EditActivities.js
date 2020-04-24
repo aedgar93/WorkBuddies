@@ -1,53 +1,35 @@
-import React, {useState} from 'react'
-import Activity, { EditActivity } from '../activity';
+import React, { useState } from 'react'
+import Activity from '../activity';
 import Button from 'react-bootstrap/Button'
 import styles from './EditActivities.module.css'
 
 
-const EditActivities = ({ activities, onDelete, onEdit, onAdd, alwaysSelected }) => {
-  const [adding, setAdding] = useState(null)
-  const [editIndex, setEditIndex] = useState(null)
+const EditActivities = ({ activities, onDelete, onAdd }) => {
+  const [name, setName] = useState('')
 
-  const handleDeleteActivity = (index, activity) => {
-    onDelete(index, activity)
-    setEditIndex(null)
+  const handleDeleteActivity = (index) => {
+    onDelete(index)
   }
 
-  const handleEditActivity = (index, activity) => {
-    onEdit(index, activity)
-    setEditIndex(null)
-  }
-
-  const handleAddActivity = (name) => {
+  const handleAddActivity = (e) => {
+    e.preventDefault()
     onAdd(name)
-    setAdding(null)
-  }
-
-
-  const handleOpenAdd = () => {
-    setEditIndex(null)
-    setAdding({name: ""})
-  }
-
-  const handleStartEdit = (index) => {
-    setEditIndex(index)
-    setAdding(null)
+    setName('')
   }
 
   return (
       <>
       {
         activities.map((activity, index) => {
-          return index === editIndex ?
-            <EditActivity key={activity.name + index} name={activity.name}  onDelete={activity => handleDeleteActivity(index, activity)} onSave={activity => handleEditActivity(index, activity)}/> :
-            <span className={styles.activityWrapper} key={activity.name + index}><Activity name={activity.name}  onClick={() =>  handleStartEdit(index)} selected={alwaysSelected}/></span>
+          return <span className={styles.activityWrapper} key={activity.name + index}><Activity name={activity.name}  onDelete={() =>  handleDeleteActivity(index)}/></span>
         })
       }
-      {
-        adding ?
-        <EditActivity name={adding.name} onDelete={() => setAdding(null)} onSave={handleAddActivity} /> :
-        <Button variant="outline-success" onClick={handleOpenAdd} className={styles.addButton} >Add</Button>
-      }
+      <div className={styles.form}>
+        <form onSubmit={handleAddActivity}>
+          <input value={name} onChange={e => setName(e.target.value)} className={styles.input} placeholder="Enter activity"/>
+          <Button type="submit" className={styles.button} size="lg">Add</Button>
+        </form>
+      </div>
     </>
   )
 }

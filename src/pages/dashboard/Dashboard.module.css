@@ -1,16 +1,22 @@
 .wrapper {
   text-align: left;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
+  padding: 0 20px;
+}
+
+.topBar {
+  background: var(--primary-light);
+  padding: 65px 0 100px 0;
+}
+
+.welcome {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .section {
-  margin: 30px 0;
-}
-
-.subtext {
-  font-size: 14px;
-  color: rgba(0,0,0, .5);
+  margin-top: 75px;
 }
 
 .matchup {
@@ -25,4 +31,198 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+
+.title {
+  text-align: left;
+  font-size: 34px;
+  font-weight: bold;
+  margin-top: 15px;
+  margin-bottom: 60px;
+}
+
+.activity {
+  color: var(--primary-color);
+}
+
+.picWrapper {
+  margin-right: 60px;
+  position: relative;
+}
+
+.tagContainer {
+  overflow: auto;
+}
+
+.activityTag {
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 15px 18px;
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  border-radius: 32px;
+  top: -18px;
+  right: 100px;
+  width: max-content;
+  min-width: 120px;
+  max-width: 200px;
+}
+
+.activityText {
+  max-height: 16px;
+  line-height: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.matchup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  max-width: 900px;
+}
+
+.info {
+  color: #4A4A4A;
+}
+.contact {
+  font-size: 24px;
+  line-height: 27px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.contactIcon {
+  width: 22px;
+  line-height: 22px;
+  vertical-align: baseline;
+  margin: 0 20px;
+}
+
+.department {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 20px;
+  margin-bottom: 11px;
+}
+
+.about {
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.inviteCard {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.24);
+  padding: 25px;
+  max-width: 460px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  margin-bottom: 75px;
+}
+
+.inviteImage {
+  margin-right: 35px;
+  flex-grow: 0;
+}
+
+.inviteImg img {
+  width: 100%;
+}
+
+.inviteInfo {
+  flex-grow: 1;
+}
+
+.inviteSent {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--primary-color);
+  letter-spacing: -0.21px;
+}
+
+.inviteDetails {
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 22px;
+  margin-top: 10px;
+}
+
+.closeInvite {
+  flex-grow: 0;
+  margin-top: -10px;
+  margin-right: -10px;
+  width: 12px;
+  -webkit-mask: url('../../assets/images/close_icon.svg') no-repeat center;
+  mask: url('../../assets/images/close_icon.svg') no-repeat center;
+  background-color: var(--primary-color);
+  cursor: pointer;
+  mask-position: top;
+}
+
+.closeInvite:hover {
+  background-color: var(--primary-light);
+}
+
+.activitiesSection {
+  min-height: 300px;
+}
+
+.activitiesContainer {
+  background: white;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.20);
+  border-radius: 9px;
+  padding: 25px;
+  padding-bottom: 23px;
+  margin-bottom: 75px;
+}
+
+.activitiesHeader {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.activitiesText {
+  line-height: 27px;
+  height: 27px;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 24px;
+  color: #5B5B5B;
+  letter-spacing: -0.25px;
+}
+
+.dropDownIcon {
+  display: inline-block;
+  width: 45px;
+}
+
+.downIcon {
+  height: 13px;
+  width: 21px;
+}
+
+.rightIcon {
+  height: 21px;
+  width: 13px;
+}
+
+.edit {
+  display: block;
+  text-align: right;
+  font-weight: bold;
+  font-size: 18px;
 }

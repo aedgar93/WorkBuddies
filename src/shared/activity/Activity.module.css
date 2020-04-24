@@ -1,26 +1,14 @@
 .card {
-  border: 1px solid rgba(0,0,0,.125);
-  border-radius: 5px;
-  height: 75px;
-  display: flex;
-  flex-direction: row;
-  flex: 1 0 1;
-  margin: 5px;
-  width: 250px;
-  box-sizing: border-box;
-  overflow: hidden;
+  background: #DDF0FF;
+  border-radius: 24.4px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #777777;
+  letter-spacing: -0.15px;
+  padding: 17px 33px;
+  margin: 15px;
+  position: relative;
 }
-
-.selected {
-  border-color: #007bff;
-  box-shadow: 0 0 10px #9ecaed;
-}
-
-.editCard {
-  width: 100%;
-  cursor: pointer;
-}
-
 
 .name {
   align-self: center;
@@ -30,44 +18,30 @@
   box-sizing: border-box;
 }
 
-.editName {
-  align-self: center;
-  flex-grow: 1;
-}
-
-.input {
-  max-width: 100%;
-  width: 100%;
-  border: none;
-  outline: none;
-  padding-left: 5px;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.action {
-  width: 100px;
-  line-height: 75px;
-  text-align: center;
+.closeContainer {
+  border: 2px solid var(--primary-color);
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  position: absolute;
+  top: -7px;
+  right: -4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 }
 
-.save {
-  background: #d4edda;
-  color: #155724;
+.close {
+  width: 10px;
+  height: 10px;
 }
 
-.save:hover {
-  background: #155724;
-  color:  #d4edda;
+.close g {
+  font-weight: 800;
 }
 
-.delete {
-  color: #721c24;
-  background-color: #f8d7da;
-}
-
-.delete:hover {
-  color: #f8d7da;
-  background-color: #721c24;
+.closeContainer:hover, .closeContainer:hover g {
+  border-color: var(--primary-dark);
+  stroke: var(--primary-dark);
 }
