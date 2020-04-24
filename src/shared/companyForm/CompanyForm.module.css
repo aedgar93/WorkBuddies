@@ -6,14 +6,23 @@
   margin-right: 5px;
 }
 .timeColumn {
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .wrapper {
   text-align: left;
+  flex-grow: 1;
 }
 
 .subtext {
-  color: rgba(0,0,0, .5);
+  color: var(--primary-color);
   font-size: 12px;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #5B5B5B;
+  letter-spacing: -0.15px;
+  margin-bottom: 5px;
 }

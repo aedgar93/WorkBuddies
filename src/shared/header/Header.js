@@ -43,13 +43,7 @@ const Header = () => {
             <>
               <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link} className={styles.navLink}>Profile</Nav.Link>
               { auth && auth.user && auth.user.admin ?
-                <Dropdown>
-                  <Dropdown.Toggle as={Nav.Link} className={styles.navLink}>My Company</Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item as="span"><Link to={ROUTES.EDIT_COMPANY}>Info and Activities</Link></Dropdown.Item>
-                    <Dropdown.Item as="span"><Link to={ROUTES.EDIT_EMPLOYEES}>Employees</Link></Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <Nav.Link to={ROUTES.EDIT_COMPANY} as={Link} className={styles.navLink}>My Company</Nav.Link>
                 : null
               }
               <Nav.Link onClick={signOut} className={styles.navLink}>Log Out</Nav.Link>

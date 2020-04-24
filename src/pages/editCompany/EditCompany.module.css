@@ -1,7 +1,37 @@
 .wrapper {
   text-align: left;
+}
+
+.section, .companySection, .activitySection, .employeeSection {
+  padding: 60px 20px;
   max-width: 900px;
   margin: 0 auto;
+}
+
+.purpleLine {
+  background: #DAE4FF;
+}
+
+.whiteLine {
+  background: white;
+}
+
+.companySection {
+  display: flex;
+  flex-direction: row;
+}
+
+.label, .companyLabel {
+  font-weight: bold;
+  font-size: 24px;
+  color: #2E2460;
+  letter-spacing: -0.25px;
+}
+
+.companyLabel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-right: 60px;
 }
 
 .activities {
@@ -9,10 +39,11 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 40px;
 }
 
-.timeColumn {
-  margin: 10px 0;
+.editEmployees {
+  margin-top: 40px;
 }
 
 .buttonSpinner {

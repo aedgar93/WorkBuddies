@@ -6,6 +6,7 @@ import { withAuth } from '../../session'
 import moment from 'moment-timezone'
 import EditActivities from '../../shared/editActivities'
 import CompanyForm from '../../shared/companyForm';
+import EditEmployees from '../../shared/editEmployees'
 
 
 class EditCompany extends Component {
@@ -76,22 +77,33 @@ class EditCompany extends Component {
 
     return (
       <div className={styles.wrapper}>
-        <div className={styles.section}>
-          <h2>My Company</h2>
-          <CompanyForm
-            name={this.props.auth.company.name}
-            day={this.props.auth.company.day}
-            hour={this.props.auth.company.hour}
-            timeZone={this.props.auth.company.timeZone ? this.props.auth.company.timeZone : moment.tz.guess()}
-            onSubmit={this.onSubmit}></CompanyForm>
+        <div className={styles.purpleLine}>
+          <div className={styles.companySection}>
+            <div className={styles.companyLabel}>My Company</div>
+            <CompanyForm
+              name={this.props.auth.company.name}
+              day={this.props.auth.company.day}
+              hour={this.props.auth.company.hour}
+              timeZone={this.props.auth.company.timeZone ? this.props.auth.company.timeZone : moment.tz.guess()}
+              onSubmit={this.onSubmit}></CompanyForm>
+          </div>
         </div>
-        <div className={styles.section}>
-          <h2>Activities</h2>
-          <div className={styles.activities}>
-            {
-              !activityRefs ? <div>Loading... </div> :
-              <EditActivities onDelete={this.handleActivityDelete} onAdd={this.handleAddActivity} activities={activities}/>
-            }
+        <div className={styles.whiteLine}>
+          <div className={styles.activitySection}>
+            <div className={styles.label}>Activities</div>
+            <div className={styles.activities}>
+              {
+                !activityRefs ? <div>Loading... </div> :
+                <EditActivities onDelete={this.handleActivityDelete} onAdd={this.handleAddActivity} activities={activities}/>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.employeeSection}>
+          <div className={styles.label}>Manage Buddies</div>
+          <div className={styles.editEmployees}>
+            <EditEmployees />
           </div>
         </div>
       </div>

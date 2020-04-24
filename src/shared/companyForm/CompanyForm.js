@@ -7,30 +7,9 @@ import styles from './CompanyForm.module.css'
 import moment from 'moment-timezone'
 
 const hours = [
-  { label: '12 a.m.', value: 0 },
-  { label: '1 a.m.', value: 1 },
-  { label: '2 a.m.', value: 2 },
-  { label: '3 a.m.', value: 3 },
-  { label: '4 a.m.', value: 4 },
-  { label: '5 a.m.', value: 5 },
-  { label: '6 a.m.', value: 6 },
-  { label: '7 a.m.', value: 7 },
-  { label: '8 a.m.', value: 8 },
-  { label: '9 a.m.', value: 9 },
-  { label: '10 a.m.', value: 10 },
-  { label: '11 a.m.', value: 11 },
-  { label: '12 p.m.', value: 12 },
-  { label: '1 p.m.', value: 13 },
-  { label: '2 p.m.', value: 14 },
-  { label: '3 p.m.', value: 15 },
-  { label: '4 p.m.', value: 16 },
-  { label: '5 p.m.', value: 17 },
-  { label: '6 p.m.', value: 18 },
-  { label: '7 p.m.', value: 19 },
-  { label: '8 p.m.', value: 20 },
-  { label: '9 p.m.', value: 21 },
-  { label: '10 p.m.', value: 22 },
-  { label: '11 p.m.', value: 23 },
+  { label: 'Morning', value: 9 },
+  { label: 'Noon', value: 12 },
+  { label: 'Evening', value: 17 },
 ]
 
 const days = [
@@ -64,7 +43,7 @@ const CompanyForm = (props) => {
     <div className={styles.wrapper}>
       <Form onSubmit={onSubmit}>
         <Form.Group controlId="name">
-          <Form.Label>Name</Form.Label>
+          <Form.Label className={styles.label}>Company Name</Form.Label>
           <Form.Control
             value={name}
             name="name"
@@ -73,8 +52,8 @@ const CompanyForm = (props) => {
             placeholder="Company Name" />
         </Form.Group>
         <Form.Group>
-          <Form.Label>Match up Time</Form.Label>
-          <div className={styles.subtext}>Please select a time for buddies to be matched up. We suggest setting a time at the beginning of your work week</div>
+          <Form.Label className={styles.label}>Match up Time</Form.Label>
+          <div className={styles.subtext}>Please select a time for buddies to be matched up.</div>
           <Row>
             <Col xs={12} s={4} m={4} l={4} xl={4} className={styles.timeColumn}>
               <Form.Control

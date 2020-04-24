@@ -3,11 +3,11 @@ import React, { useState, useContext, useEffect } from 'react';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import styles from './EditEmployees.module.css'
-import UserCard from '../../shared/userCard'
+import UserCard from '../userCard'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
-import SendInvites from '../../shared/sendInvites'
+import SendInvites from '../sendInvites'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Button from 'react-bootstrap/Button'
 
@@ -73,12 +73,13 @@ const EditEmployees = () => {
               exit: 300,
            }}>
             <div className={styles.inviteContainer}>
-              <div>
+              <div className={styles.name}>
                 {invite.name}
-                <br/>
+              </div>
+              <div className={styles.email}>
                 {invite.email}
               </div>
-              <Button variant="outline-danger" onClick={() => handleDeleteInvite(ref, i)}>Delete</Button>
+              <Button variant="outline-danger" onClick={() => handleDeleteInvite(ref, i)} className={styles.delete}>Delete</Button>
             </div>
           </CSSTransition>
         )
@@ -90,7 +91,6 @@ const EditEmployees = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.section}>
-        <h2>Employees</h2>
         {
           userRefs ?
             <Row>
@@ -108,7 +108,6 @@ const EditEmployees = () => {
       </div>
 
       <div className={styles.section}>
-        <h2>Invites</h2>
         <SendInvites onSubmit={updateInvites}/>
         {
           updating ? <Spinner /> : null

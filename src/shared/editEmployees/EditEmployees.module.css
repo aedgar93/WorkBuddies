@@ -22,9 +22,24 @@
 .inviteContainer {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   margin: 15px 0;
-  padding: 15px;
-  border: 1px solid rgba(0,0,0,.125);
+  padding: 10px 22px;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
   align-items: center;
+}
+
+.name {
+  margin-right: 25px;
+  justify-self: flex-start;
+}
+
+.email {
+  margin: 0 25px;
+  flex-grow: 1;
+}
+
+.delete {
+  justify-self: flex-end;
+  margin: auto;
 }

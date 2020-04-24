@@ -130,7 +130,7 @@ const Dashboard = ({ location }) => {
         {
           auth.user.admin ?
           <div>
-            <Button as={Link} to={ROUTES.EDIT_EMPLOYEES}>Invite your team members</Button>
+            <Button as={Link} to={ROUTES.EDIT_COMPANY}>Invite your team members</Button>
           </div>
           : null
         }

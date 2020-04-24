@@ -15,7 +15,6 @@ import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
 import EditAccount from './pages/editAccount'
-import EditEmployees from './pages/editEmployees';
 import Spinner from 'react-bootstrap/Spinner'
 import CreateCompany from './pages/createCompany';
 import SetUpEmployees from './pages/setUpEmployees';
@@ -99,7 +98,6 @@ class App extends Component {
 
                         { /* Admin Routes */ }
                         { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
-                        { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
                         { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
 
                         <Route path={ROUTES.WELCOME} component={Welcome}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }

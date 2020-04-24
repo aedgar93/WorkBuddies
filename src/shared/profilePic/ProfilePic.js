@@ -11,6 +11,8 @@ const ProfilePic = ({ onClick, children, user, size}) => {
     style.height = size
     initialsStyle.lineHeight = size + 'px'
     initialsStyle.fontSize = size/2
+    initialsStyle.letterSpacing = size/2 * .16 * -1 + 'px'
+    initialsStyle.left = size/2 * .07 * -1 + 'px'
   }
   return (
     <div onClick={() => onClick && onClick()} className={styles.wrapper} data-size={size} style={style}>
