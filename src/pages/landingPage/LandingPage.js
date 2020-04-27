@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styles from './LandingPage.module.css'
 import SampleActivities from '../../shared/sampleActivities/SampleActivities';
 import { ROUTES } from '../../utils/constants'
-import Button from 'react-bootstrap/Button'
+import { Button } from 'react-bootstrap'
 import bg1 from '../../assets/images/landing_bg_1.png'
 import bg2 from '../../assets/images/landing_bg_2.png'
 import time from '../../assets/images/time.svg'

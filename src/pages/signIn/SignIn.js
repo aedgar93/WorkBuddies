@@ -4,9 +4,7 @@ import styles from './SignIn.module.css'
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../../firebaseComponents'
 import { ROUTES } from '../../utils/constants'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Alert from 'react-bootstrap/Alert';
+import { Button, Form, Alert } from 'react-bootstrap';
 
 const SignIn = ({ history }) => {
   const [email, setEmail] = useState('')

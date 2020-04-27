@@ -2,17 +2,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { FirebaseContext } from '../../firebaseComponents'
 import styles from './Dashboard.module.css'
-import Spinner from 'react-bootstrap/Spinner'
+import { Spinner, Button, Alert } from 'react-bootstrap'
 import { AuthUserContext } from '../../session'
 import Activity from '../../shared/activity'
 import ProfilePic from '../../shared/profilePic';
 import email_icon from '../../assets/images/email_icon.png'
-import Alert from 'react-bootstrap/alert'
 import {
   Link
 } from 'react-router-dom';
 import { ROUTES } from '../../utils/constants'
-import Button from 'react-bootstrap/Button'
 import invite_icon from '../../assets/images/invite.svg'
 import arrow_right from '../../assets/images/arrow_right.svg'
 import arrow_down from '../../assets/images/arrow_down.svg'

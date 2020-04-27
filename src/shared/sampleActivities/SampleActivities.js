@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SampleActivities.module.css'
 import suggested from '../../utils/sampleActivities'
-import Button from 'react-bootstrap/Button'
+import { Button } from 'react-bootstrap'
 
 const SampleActivities = ({ setSelectedActivities, selectedActivities }) => {
 

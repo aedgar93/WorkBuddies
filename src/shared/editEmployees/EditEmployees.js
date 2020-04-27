@@ -4,12 +4,9 @@ import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import styles from './EditEmployees.module.css'
 import UserCard from '../userCard'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Spinner from 'react-bootstrap/Spinner'
+import { Row, Col, Spinner, Button } from 'react-bootstrap'
 import SendInvites from '../sendInvites'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import Button from 'react-bootstrap/Button'
 
 const EditEmployees = () => {
   const [userRefs, setUserRefs] = useState([])

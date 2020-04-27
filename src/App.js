@@ -15,7 +15,7 @@ import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
 import EditAccount from './pages/editAccount'
-import Spinner from 'react-bootstrap/Spinner'
+import { Spinner } from 'react-bootstrap'
 import CreateCompany from './pages/createCompany';
 import SetUpEmployees from './pages/setUpEmployees';
 import LandingPage from './pages/landingPage';

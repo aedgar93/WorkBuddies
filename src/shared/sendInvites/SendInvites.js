@@ -1,11 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react'
 import styles from './SendInvites.module.css'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Alert from 'react-bootstrap/Alert'
+import { Form, Button, Alert } from 'react-bootstrap'
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
-import Spinner from 'react-bootstrap/Spinner'
 import CloudSponge from '../cloudSponge'
 
 

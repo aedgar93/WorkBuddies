@@ -3,11 +3,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import styles from './AcceptInvite.module.css'
 import { FirebaseContext } from '../../firebaseComponents'
 import { ROUTES } from '../../utils/constants'
-import Alert from 'react-bootstrap/Alert'
-import Spinner from 'react-bootstrap/Spinner'
+import { Alert, Spinner, Modal, Button } from 'react-bootstrap'
 import SignUpForm from '../../shared/signUpForm/SignUpForm';
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
 
 const AcceptInvite = ({ history, location }) => {
   const [error, setError] = useState(null)

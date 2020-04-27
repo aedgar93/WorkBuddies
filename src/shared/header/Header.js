@@ -7,8 +7,7 @@ import {
 } from 'react-router-dom';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
-import Navbar from 'react-bootstrap/Navbar'
-import Nav from 'react-bootstrap/Nav'
+import { Navbar, Nav } from 'react-bootstrap'
 import { ROUTES } from '../../utils/constants'
 import { useHistory } from "react-router-dom";
 import logo from '../../assets/images/logo.svg'

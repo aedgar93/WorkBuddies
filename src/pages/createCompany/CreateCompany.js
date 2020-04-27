@@ -1,12 +1,10 @@
 import React, { useState, useContext } from 'react'
 import styles from './CreateCompany.module.css'
 import { ROUTES } from '../../utils/constants'
-import Alert from 'react-bootstrap/Alert'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { FirebaseContext } from '../../firebaseComponents'
 import SignUpForm from '../../shared/signUpForm'
 import moment from 'moment-timezone'
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
 import suggestedActivities from '../../utils/sampleActivities'
 
 

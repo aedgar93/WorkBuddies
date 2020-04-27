@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Activity from '../activity';
-import Button from 'react-bootstrap/Button'
+import { Button } from 'react-bootstrap'
 import styles from './EditActivities.module.css'
 
 

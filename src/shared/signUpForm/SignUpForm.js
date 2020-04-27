@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from './SignUpForm.module.css'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
+import { Button, Form, Col, Row }  from 'react-bootstrap';
 
 const SignUpForm = ({ loading, onSubmit, suggestedEmail, showCompanyName  }) => {
   const [validated, setValidated] = useState(false)
