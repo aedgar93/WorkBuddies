@@ -9,7 +9,7 @@
     "node-sass": "^4.13.1",
     "react": "^16.11.0",
     "react-avatar-editor": "^12.0.0-beta.0",
-    "react-bootstrap": "^1.0.0-beta.14",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.11.0",
     "react-media": "^1.10.0",
     "react-router-dom": "^5.1.2",
