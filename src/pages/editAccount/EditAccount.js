@@ -3,6 +3,7 @@ import styles from './EditAccount.module.css'
 import { AuthUserContext } from '../../session'
 import FirebaseContext from '../../firebaseComponents/context'
 import Form from 'react-bootstrap/Form'
+import FormCheck from 'react-bootstrap/FormCheck'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import Modal from 'react-bootstrap/Modal'
@@ -132,10 +133,11 @@ const EditAccount = ({history}) => {
   }
 
   const updateNotifyEmail = (val) => {
+    console.log(val)
     setNotifyEmail(val)
     firebase.db.collection('users').doc(auth.user.id).update({
       notifyEmail: val
-    }, {merge : true })
+    })
   }
 
   const openPicModal = () => {
@@ -271,15 +273,15 @@ const EditAccount = ({history}) => {
       </div>
       </div>
       <div className={styles.section}>
+        <div className={styles.title}>Notification</div>
         <Form>
-          <Form.Group controlId="notifications" className={styles.formGroup} bsPrefix="wb">
-            <div className={styles.title}>Notification</div>
-            <Form.Check
-              checked={notifyEmail}
-              type="checkbox"
-              label="Email"
-              onChange={e => updateNotifyEmail(e.target.checked)}
-              />
+          <Form.Group controlId="notifications" className={styles.formCheck} bsPrefix="wb">
+              <div className={styles.notifyLabel}>Email</div>
+              <div className={styles.checkboxContainer}>
+                <span className={notifyEmail ? styles.checked : styles.noCheck} onClick={() => updateNotifyEmail(!notifyEmail)}></span>
+                <input id="notifyEmail" checked={notifyEmail} type="checkbox" onChange={e => updateNotifyEmail(e.target.checked)} className={styles.checkInput}/>
+                <label htmlFor="notifyEmail">{ notifyEmail ? 'On' : 'Off'}</label>
+              </div>
           </Form.Group>
         </Form>
       </div>
