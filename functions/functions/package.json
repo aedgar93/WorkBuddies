@@ -15,6 +15,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^1.2.0",
     "@sendgrid/mail": "^6.4.0",
+    "fire-slack": "^0.5.0",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.3.0",
     "moment-timezone": "^0.5.27",

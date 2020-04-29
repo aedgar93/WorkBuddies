@@ -8,6 +8,7 @@ const { PubSub } = require('@google-cloud/pubsub');
 const inviteEmailContent = require('./emails/invite.js')
 const buddyEmailContent = require('./emails/matchup.js')
 const threeBuddiesEmailContent = require('./emails/matchup3.js')
+const Slack = require('fire-slack')
 
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
@@ -19,7 +20,11 @@ admin.initializeApp({
   databaseURL: "https://work-buddies-2e620.firebaseio.com"
 });
 
+
 const config = functions.config()
+
+Slack.initialize('https://hooks.slack.com/services/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', {channel: 'work-buddies-debug'})
+
 
 const pubsub = new PubSub({
   projectId: process.env.GCLOUD_PROJECT,
@@ -392,14 +397,58 @@ const matchup = async (data) => {
     return Promise.all([matchUpUsersPromise, setNextMatchupPromise].concat(emailPromises))
 }
 
-exports.matchupSub = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
-  const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
-  console.info(JSON.stringify(data))
-  return matchup(data)
+exports.matchupSub = functions.pubsub.topic('matchup').onPublish(async (message, _ctx) => {
+  try {
+    const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    console.info(JSON.stringify(data))
+    return await matchup(data)
+  } catch(error) {
+    let blocks = [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*matchupSub*"
+        }
+      },
+      { type: 'divider' },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*data:* " + JSON.stringify(data)
+        }
+      },
+    ]
+    await Slack.send({ webhook: { blocks }, error: error })
+    return Promise.reject(error)
+  }
 })
 
-exports.matchup = functions.https.onCall((data, _ctx) => {
-  return matchup(data)
+exports.matchup = functions.https.onCall(async (data, _ctx) => {
+  try {
+    return await matchup(data)
+  } catch(error) {
+    let blocks = [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*matchup*"
+        }
+      },
+      { type: 'divider' },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*data:* " + JSON.stringify(data)
+        }
+      },
+    ]
+    await Slack.send({ webhook: { blocks }, error: error })
+    return Promise.reject(error)
+  }
 })
 // END GENERATE MATCHUPS
 
@@ -407,79 +456,84 @@ exports.matchup = functions.https.onCall((data, _ctx) => {
 //Matchup on new user
 exports.newUserHandler = functions.firestore.document('users/{userId}')
   .onCreate(async (userSnapshot, _ctx) => {
-    //get company
-    let user = userSnapshot.data()
-    if(user.admin) return null
-    let companyId = user.company_uid
-    console.log(companyId)
-    const firestore = admin.firestore();
-    const companyRef = firestore.collection('companies').doc(companyId)
-    if (!companyRef) return Promise.reject(new Error("company not found"))
+    try {
+      //get company
+      let user = userSnapshot.data()
+      if(user.admin) return null
+      let companyId = user.company_uid
+      console.log(companyId)
+      const firestore = admin.firestore();
+      const companyRef = firestore.collection('companies').doc(companyId)
+      if (!companyRef) return Promise.reject(new Error("company not found"))
 
-    let activitiesSnapshot = await companyRef.collection('activities').get()
+      let activitiesSnapshot = await companyRef.collection('activities').get()
 
-    const activities = []
-    activitiesSnapshot.forEach(doc => activities.push(doc.data()))
-    let activitiesHTML = getActivitiesHTML(activities)
+      const activities = []
+      activitiesSnapshot.forEach(doc => activities.push(doc.data()))
+      let activitiesHTML = getActivitiesHTML(activities)
 
-    let companyData = await companyRef.get()
-    companyData = companyData.data()
+      let companyData = await companyRef.get()
+      companyData = companyData.data()
 
-    if(!companyData.activeBuddies) {
-    //if no matchup, create one and match people up
-      return matchup({id: companyId})
-    } else {
-      //get current matchup
-      let { ref, matchups } = await getMatchups(companyRef, companyData)
-      let usersRef = await firestore.collection('users').where('company_uid', '==', companyId).get()
-      let users = []
-      usersRef.forEach(user => users.push(user))
-
-      //check if there is an odd man out
-      let single = matchups.find(matchup => {
-        return matchup.buddies && matchup.buddies.length === 1
-      })
-
-      let buddy
-      let activity
-      if (single) {
-        let buddyId = single.buddies[0]
-        buddy = users.find(user => user.id === buddyId)
-        activity = single.activity
-        single.buddies.push(userSnapshot.id)
+      if(!companyData.activeBuddies) {
+      //if no matchup, create one and match people up
+        return matchup({id: companyId})
       } else {
-        console.log('no single')
-        //check if there are any users not in a matchup at all
-        let buddiesInMatchup = []
-        matchups.forEach(matchup => {
-          buddiesInMatchup.push(matchup.buddies[0])
-          if(matchup.buddies.length > 1) buddiesInMatchup.push(matchup.buddies[1])
+        //get current matchup
+        let { ref, matchups } = await getMatchups(companyRef, companyData)
+        let usersRef = await firestore.collection('users').where('company_uid', '==', companyId).get()
+        let users = []
+        usersRef.forEach(user => users.push(user))
+
+        //check if there is an odd man out
+        let single = matchups.find(matchup => {
+          return matchup.buddies && matchup.buddies.length === 1
         })
 
-        buddy = users.find(buddy => buddiesInMatchup.indexOf(buddy.id) === -1 && buddy.id !== userSnapshot.id)
-        console.log('buddy', buddy)
-        if(!buddy) return null
-        activity = matchups[0].activity //just use the first activity so we don't have to fetch them all
-        matchups.push({buddies: [userSnapshot.id, buddy.id], activity})
+        let buddy
+        let activity
+        if (single) {
+          let buddyId = single.buddies[0]
+          buddy = users.find(user => user.id === buddyId)
+          activity = single.activity
+          single.buddies.push(userSnapshot.id)
+        } else {
+          console.log('no single')
+          //check if there are any users not in a matchup at all
+          let buddiesInMatchup = []
+          matchups.forEach(matchup => {
+            buddiesInMatchup.push(matchup.buddies[0])
+            if(matchup.buddies.length > 1) buddiesInMatchup.push(matchup.buddies[1])
+          })
+
+          buddy = users.find(buddy => buddiesInMatchup.indexOf(buddy.id) === -1 && buddy.id !== userSnapshot.id)
+          console.log('buddy', buddy)
+          if(!buddy) return null
+          activity = matchups[0].activity //just use the first activity so we don't have to fetch them all
+          matchups.push({buddies: [userSnapshot.id, buddy.id], activity})
+        }
+
+
+        let emailInfo = []
+        addEmailPersonalization(user, buddy.data(), activity, activitiesHTML, emailInfo)
+        addEmailPersonalization(buddy.data(), user, activity, activitiesHTML, emailInfo)
+
+        let msg = {
+          personalizations: emailInfo,
+          from: getFromEmail(),
+          html: buddyEmailContent()
+        }
+
+        console.log(matchups)
+        return ref.set({matchups})
+        .then(() => {
+          //send email
+          return sgMail.send(msg)
+        })
       }
-
-
-      let emailInfo = []
-      addEmailPersonalization(user, buddy.data(), activity, activitiesHTML, emailInfo)
-      addEmailPersonalization(buddy.data(), user, activity, activitiesHTML, emailInfo)
-
-      let msg = {
-        personalizations: emailInfo,
-        from: getFromEmail(),
-        html: buddyEmailContent()
-      }
-
-      console.log(matchups)
-      return ref.set({matchups})
-      .then(() => {
-        //send email
-        return sgMail.send(msg)
-      })
+    } catch(error) {
+      await Slack.send({ webhook: { text: 'An error occurred!' }, error: error, ref: userSnapshot})
+      return Promise.reject(error)
     }
   })
 
