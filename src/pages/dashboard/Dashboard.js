@@ -25,7 +25,7 @@ const states = {
 
 const Dashboard = ({ location }) => {
   const [activities, setActivities] = useState([])
-  const [buddy, setBuddy] = useState(null)
+  const [buddies, setBuddies] = useState(null)
   const [activity, setActivity] = useState(null)
   const [state, setState] = useState(states.loading)
   const [error, setError] = useState(null)
@@ -49,14 +49,24 @@ const Dashboard = ({ location }) => {
 
     }
 
-    let buddyId = matchup.buddies.indexOf(auth.user.id) === 0 ? matchup.buddies[1] : matchup.buddies[0]
-    let buddySnapshot = await firebase.db.collection('users').doc(buddyId).get()
+    let buddyIds = [...matchup.buddies]
 
-    if(buddySnapshot.exists) {
-      setBuddy(buddySnapshot.data())
+    let myIndex = buddyIds.findIndex(id => id === auth.user.id)
+    buddyIds.splice(myIndex, 1)
+
+    let buddyData = []
+    for(let i = 0; i < buddyIds.length; i++) {
+      let id = buddyIds[i]
+      let buddySnapshot = await firebase.db.collection('users').doc(id).get()
+      if(buddySnapshot.exists) {
+        buddyData.push(buddySnapshot.data())
+      }
+    }
+
+
+    if(buddyData.length > 0) {
+      setBuddies(buddyData)
       setActivity(matchup.activity)
-      //TESTING
-      //setState(states.BUDDY)
       setState(states.BUDDY)
 
     } else {
@@ -83,27 +93,39 @@ const Dashboard = ({ location }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth.waitingForAuth])
 
-  const renderBuddy = () => {
+  const renderBuddy = (buddy, buddy2, activity, showActivity = false) => {
     let subject = "I'm your weekly buddy"
-    let body = `Hello ${buddy.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activity.name}?%0D%0A %0D%0ASincerely, ${auth.user.firstName}`
+    let body = `Hello ${buddy.firstName} ${buddy2 && buddy2.email ? ' and ' + buddy2.firstName : ''},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activity.name}?%0D%0A %0D%0ASincerely, ${auth.user.firstName}`
     return (
-      <>
-        <div className={styles.title}>This Week, Let's <span className={styles.activity}>{activity.name}</span> with {buddy.firstName}:</div>
-        <div className={styles.matchup}>
+      <div className={styles.matchup}>
           <div className={styles.picWrapper}>
             <div className={styles.tagContainer}>
-              <div className={styles.activityTag}><div className={styles.activityText}>{activity.name}</div></div>
+              {showActivity ? <div className={styles.activityTag}><div className={styles.activityText}>{activity.name}</div></div> : null }
             </div>
             <ProfilePic user={buddy}/>
           </div>
           <div className={styles.info}>
             <div className={styles.contact}>
               {buddy.firstName} {buddy.lastName}
-              { buddy.email ? <a href={`mailto:${buddy.email}?body=${body}&subject=${subject}`}><img src={email_icon} alt="email" className={styles.contactIcon}/></a> : null}
+              { buddy.email ? <a href={`mailto:${buddy.email}${buddy2 && buddy2.email ? ',' + buddy2.email : ''}?body=${body}&subject=${subject}`}><img src={email_icon} alt="email" className={styles.contactIcon}/></a> : null}
             </div>
             <div className={styles.department}>{buddy.department}</div>
-            <div className={styles.about}>"{buddy.about}"</div>
+            { buddy.about ? <div className={styles.about}>"{buddy.about}"</div> : null }
           </div>
+        </div>
+    )
+  }
+
+
+  const renderBuddies = () => {
+    let buddy1 = buddies[0]
+    let buddy2 = buddies.length > 1 ? buddies[1] : null
+    return (
+      <>
+        <div className={styles.title}>This Week, Let's <span className={styles.activity}>{activity.name}</span> with {buddy1.firstName} {buddy2 ? ' and ' + buddy2.firstName : ''}:</div>
+        <div className={styles.matchups}>
+          { renderBuddy(buddy1, buddy2, activity, true) }
+          { buddy2 ? renderBuddy(buddy2, buddy1, activity) : null }
         </div>
       </>
     )
@@ -143,7 +165,7 @@ const Dashboard = ({ location }) => {
     return (
       <div className={styles.matchupWrapper}>
         {
-          state === states.BUDDY ? renderBuddy() : renderNoBuddy()
+          state === states.BUDDY ? renderBuddies() : renderNoBuddy()
         }
       </div>
     )

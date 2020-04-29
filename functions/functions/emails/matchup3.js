@@ -1,5 +1,7 @@
 module.exports = function() {
   return  `
+
+
   <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -1006,7 +1008,7 @@ module.exports = function() {
                                       <h1>
                                         <strong><span style="color:#2E2460">This Week,
                                                 Let's</span> <span style="color:#7F68FF">{{activityString}}</span> <span
-                                                style="color:#2E2460">with&nbsp;{{buddy2}}:</span></strong>
+                                                style="color:#2E2460">with&nbsp;{{buddy2}} and {{buddy3}}:</span></strong>
                                       </h1>
 
                                     </td>
@@ -1078,6 +1080,42 @@ module.exports = function() {
                                   </tr>
                                 </tbody>
                               </table>
+
+                              <table width="100%">
+                                <table align="left" border="0" cellpadding="0" cellspacing="0"
+                                width="100%" class="photoTable" style="mso-hide:all;">
+                                <tbody style="mso-hide:all;">
+                                  <tr style="mso-hide:all;">
+
+                                    <td valign="top"
+                                      style="mso-hide:all;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+
+                                      <div class="profileImgContainer" style="mso-hide:all;">
+                                        <div style="width:93px;height:93px;border-radius:50%;overflow:hidden;background-color:#2E2460;display: inline-block;mso-hide:all;">
+                                          {{profilePic_3}}
+                                        </div>
+                                      </div>
+
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+
+                              <table align="left" border="0" cellpadding="0" cellspacing="0"
+                                class="contactTable">
+                                <tbody>
+                                  <tr>
+
+                                    <td valign="top" class="contactInfo"
+                                      style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
+                                      <div class="name"><strong>{{buddy3}}</strong></div>
+                                      <div class="department"><strong>{{department_3}}</strong></div>
+                                      <div class="about">{{about_3}}</div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              </table>
                               <!--[if mso]>
         </td>
         <![endif]-->
@@ -1097,7 +1135,7 @@ module.exports = function() {
                                       <tbody>
                                         <tr>
                                           <td>
-                                            <span class="contactDescription">Contact {{buddy2}} to get started</span>
+                                            <span class="contactDescription">Contact {{buddy2}} and {{buddy3}} to get started</span>
                                           </td>
                                           {{links}}
                                         </tr>
@@ -1122,7 +1160,7 @@ module.exports = function() {
                                 <tbody style="mso-hide:all;">
                                   <tr style="mso-hide:all;">
                                     <td style="text-align: center;mso-hide:all;">
-                                      <span class="contactDescription" style="mso-hide:all;">Contact {{buddy2}} to get started</span>
+                                      <span class="contactDescription" style="mso-hide:all;">Contact {{buddy2}} and {{buddy3}}to get started</span>
                                     </td>
                                   </tr>
                                   <tr style="mso-hide:all;">
@@ -1264,5 +1302,4 @@ module.exports = function() {
 </body>
 
 </html>
-
 `}

@@ -7,6 +7,9 @@ const uuidv1 = require('uuid/v1');
 const { PubSub } = require('@google-cloud/pubsub');
 const inviteEmailContent = require('./emails/invite.js')
 const buddyEmailContent = require('./emails/matchup.js')
+const threeBuddiesEmailContent = require('./emails/matchup3.js')
+
+
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
 var serviceAccount = require("./admin-service-account.json");
@@ -23,7 +26,6 @@ const pubsub = new PubSub({
   keyFilename: './admin-service-account.json'
 });
 
-console.log(config.mail)
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
 
@@ -141,41 +143,60 @@ const getActivitiesHTML = (activities) => {
   `
 }
 
-const addEmailPersonalization = (buddy1, buddy2, activity, activitiesHTML, emailInfo) => {
+const addBuddySubstitutions = (buddy, suffix, substitutions) => {
+  substitutions['buddy' + suffix] = `${buddy.firstName}`
+  if(buddy.profilePic) {
+    substitutions['profilePic_' + suffix] = `<img src=${buddy.profilePic} style="width:93px;height:93px;"></img>`
+  } else {
+    substitutions['profilePic_' + suffix] = `<div class="profileImgText">${buddy.firstName[0]}${buddy.lastName[0]}</div>`
+  }
+  if(buddy.department) {
+    substitutions['department_' + suffix] = buddy.department
+  } else {
+    substitutions['department_' + suffix] = ""
+  }
+  if(buddy.about) {
+    substitutions['about_' + suffix] = buddy.about
+  } else {
+    substitutions['about_' + suffix] = ""
+  }
+
+}
+
+const addEmailPersonalization = (buddy1, buddy2, buddy3, activity, activitiesHTML, emailInfo) => {
   if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
   let to = [{email: buddy1.email}]
   let activityString = activity ? activity.name : "Grab a Coffee"
   let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', about: '', email: '', activitiesHTML}
   if (buddy2) {
-    substitutions["buddy2"] = `${buddy2.firstName}`
-    if(buddy2.profilePic) {
-      substitutions.profilePic = `<img src=${buddy2.profilePic} style="width:93px;height:93px;"></img>`
-    } else {
-      substitutions.profilePic = `<div class="profileImgText">${buddy2.firstName[0]}${buddy2.lastName[0]}</div>`
-    }
-    if(buddy2.department) substitutions.department = buddy2.department
-    if(buddy2.description) substitutions.description = buddy2.description
-    if(buddy2.email) {
-      let subject = "I'm your weekly buddy"
-      let body = `Hello ${buddy2.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?%0D%0A %0D%0ASincerely, ${buddy1.firstName}`
-      substitutions.links = `<td class="contactButtonTD">
-        <a class="contactButton" href="mailto:${buddy2.email}?subject=${subject}&body=${body}">
-          <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
-            <span class="contactText">Email</span>
-        </a>
-      </td>`
-      substitutions.email = buddy2.email
-    }
-    if(buddy2.department) substitutions.department = buddy2.department
-    if(buddy2.about) substitutions.about = buddy2.about
+    addBuddySubstitutions(buddy2, '2', substitutions)
+    let subject = "I'm your weekly buddy"
+    let body = `Hello ${buddy2.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?%0D%0A %0D%0ASincerely, ${buddy1.firstName}`
+    substitutions['links'] = `<td class="contactButtonTD">
+      <a class="contactButton" href="mailto:${buddy2.email}?subject=${subject}&body=${body}">
+        <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
+          <span class="contactText">Email</span>
+      </a>
+    </td>`
+  }
+  if(buddy3) {
+    addBuddySubstitutions(buddy3, '3', substitutions)
+    let subject = "I'm your weekly buddy"
+    let body = `Hello ${buddy2.firstName} and ${buddy3.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?%0D%0A %0D%0ASincerely, ${buddy1.firstName}`
+    substitutions['links'] = `<td class="contactButtonTD">
+      <a class="contactButton" href="mailto:${buddy2.email},${buddy3.email}?subject=${subject}&body=${body}">
+        <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
+          <span class="contactText">Email</span>
+      </a>
+    </td>`
   }
 
   return emailInfo.push({ to, substitutions, subject: "Your Weekly Buddy" })
 }
 
-const notify = (buddy1, buddy2, activity, activitiesHTML, emailInfo) => {
+const notify = (buddy1, buddy2, buddy3,  activity, activitiesHTML, emailInfo) => {
   if (!buddy1) return null
-  addEmailPersonalization(buddy1, buddy2, activity, activitiesHTML, emailInfo)
+  addEmailPersonalization(buddy1, buddy2, buddy3, activity, activitiesHTML, emailInfo)
   return null
 }
 
@@ -237,7 +258,7 @@ const matchup = async (data) => {
 
       // If someone wasn't matched up last time, match them first this time
       let oddManOutIndex = getOddManOutIndex(previousMatchups, users)
-      while (users.length > 1) {
+      while (users.length > 1 && users.length !== 3) {
         let buddy = null
         let user = null
         if(oddManOutIndex >=0 && oddManOutIndex < users.length) {
@@ -273,13 +294,14 @@ const matchup = async (data) => {
         }
         let activity = getRandom(activities)
 
-        //buddy 1 notifications
         let userData = user ? user.data() : null
         let buddyData = buddy ? buddy.data() : null
-        notify(userData, buddyData, activity, activitiesHTML, emailInfo)
+
+        notify(userData, buddyData, null, activity, activitiesHTML, emailInfo)
 
         //buddy2 notifications
-        notify(buddyData, userData, activity,  activitiesHTML, emailInfo)
+        notify(buddyData, userData, null, activity,  activitiesHTML, emailInfo)
+
 
         newMatchups.push({
           buddies: [user.id, buddy.id],
@@ -304,7 +326,7 @@ const matchup = async (data) => {
       if(users.length === 1) {
         //handle odd
         let activity = getRandom(activities)
-        user = users.pop()
+        let user = users.pop()
         newMatchups.push({
           buddies: [user.id],
           activity: activity
@@ -312,7 +334,8 @@ const matchup = async (data) => {
         let userData = user.data()
         if(userData.notifyEmail) {
           let emailInfo = []
-          addEmailPersonalization(userData, null, activity, emailInfo)
+          notify(userData, null, null, activity, activitiesHTML, emailInfo)
+
           let msg = {
             personalizations: emailInfo,
             from: getFromEmail(),
@@ -320,6 +343,32 @@ const matchup = async (data) => {
           }
           allMessages.push(msg)
         }
+      } else if(users.length === 3) {
+        let activity = getRandom(activities)
+        let user = users.pop()
+        let buddy = users.pop()
+        let buddy2 = users.pop()
+        let emailInfo = []
+
+        let userData = user.data()
+        let buddyData = buddy.data()
+        let buddy2Data = buddy2.data()
+
+        notify(userData, buddyData, buddy2Data, activity, activitiesHTML, emailInfo)
+        notify(buddyData, userData, buddy2Data, activity, activitiesHTML, emailInfo)
+        notify(buddy2Data, userData, buddyData, activity, activitiesHTML, emailInfo)
+
+        newMatchups.push({
+          buddies: [user.id, buddy.id, buddy2.id],
+          activity: activity
+        })
+
+        let msg = {
+          personalizations: emailInfo,
+          from: getFromEmail(),
+          html: threeBuddiesEmailContent()
+        }
+        allMessages.push(msg)
       }
 
       //double check existing matchup

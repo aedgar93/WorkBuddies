@@ -19,10 +19,6 @@
   margin-top: 75px;
 }
 
-.matchup {
-  margin: 20px 0;
-}
-
 .loading {
   text-align: center;
 }
@@ -50,6 +46,7 @@
 
 .picWrapper {
   margin-right: 60px;
+  flex-grow: 0;
   position: relative;
 }
 
@@ -82,17 +79,26 @@
   text-overflow: ellipsis;
 }
 
+.matchups {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .matchup {
+  margin: 20px auto;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  max-width: 900px;
+  width: 500px;
+  max-width: 90%;
 }
 
 .info {
   color: #4A4A4A;
+  flex-grow: 1;
 }
+
 .contact {
   font-size: 24px;
   line-height: 27px;
@@ -227,9 +233,10 @@
   font-size: 18px;
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 800px) {
   .matchup {
     flex-direction: column;
+    width: auto;
   }
 
   .info {
@@ -239,6 +246,11 @@
   .picWrapper {
     margin: 0;
   }
+}
+
+
+@media only screen and (max-width: 480px) {
+
 
   .activityText {
     max-width: 100px;
