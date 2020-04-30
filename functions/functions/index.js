@@ -8,7 +8,9 @@ const { PubSub } = require('@google-cloud/pubsub');
 const inviteEmailContent = require('./emails/invite.js')
 const buddyEmailContent = require('./emails/matchup.js')
 const threeBuddiesEmailContent = require('./emails/matchup3.js')
-const Slack = require('fire-slack')
+const Sentry = require('@sentry/node')
+
+Sentry.init({ dsn: 'https://abc4cbf3abff4a19975d97ee9e6bfcd6@o386021.ingest.sentry.io/5219768' });
 
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
@@ -23,9 +25,6 @@ admin.initializeApp({
 
 const config = functions.config()
 
-Slack.initialize('https://hooks.slack.com/services/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', {channel: 'work-buddies-debug'})
-
-
 const pubsub = new PubSub({
   projectId: process.env.GCLOUD_PROJECT,
   keyFilename: './admin-service-account.json'
@@ -37,19 +36,24 @@ sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wr
 //Delete all invites for an email when a user joins
 exports.inviteAccepted = functions.firestore.document('users/{userId}')
   .onCreate((userSnapshot, _ctx) => {
-    const firestore = admin.firestore();
-    const invitesRef = firestore.collection('invites');
-    let email = userSnapshot.data().email
+    try {
+      const firestore = admin.firestore();
+      const invitesRef = firestore.collection('invites');
+      let email = userSnapshot.data().email
 
-    return invitesRef.where('email', '==', email).get()
-    .then(snapshot => {
-      var batch = firestore.batch()
+      return invitesRef.where('email', '==', email).get()
+      .then(snapshot => {
+        var batch = firestore.batch()
 
-      snapshot.docs.forEach(doc => {
-        batch.delete(doc.ref)
+        snapshot.docs.forEach(doc => {
+          batch.delete(doc.ref)
+        })
+        return batch.commit()
       })
-      return batch.commit()
-    })
+    } catch(e) {
+      Sentry.captureException(e)
+      return Promise.reject(e)
+    }
   })
 
 //INVITE EMAIL
@@ -63,32 +67,37 @@ const signupLink = `${config && config.host && config.host.url ? config.host.url
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
-    const firestore = admin.firestore();
-    const adminRef = firestore.collection('users');
-    const data = inviteSnapshot.data()
+    try {
+      const firestore = admin.firestore();
+      const adminRef = firestore.collection('users');
+      const data = inviteSnapshot.data()
 
-    return adminRef.doc(data.invitedBy).get().then(results => {
-      let admin = results.data();
+      return adminRef.doc(data.invitedBy).get().then(results => {
+        let admin = results.data();
 
-      let emailContent = inviteEmailContent()
-      let link = `${signupLink}?id=${encodeURIComponent(inviteSnapshot.id)}`
-      emailContent = emailContent.replace('{{link}}', link);
-      if(inviteSnapshot.data().name) {
-        emailContent = emailContent.replace('{{greeting}}', `Hi ${inviteSnapshot.data().name},`)
-      } else {
-        emailContent = emailContent.replace('{{greeting}}', 'Hi,')
-      }
-      emailContent = emailContent.replace('{{admin_name}}', admin.firstName);
+        let emailContent = inviteEmailContent()
+        let link = `${signupLink}?id=${encodeURIComponent(inviteSnapshot.id)}`
+        emailContent = emailContent.replace('{{link}}', link);
+        if(inviteSnapshot.data().name) {
+          emailContent = emailContent.replace('{{greeting}}', `Hi ${inviteSnapshot.data().name},`)
+        } else {
+          emailContent = emailContent.replace('{{greeting}}', 'Hi,')
+        }
+        emailContent = emailContent.replace('{{admin_name}}', admin.firstName);
 
-      const msg = {
-        to: inviteSnapshot.data().email,
-        from: getFromEmail(),
-        subject: 'You\'re Invited to Work Buddies!',
-        html: emailContent,
-      };
+        const msg = {
+          to: inviteSnapshot.data().email,
+          from: getFromEmail(),
+          subject: 'You\'re Invited to Work Buddies!',
+          html: emailContent,
+        };
 
-      return sgMail.send(msg);
-    });
+        return sgMail.send(msg);
+      });
+    } catch(e) {
+      Sentry.captureException(e)
+      return Promise.reject(e)
+    }
   });
 
   //END INVITE EMAIL
@@ -397,57 +406,23 @@ const matchup = async (data) => {
     return Promise.all([matchUpUsersPromise, setNextMatchupPromise].concat(emailPromises))
 }
 
-exports.matchupSub = functions.pubsub.topic('matchup').onPublish(async (message, _ctx) => {
+exports.matchupSub = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
   try {
     const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
     console.info(JSON.stringify(data))
-    return await matchup(data)
-  } catch(error) {
-    let blocks = [
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "*matchupSub*"
-        }
-      },
-      { type: 'divider' },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "*data:* " + JSON.stringify(data)
-        }
-      },
-    ]
-    await Slack.send({ webhook: { blocks }, error: error })
-    return Promise.reject(error)
+    return matchup(data)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
   }
 })
 
-exports.matchup = functions.https.onCall(async (data, _ctx) => {
+exports.matchup = functions.https.onCall((data, _ctx) => {
   try {
-    return await matchup(data)
-  } catch(error) {
-    let blocks = [
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "*matchup*"
-        }
-      },
-      { type: 'divider' },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "*data:* " + JSON.stringify(data)
-        }
-      },
-    ]
-    await Slack.send({ webhook: { blocks }, error: error })
-    return Promise.reject(error)
+    return matchup(data)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
   }
 })
 // END GENERATE MATCHUPS
@@ -531,9 +506,9 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
           return sgMail.send(msg)
         })
       }
-    } catch(error) {
-      await Slack.send({ webhook: { text: 'An error occurred!' }, error: error, ref: userSnapshot})
-      return Promise.reject(error)
+    } catch(e) {
+      Sentry.captureException(e)
+      return Promise.reject(e)
     }
   })
 
@@ -542,32 +517,47 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
 
 //set next matchup time
 const setNextMatchupTime = (companyId) => {
-  const firestore = admin.firestore();
-  let companyRef = firestore.collection('companies').doc(companyId);
-  if (!companyRef) return Promise.reject(new Error("company not found"))
+  try {
+    const firestore = admin.firestore();
+    let companyRef = firestore.collection('companies').doc(companyId);
+    if (!companyRef) return Promise.reject(new Error("company not found"))
 
-  return companyRef.get()
-  .then(company => {
-    let data = company.data()
-    let now = moment().tz(data.timeZone)
-    let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0).milliseconds(0)
+    return companyRef.get()
+    .then(company => {
+      let data = company.data()
+      let now = moment().tz(data.timeZone)
+      let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0).milliseconds(0)
 
-    if(now.isAfter(nextTime)) {
-      nextTime = nextTime.add(1, 'weeks')
-    }
+      if(now.isAfter(nextTime)) {
+        nextTime = nextTime.add(1, 'weeks')
+      }
 
-    return company.ref.set({
-      matchUpTime: nextTime.valueOf()
-    }, {merge: true})
-  })
+      return company.ref.set({
+        matchUpTime: nextTime.valueOf()
+      }, {merge: true})
+    })
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 }
 exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
-  return setNextMatchupTime(companyId)
+  try {
+    return setNextMatchupTime(companyId)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 })
 
 exports.setInitialMatchupTime = functions.firestore.document('companies/{companyId}')
 .onCreate((snapshot, _context) => {
-  setNextMatchupTime(snapshot.id)
+  try {
+    setNextMatchupTime(snapshot.id)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 });
 
 
@@ -603,8 +593,13 @@ let publishToTopic = topic =>
 
 
 exports.matchUpScheduler = functions.pubsub.schedule('*/5 * * * *').onRun((_ctx) => {
-  let timestamp = moment.utc().valueOf();
-  return queries.getToMatchUp(timestamp).asyncMap(publishToTopic('matchup'))
+  try {
+    let timestamp = moment.utc().valueOf();
+    return queries.getToMatchUp(timestamp).asyncMap(publishToTopic('matchup'))
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 });
 
 // END TRIGGER MATCHUPS
