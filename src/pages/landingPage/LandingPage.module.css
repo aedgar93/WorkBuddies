@@ -1,85 +1,239 @@
-.topSection {
-  margin:0;
-  padding-bottom: 100px;
-  position: relative;
-}
-
-.topSectionInner {
-  max-width: 800px;
-  margin: 0 auto;
-  z-index: 3;
-  position: relative;
-}
-
-.bg1, .bg2 {
-  position: absolute;
-  z-index: 1;
-  width: 410px;
-  height: 410px;
-}
-
-.bg1 {
-  top: 40px;
-  right: 75px;
-}
-
-.bg2 {
-  bottom: 90px;
-  left: 100px;
-}
-
-.actionsContainer {
-  margin-top: 80px;
-}
-
-.instructions {
-  color: var(--primary);
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.activitiesContainer {
-  margin-top: 80px;
-}
-
-.submit {
-  margin-bottom: 40px;
-  font-size: 18px;
-  font-weight: bold;
-  width: 340px;
-  height: 60px;
-}
-
-.link {
-  text-decoration: underline;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-
-.bottomSection {
-  background: white;
-  padding: 0 20px 20px 20px;
-  display:flex;
+.strip1 {
+  margin: 100px auto 145px auto;
+  display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
 }
 
-.blurb {
-  flex-grow: 0;
-  flex-shrink: 0;
-  width: 300px;
-  margin: 75px 10px;
+.info {
+  max-width: 100%;
 }
 
-.icon {
-  margin: 0 auto 28px auto;
+.strip1 .info {
+  width: 720px;
+  margin-right: 22px;
 }
 
-@media (max-width: 415px) {
-  .blurb {
-    margin: 20px 10px;
+.title {
+  font-weight: bold;
+  font-size: 48px;
+  color: var(--primary-dark);
+  letter-spacing: -0.51px;
+  line-height: 52px;
+}
+
+.startButton {
+  margin: 50px 0;
+  padding: 9px 29px;
+  font-size: 18px;
+}
+
+.invite {
+  text-decoration: underline;
+  color: var(--primary-text);
+  font-size: 16px;
+}
+
+.image1 {
+  flex-shrink: 1;
+}
+
+.image1 img {
+  max-width: 100%;
+}
+
+div.strip2 {
+  padding: 182px 20px 144px 20px;
+  background-color: #F9F9F9;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+}
+
+.strip2 .info {
+  width: 620px;
+  margin-left: 82px;
+}
+
+.subTitle {
+  font-weight: bold;
+  font-size: 30px;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+.desc {
+  font-size: 16px;
+  color: var(--primary-dark);
+  line-height: 27px;
+}
+
+.strip3 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 106px 0 83px 0;
+  background-image: url('../../assets/images/landing_connect.svg');
+  background-repeat: no-repeat;
+  background-position-x: center;
+  background-position-y: 155px;
+}
+
+.strip3 .info {
+  margin: 0px 126px 0 68px;
+}
+
+.infoBubble {
+  background-color: white;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.19);
+  border-radius: 14px;
+  font-size: 24px;
+  color: #302464;
+  text-align: center;
+  line-height: 26px;
+  padding: 28px 0;
+  width: 413px;
+  max-width: 100%;
+  margin: 102px 0;
+}
+
+.infoBubble:first-child {
+  margin-top: 85px;
+}
+
+.infoBubble:last-child {
+  margin-bottom: 40px;
+}
+
+.image3 {
+  align-self: start;
+  margin-top: 50px;
+}
+
+.image4 {
+  align-self: flex-end;
+}
+
+
+div.strip4 {
+  background-color: #F9F9F9;
+  padding: 105px 0;
+}
+
+.title2 {
+  font-weight: bold;
+  font-size: 28px;
+  color: var(--primary-dark);
+  letter-spacing: -0.3px;
+  text-align: center;
+  line-height: 52px;
+}
+
+.logo {
+  width: 171px;
+  margin: 0 auto 31px auto;
+}
+
+.strip4 .startButton {
+  margin: 36px 0 25px 0;
+}
+
+image1 img, .image2 img, .image3 img, .image4 img {
+  max-width: 100%;
+}
+
+@media only screen and (max-width: 1100px) {
+
+  .title {
+    font-size: 36px;
+    line-height: 1.5em;
+  }
+
+  .title2 {
+    line-height: 1.5em;
+    font-size: 26px;
+  }
+
+  .strip1 .info {
+    width: 500px;
+  }
+
+  .strip3 .info {
+    margin: 0 40px 0 30px;
+  }
+
+}
+
+@media only screen and (max-width: 900px) {
+
+  .title1 {
+    font-size: 30px;
+  }
+
+  div.strip3 {
+    background-image: none;
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+  }
+
+  .image3 {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+
+  .title, .subtitle {
+    font-size: 28px;
+    line-height: 1.5em;
+  }
+
+  .strip1, .strip3 {
+    margin: 50px 0;
+    background-image: none;
+  }
+
+  div.strip2, div.strip4 {
+    padding: 50px 20px;
+  }
+
+  .strip1, div.strip2{
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+  }
+
+  .image1 {
+    width: 60%;
+    align-self: center;
+    margin-left: -10px;
+    margin-top: 25px;
+  }
+
+  .strip1 .info, .strip2 .info, .strip3 .info {
+    margin: 0 auto;
+  }
+
+  .infoBubble {
+    padding: 20px 15px;
+  }
+
+  .strip2 .info {
+    order: -1;
+  }
+
+  .image2 {
+    width: 80%;
+  }
+
+  .image4 {
+    align-self: center;
+    max-width: 60%;
   }
 }

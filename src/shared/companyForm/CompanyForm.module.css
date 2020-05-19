@@ -22,7 +22,19 @@
 .label {
   font-weight: bold;
   font-size: 14px;
-  color: #5B5B5B;
+  color: var(--primary-text);
   letter-spacing: -0.15px;
   margin-bottom: 5px;
+}
+
+.input {
+  composes: input from '../../shared.css';
+}
+
+.select {
+  composes: select from '../../shared.css';
+  text-align: left;
+  text-align-last: left;
+  padding-left: 10px;
+  overflow: hidden !important;
 }

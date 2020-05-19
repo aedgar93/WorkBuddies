@@ -2,9 +2,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styles from './AcceptInvite.module.css'
 import { FirebaseContext } from '../../firebaseComponents'
-import { ROUTES } from '../../utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import { Alert, Spinner, Modal, Button } from 'react-bootstrap'
 import SignUpForm from '../../shared/signUpForm/SignUpForm';
+import icon from '../../assets/images/single_matchup_icons.svg'
+import acceptInvite from 'wb-utils/acceptInvite'
 
 const AcceptInvite = ({ history, location }) => {
   const [error, setError] = useState(null)
@@ -87,38 +89,15 @@ const AcceptInvite = ({ history, location }) => {
       })
   }
 
-  const acceptInvite = async (companyId, inviteId, info = accountInfo) => {
-    if (!companyId) {
-      updateError('Sorry! Something went wrong. Please try again.')
-      return Promise.reject('Company not found')
-    }
-    if (!inviteId) {
-      updateError('Sorry! Something went wrong. Please try again.')
-      return Promise.reject('Invite not found')
-    }
-    let { email, password1, firstName, lastName } = info
-    let user
-    try {
-      let result = await firebase.createUserWithEmailAndPassword(email, password1)
-      user = result.user
-    } catch(error) {
-      console.log(error)
-      return updateError(error.message)
-    }
-    localStorage.removeItem('inviteId')
-    firebase.db.collection('users').add({
-      auth_id: user.uid,
-      firstName,
-      lastName,
-      email,
-      notifyEmail: true,
-      company_uid: companyId,
-      admin: false
-    })
+  const acceptInviteHandler = async (companyId, inviteId, info = accountInfo) => {
+    acceptInvite(firebase, companyId, inviteId, info)
     .then(() => {
       history.push(ROUTES.BASE)
     })
-    .catch(updateError)
+    .catch(error => {
+      updateError(error)
+      return Promise.reject(error)
+    })
   }
 
   const onSubmit = async (accountInfo) => {
@@ -131,7 +110,7 @@ const AcceptInvite = ({ history, location }) => {
     if(!invites || invites.length === 0) return updateError("Sorry! We couldn't find any invites for that email address. Please enter an email address associated with an invite, or follow the link provided in the invite.")
     else if(invites.length === 1) {
       let invite = invites[0]
-      return acceptInvite(invite.data().company_uid, invite.id, accountInfo)
+      return acceptInviteHandler(invite.data().company_uid, invite.id, accountInfo)
     } else {
       openSelectInvite(invites, accountInfo)
     }
@@ -151,34 +130,40 @@ const AcceptInvite = ({ history, location }) => {
 
   if (!ready) return (<Spinner animation="border" size="lg" variant="primary"/>)
   return (
-    <div className={styles.wrapper}>
-      <h3>Welcome!</h3>
-      {
-        error ? <Alert variant="danger" className={styles.alert}>{ error }</Alert> : null
-      }
-      <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail}/>
+    <div className={styles.outerWrapper}>
+      <div className={styles.wrapper}>
+        <h3 className={styles.title}>You’re invited to Work Buddies! <br/> Let’s set up your account</h3>
+        {
+          error ? <Alert variant="danger" className={styles.alert}>{ error }</Alert> : null
+        }
+        <SignUpForm onSubmit={onSubmit} loading={loading} suggestedEmail={suggestedEmail}/>
 
-    <Modal show={showModal} onHide={closeModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Please select the company you would like to join.</Modal.Title>
-        </Modal.Header>
+      <Modal show={showModal} onHide={closeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Please select the company you would like to join.</Modal.Title>
+          </Modal.Header>
 
-        <Modal.Body>
-          {
-            invites ?
-              invites.map(invite => {
-              return (
-                <div key={invite.id} className={styles.selectCompany}>
-                  <Button
-                    onClick={() => acceptInvite(invite.company_uid, invite.id)}>
-                    {invite.company.name}
-                  </Button>
-                </div>
-              )})
-              : "Fetching all invites..."
-          }
-        </Modal.Body>
-      </Modal>
+          <Modal.Body>
+            {
+              invites ?
+                invites.map(invite => {
+                return (
+                  <div key={invite.id} className={styles.selectCompany}>
+                    <Button
+                      onClick={() => acceptInviteHandler(invite.company_uid, invite.id)}>
+                      {invite.company.name}
+                    </Button>
+                  </div>
+                )})
+                : "Fetching all invites..."
+            }
+          </Modal.Body>
+        </Modal>
+      </div>
+      <div className={styles.iconWrapper}>
+        <div className={styles.subtitle}>Get to know your co-workers, one activity at a time. </div>
+        <img src={icon} alt="Co-workers pairing up for an activity" className={styles.icon} />
+      </div>
     </div>
   );
 }

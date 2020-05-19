@@ -2,14 +2,10 @@
   text-align: left;
 }
 
-.purpleLine {
-  background-color: var(--primary-light);
-}
-
 .title {
   font-weight: bold;
   font-size: 24px;
-  color: #2E2460;
+  color: var(--primary-text);
   letter-spacing: -0.25px;
   margin-bottom: 25px;
 }
@@ -24,9 +20,12 @@
 }
 
 .section {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 60px 20px;
+  composes: section from '../../shared.css'
+}
+
+.sectionInner {
+  composes: sectionInner from '../../shared.css'
+
 }
 
 .form {
@@ -45,10 +44,13 @@
   margin-top: 20px;
 }
 
-.label {
-  margin: 0 0 6px 0;
-  font-size: 15px;
-  line-height: 16px;;
+.input, .textarea  {
+  composes: input from '../../shared.css';
+}
+
+.formGroup .textarea {
+  height: 80px;
+  resize: none;
 }
 
 .buttonSpinner {
@@ -67,7 +69,7 @@
 .notifyLabel {
   font-weight: bold;
   font-size: 18px;
-  color: var(--primary-dark);
+  color: var(--primary-color);
   letter-spacing: -0.19px;
   display: inline-block;
   margin-right: 30px;
@@ -128,7 +130,7 @@
 }
 
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 600px) {
   .content {
     flex-direction: column;
   }
@@ -141,6 +143,10 @@
 
   .title {
     text-align: left;
+  }
+
+  .formGroup input, .formGroup textarea {
+    padding-left: 10px;
   }
 }
 

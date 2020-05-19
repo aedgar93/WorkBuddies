@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="393px" height="258px" viewBox="0 0 393 258" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>landing_2</title>
+    <defs>
+        <rect id="path-1" x="134" y="81" width="125" height="49" rx="24.5"></rect>
+        <filter x="-6.8%" y="-13.3%" width="113.6%" height="134.7%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.231670673 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <circle id="path-3" cx="47.5" cy="47.5" r="47.5"></circle>
+        <linearGradient x1="33.7201375%" y1="43.516669%" x2="100%" y2="67.121801%" id="linearGradient-5">
+            <stop stop-color="#84A5FF" offset="0%"></stop>
+            <stop stop-color="#5F77FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="33.7201375%" y1="33.3470545%" x2="100%" y2="93.978692%" id="linearGradient-6">
+            <stop stop-color="#84A5FF" offset="0%"></stop>
+            <stop stop-color="#5F77FF" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-7" cx="47.5" cy="47.5" r="47.5"></circle>
+        <linearGradient x1="76.1959314%" y1="46.0445698%" x2="27.4960907%" y2="50%" id="linearGradient-9">
+            <stop stop-color="#FFC6AF" offset="0%"></stop>
+            <stop stop-color="#FFE4D8" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="33.7201375%" y1="34.8952875%" x2="100%" y2="89.88997%" id="linearGradient-10">
+            <stop stop-color="#84A5FF" offset="0%"></stop>
+            <stop stop-color="#5F77FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="hi-fi-design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="landing-page01" transform="translate(-183.000000, -890.000000)">
+            <g id="landing_2" transform="translate(183.000000, 890.000000)">
+                <path d="M50,105 C106.574955,77 160.109117,63 210.602484,63 C261.095852,63 309.561691,77 356,105" id="Path-3" stroke="#F3CC8F" stroke-width="4" stroke-linecap="round" stroke-dasharray="3,6" transform="translate(203.000000, 84.000000) scale(1, -1) translate(-203.000000, -84.000000) "></path>
+                <g id="Rectangle-Copy-4">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                </g>
+                <rect id="Rectangle-Copy-5" fill="#FFFFFF" x="258" y="129" width="104" height="41" rx="20.5"></rect>
+                <text id="Ping-pong" opacity="0.628231957" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" letter-spacing="-0.148484852" fill="#7F68FF">
+                    <tspan x="276" y="155">Ping pong</tspan>
+                </text>
+                <g id="Group-3" transform="translate(39.000000, 145.000000)">
+                    <rect id="Rectangle-Copy-6" fill="#FFFFFF" x="0" y="0" width="142" height="41" rx="20.5"></rect>
+                    <text id="Virtual-lunch-time" opacity="0.628231957" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" letter-spacing="-0.148484852" fill="#7F68FF">
+                        <tspan x="14" y="26">Virtual lunch time</tspan>
+                    </text>
+                </g>
+                <rect id="Rectangle-Copy-6" fill="#FFFFFF" x="4" y="217" width="142" height="41" rx="20.5"></rect>
+                <text id="Show-off-your-pet" opacity="0.628231957" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" letter-spacing="-0.148484852" fill="#7F68FF">
+                    <tspan x="18" y="243">Show off your pet</tspan>
+                </text>
+                <rect id="Rectangle-Copy-6" fill="#FFFFFF" x="194" y="199" width="116" height="41" rx="20.5"></rect>
+                <text id="Go-for-a-walk" opacity="0.628231957" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" letter-spacing="-0.148484852" fill="#7F68FF">
+                    <tspan x="210" y="225">Go for a walk</tspan>
+                </text>
+                <text id="Grab-coffee-Copy" font-family="Arial-BoldMT, Arial" font-size="16.8000007" font-weight="bold" letter-spacing="-0.178181834" fill="#7F68FF">
+                    <tspan x="151" y="112">Grab coffee</tspan>
+                </text>
+                <g id="Group-8" transform="translate(250.000000, 64.000000)" stroke="#F3CC8F" stroke-linecap="round" stroke-width="3.99999976">
+                    <line x1="5.95999976" y1="12.2" x2="11.4799994" y2="7.80000025" id="Line-2-Copy"></line>
+                    <line x1="9.95999976" y1="18.2" x2="16.4999998" y2="18.5000002" id="Line-2-Copy-3"></line>
+                    <line x1="-3.52000003" y1="4.79999995" x2="5.11999946" y2="4.79999995" id="Line-2-Copy-2" transform="translate(0.800000, 4.800000) rotate(90.000000) translate(-0.800000, -4.800000) "></line>
+                </g>
+                <g id="Group-6" transform="translate(133.000000, 76.000000)" stroke="#F3CC8F" stroke-linecap="round" stroke-width="3.99999976">
+                    <line x1="0.399999976" y1="3.79999971" x2="7.29999995" y2="3.69999987" id="Line-2" transform="translate(4.000000, 4.000000) rotate(90.000000) translate(-4.000000, -4.000000) "></line>
+                    <line x1="0.800000131" y1="3.79999995" x2="7.9999997" y2="3.79999995" id="Line-2"></line>
+                </g>
+                <g id="Group-7" transform="translate(143.000000, 58.000000)" stroke="#F3CC8F" stroke-linecap="round" stroke-width="3.99999976">
+                    <line x1="0.399999976" y1="3.79999971" x2="7.29999995" y2="3.69999987" id="Line-2-Copy-4" transform="translate(4.000000, 4.000000) rotate(90.000000) translate(-4.000000, -4.000000) "></line>
+                    <line x1="0.800000131" y1="3.79999995" x2="7.9999997" y2="3.79999995" id="Line-2-Copy-5"></line>
+                </g>
+                <g id="Group-9">
+                    <mask id="mask-4" fill="white">
+                        <use xlink:href="#path-3"></use>
+                    </mask>
+                    <use id="Mask" fill="#FFFFFF" xlink:href="#path-3"></use>
+                    <g mask="url(#mask-4)">
+                        <g transform="translate(13.000000, 17.000000)">
+                            <path d="M7.86895696,41.4529405 L0,56 C6.1394146,57.436546 10.8060813,58.1032126 14,58 C20.1252837,57.8020593 26.4428327,55.0978682 33,55 C40.8924737,54.8822019 48.4291192,58.9586793 56,59.0003094 C58.4258674,59.0133431 62.4258674,57.3465733 68,54 L52,26 L9,26 L7.86895696,41.4529405 Z" id="Path-41" stroke="none" fill="url(#linearGradient-5)" fill-rule="evenodd"></path>
+                            <path d="M33.8884693,57.5999985 C47.5805013,57.5999985 56.3164133,37.8890199 56.3164133,25.3691784 C56.3164133,12.8493368 46.0413486,2.69999993 33.3664139,2.69999993 C20.6914792,2.69999993 10.4164145,12.8493368 10.4164145,25.3691784 C10.4164145,37.8890199 20.1964374,57.5999985 33.8884693,57.5999985 Z" id="Oval" stroke="none" fill="#FFDFC7" fill-rule="evenodd"></path>
+                            <path d="M26.1832291,14.7260266 C35.3145421,21.8127478 42.7660637,26.0669333 48.5377941,27.488583 C50.186449,27.8946675 50.3238601,33.1514985 51.4536069,33.3789937 C53.3371751,33.7582845 54.9570712,32.1220594 56.3132949,28.4703181 C56.4875358,9.49010605 49.3599934,0 34.9306676,0 C20.5013418,0 12.0070971,4.97577407 9.44793369,14.9273222 C6.56206853,25.5896952 7.28353482,33.0533564 11.6123326,37.3183056 C14.3946927,40.0596267 13.9924868,30.5113227 20.3516035,23.5616426 C22.707871,20.9865514 24.6517462,18.0413461 26.1832291,14.7260266 Z" id="Path-16" stroke="none" fill="url(#linearGradient-6)" fill-rule="evenodd"></path>
+                            <path d="M13.4771395,42.9168262 C11.0204629,44.0173435 7.65859982,41.81272 5.9682081,37.9926619 C4.27781638,34.1726037 4.89901298,30.1836892 7.35568955,29.0831719 C9.81236612,27.9826546 13.1742292,30.1872781 14.8646209,34.0073362 C16.5550127,37.8273943 15.9338161,41.8163089 13.4771395,42.9168262 Z" id="Oval-Copy-6" stroke="none" fill="#FFDFC7" fill-rule="evenodd"></path>
+                            <path d="M59.3771383,42.9168262 C56.9204617,44.0173435 53.5585986,41.81272 51.8682069,37.9926619 C50.1778152,34.1726037 50.7990118,30.1836892 53.2556883,29.0831719 C55.7123649,27.9826546 59.074228,30.1872781 60.7646197,34.0073362 C62.4550114,37.8273943 61.8338148,41.8163089 59.3771383,42.9168262 Z" id="Oval-Copy-7" stroke="none" fill="#FFDFC7" fill-rule="evenodd" transform="translate(56.316413, 35.999999) scale(-1, 1) translate(-56.316413, -35.999999) "></path>
+                            <line x1="9.29141455" y1="33.5454537" x2="8.14999992" y2="37.7980299" id="Line-3-Copy-4" stroke="#A07A5E" stroke-width="0.5" fill="none" stroke-linecap="square" transform="translate(8.616415, 35.549999) scale(-1, 1) translate(-8.616415, -35.549999) "></line>
+                            <line x1="54.9664133" y1="33.3019683" x2="56.7499986" y2="37.7980299" id="Line-3-Copy-5" stroke="#A07A5E" stroke-width="0.5" fill="none" stroke-linecap="square" transform="translate(55.866413, 35.549999) scale(-1, 1) translate(-55.866413, -35.549999) "></line>
+                            <polyline id="Path-38" stroke="none" fill="#F3C8AF" fill-rule="evenodd" points="29.316414 35.999999 32.9164139 43.0874989 29.316414 44.0999988"></polyline>
+                        </g>
+                    </g>
+                </g>
+                <g id="Group-10" transform="translate(298.000000, 0.000000)">
+                    <mask id="mask-8" fill="white">
+                        <use xlink:href="#path-7"></use>
+                    </mask>
+                    <use id="Mask" fill="#FFFFFF" xlink:href="#path-7"></use>
+                    <g mask="url(#mask-8)">
+                        <g transform="translate(18.000000, 16.000000)">
+                            <ellipse id="Oval" stroke="none" fill="#FFE1D3" fill-rule="evenodd" transform="translate(52.047796, 37.429122) scale(-1, 1) rotate(-10.000000) translate(-52.047796, -37.429122) " cx="52.0477962" cy="37.4291224" rx="4.73164196" ry="7.31369928"></ellipse>
+                            <ellipse id="Oval-Copy-5" stroke="none" fill="#FFC6AF" fill-rule="evenodd" transform="translate(7.312500, 36.568683) scale(-1, 1) rotate(21.000000) translate(-7.312500, -36.568683) " cx="7.31250029" cy="36.5686828" rx="4.73172057" ry="7.31357778"></ellipse>
+                            <line x1="51.9351667" y1="35.1715923" x2="52.4414167" y2="40.2545471" id="Line-3" stroke="#A07A5E" stroke-width="0.5" fill="none" stroke-linecap="square" transform="translate(52.216417, 37.800002) scale(-1, 1) translate(-52.216417, -37.800002) "></line>
+                            <line x1="6.54141493" y1="35.795456" x2="5.64141489" y2="40.2545471" id="Line-3-Copy-3" stroke="#A07A5E" stroke-width="0.5" fill="none" stroke-linecap="square" transform="translate(6.316415, 37.800002) scale(-1, 1) translate(-6.316415, -37.800002) "></line>
+                            <path d="M33.3935566,61.0583999 C53.302026,60.0300622 51.3607443,36.7319818 49.920008,26.9758525 C48.4792717,17.2197233 42.7592668,5.16267059 30.6067318,5.16267059 C18.4541967,5.16267059 8.60287468,14.8330657 8.60287468,26.7624219 C8.60287468,38.691778 13.4850871,62.0867376 33.3935566,61.0583999 Z" id="Oval" stroke="none" fill="url(#linearGradient-9)" fill-rule="evenodd" transform="translate(29.680162, 33.126943) scale(-1, 1) rotate(4.000000) translate(-29.680162, -33.126943) "></path>
+                            <path d="M36.8696296,19.7142865 C42.2361881,21.0797232 46.2672521,25.0797234 48.9628215,31.714287 C48.9628215,23.1428581 49.8266209,18.0000007 51.5542198,16.2857149 C54.1334787,13.726332 53.5188815,8.2977604 49.7104281,0 C50.6988282,1.89720653 44.2377414,2.84580979 30.3271677,2.84580979 C9.46130726,2.84580979 9.22804806,8.57142891 5.77285037,16.2857149 C3.46938524,21.4285716 4.33318466,28 8.36424864,36 C8.88417984,31.8951195 11.187645,27.6094056 15.274644,23.1428581 C18.6819792,19.419093 28.8197918,17.6661314 36.8696296,19.7142865 Z" id="Path-16" stroke="none" fill="url(#linearGradient-10)" fill-rule="evenodd" transform="translate(28.816416, 18.000001) scale(-1, 1) translate(-28.816416, -18.000001) "></path>
+                            <polyline id="Path-37" stroke="none" fill="#F9C3A4" fill-rule="evenodd" points="23.4164156 36.9000015 23.4164156 46.8000019 27.0164157 46.8000019"></polyline>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

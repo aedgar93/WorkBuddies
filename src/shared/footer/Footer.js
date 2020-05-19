@@ -1,16 +1,19 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, { useContext } from 'react';
 import styles from './Footer.module.css'
+import { withRouter } from 'react-router-dom'
+import { AuthUserContext } from '../../session'
 
 
-const Footer = () => {
+const Footer = ({ location }) => {
+  const auth = useContext(AuthUserContext)
 
 
   return (
-    <div className={styles.footer}>
-      © 2020 WorkBuddies, LLC
+    <div className={`${styles.footer} ${location.pathname === '/' && (!auth || !auth.user) ? styles.home : ''}`}>
+      © 2020 Tang Labs, LLC
     </div>
   )
 }
 
-export default Footer
+export default withRouter(Footer)

@@ -1,17 +1,21 @@
 import React, { useState, useContext } from 'react'
 import styles from './CreateCompany.module.css'
-import { ROUTES } from '../../utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import { Alert, Modal, Button } from 'react-bootstrap'
 import { FirebaseContext } from '../../firebaseComponents'
 import SignUpForm from '../../shared/signUpForm'
 import moment from 'moment-timezone'
-import suggestedActivities from '../../utils/sampleActivities'
+import suggestedActivities from 'wb-utils/sampleActivities'
+import bg_image from '../../assets/images/girl_on_laptop.svg'
+import acceptInvite from 'wb-utils/acceptInvite'
+
 
 
 const CreateCompany = ({ history }) => {
   const [error, setError] = useState(null)
   const [invites, setInvites] = useState([])
   const [loading, setLoading] = useState(false)
+  const [accountInfo, setAccountInfo] = useState(null)
   const firebase = useContext(FirebaseContext)
   const genericError = 'Something went wrong! Please try again.'
 
@@ -44,7 +48,7 @@ const CreateCompany = ({ history }) => {
   }
 
 
-  const create = async (info) => {
+  const create = async (info = accountInfo) => {
     setInvites([])
     if(!info) {
       return updateError()
@@ -100,6 +104,7 @@ const CreateCompany = ({ history }) => {
   }
 
   const onSubmit = async (info) => {
+    setAccountInfo(info)
     setError(false)
     setLoading(true)
     let existingInvites = await checkInvites(info.email)
@@ -109,45 +114,44 @@ const CreateCompany = ({ history }) => {
     setInvites(existingInvites)
   }
 
-  const goToInvite = (invite) => {
-    history.push({
-      pathname: ROUTES.SIGN_UP + '/' + invite.code
-    })
+  const acceptInviteHandler = (invite) => {
+    acceptInvite(firebase, invite.company_uid, invite.id, accountInfo)
   }
 
   return (
-  <div className={styles.wrapper}>
-      { error ? <Alert variant="danger">{ error }</Alert> : null}
-        <>
-          <h3 className={styles.title}>
-            Start using Work Buddies!
-          </h3>
-          <SignUpForm onSubmit={onSubmit} showCompanyName={true} loading={loading}/>
+  <div className={styles.outerWrapper}>
+    <div className={styles.wrapper}>
+        { error ? <Alert variant="danger">{ error }</Alert> : null}
+          <>
+            <h3 className={styles.title}>
+              Start using Work Buddies!
+            </h3>
+            <SignUpForm onSubmit={onSubmit} showCompanyName={true} loading={loading}/>
 
-          <Modal show={invites && invites.length >= 1}>
-            <Modal.Header closeButton>
-              <Modal.Title>It looks like you have already been invited to {invites.length === 1 ? 'a company': 'multiple companies'}</Modal.Title>
-            </Modal.Header>
+            <Modal show={invites && invites.length >= 1} centered>
+              <Modal.Header closeButton={false}>
+                <Modal.Title>It looks like you have already been invited to {invites.length === 1 ? 'a company': 'multiple companies'}</Modal.Title>
+              </Modal.Header>
 
-            <Modal.Body>
-              <div>Would you like to join an existing company or continue with creating your own?</div>
-                {
-                  invites && invites.map(invite => {
-                    console.log(invite)
-                    return (
-                      <div key={invite.id} className={styles.selectCompany}>
-                        <Button
-                          onClick={() => goToInvite(invite)}>
-                          Join {invite.company.name}
-                        </Button>
-                      </div>
-                  )})
-                }
-                <br/>
-                <Button onClick={create}>Create my company</Button>
-            </Modal.Body>
-          </Modal>
-        </>
+              <Modal.Body>
+                <div className={styles.alertText}>Would you like to join an existing company or continue with creating your own?</div>
+                  {
+                    invites && invites.map(invite => {
+                      return (
+                        <div key={invite.id} className={styles.selectCompany}>
+                          <Button
+                            onClick={() => acceptInviteHandler(invite)}>
+                            Join {invite.company.name}
+                          </Button>
+                        </div>
+                    )})
+                  }
+                  <Button onClick={() => create()}>Create my company</Button>
+              </Modal.Body>
+            </Modal>
+          </>
+      </div>
+      <img src={bg_image} alt="Girl Working on a Laptop" className={styles.bg} />
     </div>
   )
 }

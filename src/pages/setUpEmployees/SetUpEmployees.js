@@ -1,7 +1,8 @@
 import React from 'react'
 import styles from './SetUpEmployees.module.css'
 import SendInvites from '../../shared/sendInvites'
-import { ROUTES } from '../../utils/constants'
+import { ROUTES } from 'wb-utils/constants'
+import icons from '../../assets/images/people_icons.svg'
 
 const SetUpEmployees = ({history}) => {
 
@@ -15,9 +16,12 @@ const SetUpEmployees = ({history}) => {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <h2>Let's invite your work buddies</h2>
-      <SendInvites onNext={skip} onSubmit={handleDone}/>
+    <div className={styles.outerWrapper}>
+      <img src={icons} alt="Outlines of faces" className={styles.icons}/>
+      <div className={styles.wrapper}>
+        <h2 className={styles.title}>Let's invite your work buddies</h2>
+        <SendInvites onNext={skip} onSubmit={handleDone}/>
+      </div>
     </div>
   )
 }

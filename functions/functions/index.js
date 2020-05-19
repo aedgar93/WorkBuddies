@@ -4,10 +4,12 @@ const sgMail = require('@sendgrid/mail');
 const moment = require('moment-timezone');
 const initQueries = require('./queries.js');
 const uuidv1 = require('uuid/v1');
+const { TIMES, ROUTES }= require('wb-utils/constants')
 const { PubSub } = require('@google-cloud/pubsub');
-const inviteEmailContent = require('./emails/invite.js')
-const buddyEmailContent = require('./emails/matchup.js')
-const threeBuddiesEmailContent = require('./emails/matchup3.js')
+const fs = require('fs');
+const { promisify } = require('util');
+const read = promisify(fs.readFile);
+
 const Sentry = require('@sentry/node')
 
 Sentry.init({ dsn: 'https://abc4cbf3abff4a19975d97ee9e6bfcd6@o386021.ingest.sentry.io/5219768' });
@@ -61,7 +63,7 @@ const getFromEmail = () => {
   return config && config.mail ? config.mail.email : 'annadesiree11@gmail.com'
 }
 
-const signupLink = `${config && config.host && config.host.url ? config.host.url : 'http://localhost:3000'}/signup`
+const signupLink = `${config && config.host && config.host.url ? config.host.url : 'http://localhost:3000'}${ROUTES.ACCEPT_INVITE}`
 
 
 
@@ -72,10 +74,13 @@ exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
       const adminRef = firestore.collection('users');
       const data = inviteSnapshot.data()
 
-      return adminRef.doc(data.invitedBy).get().then(results => {
+      return Promise.all([
+        adminRef.doc(data.invitedBy).get(),
+        read('emails/invite.html', 'utf8')
+      ])
+      .then(([results, emailContent]) => {
         let admin = results.data();
 
-        let emailContent = inviteEmailContent()
         let link = `${signupLink}?id=${encodeURIComponent(inviteSnapshot.id)}`
         emailContent = emailContent.replace('{{link}}', link);
         if(inviteSnapshot.data().name) {
@@ -125,37 +130,6 @@ const getRandom = (collection) => {
 
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
-const getActivitiesHTML = (activities) => {
-  return `
-  <table align="left" border="0" cellpadding="0" cellspacing="0"
-    style="max-width: 100%;min-width: 100%;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;padding-top: 60px;"
-    width="100%" class="mcnTextContentContainer">
-    <tbody>
-      <tr>
-
-        <td valign="top" class="otherActivityContainer">
-          <div class="otherActivityTitle">Other Suggested Activities:</div>
-          <table align="left" border="0" cellpadding="0" cellspacing="10"
-            style="max-width: 100%;min-width: 100%;border-collapse: separate;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"
-            width="100%" class="mcnTextContentContainer">
-            <tbody>
-              <tr>
-                <td class="activityTD">
-                  ${activities.map(activity => {
-                    return `
-                      <span class="activity">${activity.name}</span>
-                    `
-                  }).join(" ")}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  `
-}
 
 const addBuddySubstitutions = (buddy, suffix, substitutions) => {
   substitutions['buddy' + suffix] = `${buddy.firstName}`
@@ -174,43 +148,47 @@ const addBuddySubstitutions = (buddy, suffix, substitutions) => {
   } else {
     substitutions['about_' + suffix] = ""
   }
-
+  const timePrefix = 'buddy' + suffix + '_time_'
+  for(let i = 0;i <= 4; i++) {
+    if(buddy.availability && buddy.availability[i] && buddy.availability[i].times) {
+      let time0 = TIMES.find(t => t.value === buddy.availability[i].times[0])
+      let time1 = TIMES.find(t => t.value === buddy.availability[i].times[1])
+      console.info(time0 && time0.label)
+      console.info(time1 && time1.label)
+      substitutions[`${timePrefix}${i}_0`] = (time0 && time0.label) || '- -'
+      substitutions[`${timePrefix}${i}_1`] = (time1 && time1.label) || '- -'
+    } else {
+      substitutions[`${timePrefix}${i}_0`] = '- -'
+      substitutions[`${timePrefix}${i}_1`] = '- -'
+    }
+  }
 }
 
-const addEmailPersonalization = (buddy1, buddy2, buddy3, activity, activitiesHTML, emailInfo) => {
+const addEmailPersonalization = (buddy1, buddy2, buddy3, activity, emailInfo) => {
   if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
   let to = [{email: buddy1.email}]
   let activityString = activity ? activity.name : "Grab a Coffee"
-  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', about: '', email: '', activitiesHTML}
+  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', about: '', email: ''}
   if (buddy2) {
     addBuddySubstitutions(buddy2, '2', substitutions)
     let subject = "I'm your weekly buddy"
-    let body = `Hello ${buddy2.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?%0D%0A %0D%0ASincerely, ${buddy1.firstName}`
-    substitutions['links'] = `<td class="contactButtonTD">
-      <a class="contactButton" href="mailto:${buddy2.email}?subject=${subject}&body=${body}">
-        <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
-          <span class="contactText">Email</span>
-      </a>
-    </td>`
+    let body = `Hello ${buddy2.firstName},\n\nWe've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?\n\nSincerely, ${buddy1.firstName}`
+    substitutions['contactHref'] = `mailto:${buddy2.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }
   if(buddy3) {
     addBuddySubstitutions(buddy3, '3', substitutions)
     let subject = "I'm your weekly buddy"
-    let body = `Hello ${buddy2.firstName} and ${buddy3.firstName},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?%0D%0A %0D%0ASincerely, ${buddy1.firstName}`
-    substitutions['links'] = `<td class="contactButtonTD">
-      <a class="contactButton" href="mailto:${buddy2.email},${buddy3.email}?subject=${subject}&body=${body}">
-        <img src="http://work-buddies-app.herokuapp.com/email_icon_white.png" class="contactIcon"></img>
-          <span class="contactText">Email</span>
-      </a>
-    </td>`
+    let body = `Hello ${buddy2.firstName} and ${buddy3.firstName},\n\nWe've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?\n\nSincerely, ${buddy1.firstName}`
+    substitutions['contactHref'] = `mailto:${buddy2.email},${buddy3.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
   }
 
   return emailInfo.push({ to, substitutions, subject: "Your Weekly Buddy" })
 }
 
-const notify = (buddy1, buddy2, buddy3,  activity, activitiesHTML, emailInfo) => {
+const notify = (buddy1, buddy2, buddy3,  activity, emailInfo) => {
   if (!buddy1) return null
-  addEmailPersonalization(buddy1, buddy2, buddy3, activity, activitiesHTML, emailInfo)
+  addEmailPersonalization(buddy1, buddy2, buddy3, activity, emailInfo)
   return null
 }
 
@@ -254,7 +232,6 @@ const matchup = async (data) => {
 
   const activities = []
   activitiesSnapshot.forEach(doc => activities.push(doc.data()))
-  let activitiesHTML = getActivitiesHTML(activities)
 
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
   let previousMatchupsInfo = await getMatchups(companyRef, companyData)
@@ -263,6 +240,8 @@ const matchup = async (data) => {
   let newMatchups = []
   let emailInfo = []
   let emailPromises = []
+  let matchupEmailContent = await read('emails/matchup.html', 'utf8')
+  let matchupEmailThreeContent = await  read('emails/matchup3.html', 'utf8')
 
   let matchUpUsersPromise = usersRef.get()
     .then(async snapshot => {
@@ -311,10 +290,10 @@ const matchup = async (data) => {
         let userData = user ? user.data() : null
         let buddyData = buddy ? buddy.data() : null
 
-        notify(userData, buddyData, null, activity, activitiesHTML, emailInfo)
+        notify(userData, buddyData, null, activity, emailInfo)
 
         //buddy2 notifications
-        notify(buddyData, userData, null, activity,  activitiesHTML, emailInfo)
+        notify(buddyData, userData, null, activity, emailInfo)
 
 
         newMatchups.push({
@@ -331,7 +310,7 @@ const matchup = async (data) => {
         let msg = {
           personalizations: emailInfo,
           from: getFromEmail(),
-          html: buddyEmailContent()
+          html: matchupEmailContent
         }
         allMessages.push(msg)
       }
@@ -348,7 +327,7 @@ const matchup = async (data) => {
         let userData = user.data()
         if(userData.notifyEmail) {
           let emailInfo = []
-          notify(userData, null, null, activity, activitiesHTML, emailInfo)
+          notify(userData, null, null, activity, emailInfo)
 
           let msg = {
             personalizations: emailInfo,
@@ -368,9 +347,9 @@ const matchup = async (data) => {
         let buddyData = buddy.data()
         let buddy2Data = buddy2.data()
 
-        notify(userData, buddyData, buddy2Data, activity, activitiesHTML, emailInfo)
-        notify(buddyData, userData, buddy2Data, activity, activitiesHTML, emailInfo)
-        notify(buddy2Data, userData, buddyData, activity, activitiesHTML, emailInfo)
+        notify(userData, buddyData, buddy2Data, activity, emailInfo)
+        notify(buddyData, userData, buddy2Data, activity, emailInfo)
+        notify(buddy2Data, userData, buddyData, activity, emailInfo)
 
         newMatchups.push({
           buddies: [user.id, buddy.id, buddy2.id],
@@ -380,7 +359,7 @@ const matchup = async (data) => {
         let msg = {
           personalizations: emailInfo,
           from: getFromEmail(),
-          html: threeBuddiesEmailContent()
+          html: matchupEmailThreeContent
         }
         allMessages.push(msg)
       }
@@ -441,12 +420,6 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
       const companyRef = firestore.collection('companies').doc(companyId)
       if (!companyRef) return Promise.reject(new Error("company not found"))
 
-      let activitiesSnapshot = await companyRef.collection('activities').get()
-
-      const activities = []
-      activitiesSnapshot.forEach(doc => activities.push(doc.data()))
-      let activitiesHTML = getActivitiesHTML(activities)
-
       let companyData = await companyRef.get()
       companyData = companyData.data()
 
@@ -491,14 +464,16 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
 
 
         let emailInfo = []
-        notify(user, buddy.data(), null, activity, activitiesHTML, emailInfo)
-        notify(buddy.data(), user, null, activity, activitiesHTML, emailInfo)
+        notify(user, buddy.data(), null, activity, emailInfo)
+        notify(buddy.data(), user, null, activity, emailInfo)
+
+        let emailContent = await read('emails/matchup.html', 'utf8')
 
         if(emailInfo.length >= 1) {
           let msg = {
             personalizations: emailInfo,
             from: getFromEmail(),
-            html: buddyEmailContent()
+            html: emailContent
           }
 
 

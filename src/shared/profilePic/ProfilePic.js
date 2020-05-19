@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ProfilePic.module.css'
 
-const ProfilePic = ({ onClick, children, user, size}) => {
+const ProfilePic = ({ onClick, children, user, size, style}) => {
 
-  let style = {}
+  style = style || {}
   let initialsStyle = {}
   if(size && typeof size === 'number') {
     style.width = size

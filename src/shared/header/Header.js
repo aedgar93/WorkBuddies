@@ -8,12 +8,13 @@ import {
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import { Navbar, Nav } from 'react-bootstrap'
-import { ROUTES } from '../../utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import { useHistory } from "react-router-dom";
 import logo from '../../assets/images/logo.svg'
 import logo_small from '../../assets/images/logo_small.svg'
 import styles from './Header.module.css'
 import Media from 'react-media';
+import Button from 'react-bootstrap/Button'
 
 
 const Header = () => {
@@ -51,6 +52,7 @@ const Header = () => {
             {
               auth && auth.user ?
               <>
+                <Nav.Link to={ROUTES.BASE} as={Link} className={styles.navLink}>Home</Nav.Link>
                 <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link} className={styles.navLink}>Profile</Nav.Link>
                 { auth && auth.user && auth.user.admin ?
                   <Nav.Link to={ROUTES.EDIT_COMPANY} as={Link} className={styles.navLink}>My Company</Nav.Link>
@@ -60,7 +62,7 @@ const Header = () => {
               </>
               :
               <>
-                <Nav.Link as={Link} to={ROUTES.SIGN_UP} className={`${styles.navLink} ${styles.signUp}`}>Sign Up</Nav.Link>
+                <Button as={Button}  className={styles.signUp} href={ROUTES.GET_STARTED}>Sign Up</Button>
                 <Nav.Link as={Link} to={ROUTES.SIGN_IN} className={`${styles.navLink} ${styles.login}`}>Login</Nav.Link>
               </>
             }

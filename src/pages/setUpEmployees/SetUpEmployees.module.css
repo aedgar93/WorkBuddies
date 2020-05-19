@@ -1,7 +1,19 @@
+.outerWrapper {
+  position: relative;
+}
+
 .wrapper {
   text-align: left;
-  max-width: 900px;
-  margin: 0 auto;
+  width: 900px;
+  padding: 0 20px;
+  max-width: 100%;;
+  margin: 120px auto 0px auto;
+}
+
+.icons {
+  position: absolute;
+  right: 15%;
+  top: -25px;
 }
 
 .invites {
@@ -11,3 +23,22 @@
 .doneButton {
   text-align: right;
 }
+
+.title {
+  composes: title from '../../shared.css';
+  margin-bottom: 70px;
+}
+
+@media only screen and (max-width: 1600px) {
+  .icons {
+    width: 350px;
+    top: -15px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .icons {
+    display: none;
+  }
+}
+

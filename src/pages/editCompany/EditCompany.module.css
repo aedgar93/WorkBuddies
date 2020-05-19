@@ -2,19 +2,15 @@
   text-align: left;
 }
 
-.section, .companySection, .activitySection, .employeeSection {
-  padding: 60px 20px;
-  max-width: 900px;
-  margin: 0 auto;
+.section {
+  composes: section from '../../shared.css'
+
 }
 
-.purpleLine {
-  background: var(--primary-light)
+.companySection, .activitySection, .employeeSection {
+  composes: sectionInner from '../../shared.css'
 }
 
-.whiteLine {
-  background: white;
-}
 
 .companySection {
   display: flex;
@@ -24,7 +20,7 @@
 .label, .companyLabel {
   font-weight: bold;
   font-size: 24px;
-  color: #2E2460;
+  color: var(--primary-text);
   letter-spacing: -0.25px;
 }
 

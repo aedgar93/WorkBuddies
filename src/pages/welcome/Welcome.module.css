@@ -1,9 +1,43 @@
 .container {
-  max-width: 900px;
-  text-align: left;
+  width: 750px;
+  text-align: center;
   margin: 0 auto;
+  padding: 0 10px;
+  max-width: 100%;
+  margin-top: var(--wrapper-top);
 }
 
-.emphasis {
-  color: var(--primary-color)
+.subTitle {
+  font-weight: bold;
+  font-size: var(--title-size);
+  color: var(--primary-dark);
+  letter-spacing: -0.32px;
+}
+
+.infoContainer {
+  margin-top: 55px;
+  margin-bottom: 30px;
+}
+
+.info {
+  font-size: 20px;
+  line-height: 1.5em;
+  margin: 20px 0;
+}
+
+.icon {
+  width: 583px;
+  margin-top: 55px;
+  margin-bottom: 25px;
+  max-width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .info {
+    font-size: 18px;
+  }
+
+  .icon {
+    margin-top: 35px;
+  }
 }

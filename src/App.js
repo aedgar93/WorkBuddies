@@ -5,7 +5,7 @@ import {
   Switch
 } from 'react-router-dom';
 import './App.css';
-import { ROUTES } from './utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import SignIn from './pages/signIn'
 import AcceptInvite from './pages/acceptInvite'
 import EditCompany from './pages/editCompany'
@@ -20,6 +20,7 @@ import CreateCompany from './pages/createCompany';
 import SetUpEmployees from './pages/setUpEmployees';
 import LandingPage from './pages/landingPage';
 import Welcome from './pages/welcome'
+import ScrollToTop from './shared/scrollToTop'
 
 class App extends Component {
   constructor(props) {
@@ -78,38 +79,41 @@ class App extends Component {
         <div className="App">
           <>
             <Router>
-              <Header />
-              <div className="content">
-                {
-                  loading ? <div><Spinner animation="border" size="lg" variant="primary"/></div> :
+              <ScrollToTop>
+                <Header />
+                <div className="content">
+                  {
+                    loading ? <div style={{marginTop: '50px'}}><Spinner animation="border" size="lg" variant="primary"/></div> :
 
-                    <Switch>
-                        { /* Unauth Routes */}
-                        { !authUser ? <Route path={ROUTES.SIGN_IN} component={SignIn}></Route> : null}
-                        { !authUser ? <Route path={ROUTES.SIGN_UP} component={AcceptInvite}></Route> : null }
-                        { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
+                      <Switch>
+                          { /* Unauth Routes */}
+                          { !authUser ? <Route path={ROUTES.SIGN_IN} component={SignIn}></Route> : null}
+                          { !authUser ? <Route path={ROUTES.ACCEPT_INVITE} component={AcceptInvite}></Route> : null }
+                          { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
 
-                        { /* Auth Routes */}
-                        { authUser ? <Route path={ROUTES.MY_ACCOUNT} component={EditAccount}></Route> : null}
+                          { /* Auth Routes */}
+                          { authUser ? <Route path={ROUTES.MY_ACCOUNT} component={EditAccount}></Route> : null}
 
-                        { /* Admin Routes */ }
-                        { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
-                        { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
+                          { /* Admin Routes */ }
+                          { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
+                          { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
 
-                        <Route path={ROUTES.WELCOME} component={Welcome}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
+                          <Route path={ROUTES.WELCOME} component={Welcome}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
 
-                        { /* Default */ }
-                        { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }
-                    </Switch>
-                }
-              </div>
+                          { /* Default */ }
+                          { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }
+                      </Switch>
+                  }
+                </div>
+                <Footer />
+              </ScrollToTop>
             </Router>
           </>
-          <Footer />
         </div>
       </AuthUserContext.Provider>
     );
   }
 }
+
 
 export default withFirebase(App);

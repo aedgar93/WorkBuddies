@@ -7,12 +7,14 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "preinstall": "if [ -d ../../utils ]; then npm pack ../../utils; fi"
   },
   "engines": {
-    "node": "8"
+    "node": "10"
   },
   "dependencies": {
+    "wb-utils": "file:wb-utils-1.0.0.tgz",
     "@google-cloud/pubsub": "^1.2.0",
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.15.5",

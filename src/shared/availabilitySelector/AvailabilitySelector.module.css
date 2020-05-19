@@ -1,9 +1,0 @@
-.week {
-  display: flex;
-  flex-direction: row;
-}
-
-.day {
-  flex-grow: 1;
-  flex-shrink: 0;
-}

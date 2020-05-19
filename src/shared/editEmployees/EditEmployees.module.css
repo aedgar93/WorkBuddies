@@ -22,7 +22,7 @@
 .inviteContainer {
   display: flex;
   flex-direction: row;
-  margin: 15px 0;
+  margin: 20px 0;
   padding: 10px 22px;
   border: 1px solid var(--primary-color);
   border-radius: 5px;

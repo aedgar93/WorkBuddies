@@ -24,18 +24,17 @@ const EditEmployees = () => {
     return function cleanup() {
       usersListener()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
 
   useEffect(() => {
     if(!auth || !auth.companyRef) return
     updateInvites()
-    console.log('use effect')
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ auth && auth.companyRef && auth.companyRef.id ])
 
   const updateInvites = () => {
-    console.log('here')
     setUpdating(true)
     firebase.db.collection('invites').where('company_uid', '==', auth.companyRef.id)
     .get()

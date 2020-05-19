@@ -2,18 +2,18 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { FirebaseContext } from '../../firebaseComponents'
 import styles from './Dashboard.module.css'
-import { Spinner, Button, Alert } from 'react-bootstrap'
+import { Spinner, Button } from 'react-bootstrap'
 import { AuthUserContext } from '../../session'
 import Activity from '../../shared/activity'
 import ProfilePic from '../../shared/profilePic';
-import email_icon from '../../assets/images/email_icon.png'
 import {
   Link
 } from 'react-router-dom';
-import { ROUTES } from '../../utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import invite_icon from '../../assets/images/invite.svg'
-import arrow_right from '../../assets/images/arrow_right.svg'
-import arrow_down from '../../assets/images/arrow_down.svg'
+import { Availability } from '../../shared/availability';
+import calendar_icon from '../../assets/images/calendar.svg'
+import { ReactComponent as CheckIcon } from '../../assets/images/check_circle.svg'
 
 
 const states = {
@@ -27,10 +27,11 @@ const Dashboard = ({ location }) => {
   const [activities, setActivities] = useState([])
   const [buddies, setBuddies] = useState(null)
   const [activity, setActivity] = useState(null)
-  const [state, setState] = useState(states.loading)
+  const [state, setState] = useState(states.LOADING)
   const [error, setError] = useState(null)
   const [showActivities, setShowActivities] = useState(null)
-  const [showInviteAlert, setShowInviteAlert] = useState(location && location.state && location.state.showInviteAlert)
+  const [showInviteAlert] = useState(location && location.state && location.state.showInviteAlert)
+
   const defaultErrorMessage = 'Oh no! Something went wrong.'
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
@@ -76,7 +77,7 @@ const Dashboard = ({ location }) => {
   }
 
   useEffect(() => {
-    if (auth.waitingForAuth) return
+    if (!auth || auth.waitingForAuth) return
     let listener = auth.companyRef.collection('activities')
     .onSnapshot(snapshot => {
       let activities = []
@@ -86,33 +87,33 @@ const Dashboard = ({ location }) => {
 
     fetchBuddies()
     .catch(() => setError(defaultErrorMessage))
-
     return function cleanup() {
       listener()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth.waitingForAuth])
 
-  const renderBuddy = (buddy, buddy2, activity, showActivity = false) => {
+  const schedule = (buddy1, buddy2) => {
     let subject = "I'm your weekly buddy"
-    let body = `Hello ${buddy.firstName} ${buddy2 && buddy2.email ? ' and ' + buddy2.firstName : ''},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activity.name}?%0D%0A %0D%0ASincerely, ${auth.user.firstName}`
+    let body = `Hello ${buddy1.firstName}${buddy2 && buddy2.email ? ' and ' + buddy2.firstName : ''},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activity.name}?%0D%0A %0D%0ASincerely, ${auth.user.firstName}`
+    window.location.href = `mailto:${buddy1.email}${buddy2 ? `,${buddy2.email}` : ''}?subject=${subject}&body=${body}`;
+  }
+
+  const renderBuddy = (buddy, buddy2) => {
+
     return (
       <div className={styles.matchup}>
-          <div className={styles.picWrapper}>
-            <div className={styles.tagContainer}>
-              {showActivity ? <div className={styles.activityTag}><div className={styles.activityText}>{activity.name}</div></div> : null }
-            </div>
-            <ProfilePic user={buddy}/>
-          </div>
-          <div className={styles.info}>
-            <div className={styles.contact}>
-              {buddy.firstName} {buddy.lastName}
-              { buddy.email ? <a href={`mailto:${buddy.email}${buddy2 && buddy2.email ? ',' + buddy2.email : ''}?body=${body}&subject=${subject}`}><img src={email_icon} alt="email" className={styles.contactIcon}/></a> : null}
-            </div>
-            <div className={styles.department}>{buddy.department}</div>
-            { buddy.about ? <div className={styles.about}>"{buddy.about}"</div> : null }
-          </div>
+        <div className={styles.picWrapper}>
+          <ProfilePic user={buddy} size={80} style={{boxShadow: '0 2px 4px 0 rgba(0,0,0,0.24)'}}/>
         </div>
+        <div className={styles.info} style={buddy2 && buddy.availability ? {marginBottom: '50px'} : {}}>
+          <div className={styles.name}>{buddy.firstName} {buddy.lastName}</div>
+          <div className={styles.department}>{buddy.department}</div>
+          { buddy.about ? <div className={styles.about}>"{buddy.about}"</div> : null }
+        </div>
+        <div className={styles.divider}></div>
+        <Availability user={buddy} />
+      </div>
     )
   }
 
@@ -120,48 +121,61 @@ const Dashboard = ({ location }) => {
   const renderBuddies = () => {
     let buddy1 = buddies[0]
     let buddy2 = buddies.length > 1 ? buddies[1] : null
+
     return (
-      <>
-        <div className={styles.title}>This Week, Let's <span className={styles.activity}>{activity.name}</span> with {buddy1.firstName} {buddy2 ? ' and ' + buddy2.firstName : ''}:</div>
+      <div className={styles.topCard}>
+        <div className={styles.title}>This Week, Let's <span className={styles.activity}>{activity.name}</span> with:</div>
         <div className={styles.matchups}>
-          { renderBuddy(buddy1, buddy2, activity, true) }
-          { buddy2 ? renderBuddy(buddy2, buddy1, activity) : null }
+          { renderBuddy(buddy1, buddy2) }
+          { buddy2 ?
+            <>
+             <div className={styles.divider}></div>
+              { renderBuddy(buddy2, buddy1, activity) }
+            </> : null }
+          <Button className={styles.scheduleButton} onClick={() => schedule(buddy1, buddy2)}>
+            <img src={calendar_icon} className={styles.scheduleIcon} alt="Calendar"/>
+            {`Schedule with ${buddy1.firstName}${buddy2 ? ' and ' + buddy2.firstName : ''} `}
+          </Button>
+          {
+            buddy1.availability || (buddy2 && buddy2.availability) ?
+            <div className={styles.scheduleNote}>
+              Here are a couple available time slots from {buddy2 ? 'your buddies' : buddy1.firstName}. <br/>
+              Don’t hesitate reach out if you don’t see a fit here.
+            </div>
+            : null
+          }
         </div>
-      </>
+      </div>
     )
   }
 
   const renderNoBuddy = () => {
     return (
       <>
-        <div className={styles.title}>You don't have any buddies to match with yet.</div>
         { showInviteAlert ?
-          <div className={styles.inviteCard}>
-            <div className={styles.inviteImage}>
-              <img src={invite_icon} alt="Invitation"/>
+          <>
+            <div className={styles.inviteCard}>
+              <div className={styles.inviteSent}><img src={invite_icon} alt="Invitation" className={styles.inviteImage}/> Invitation Sent!</div>
+              <div className={styles.inviteDetails}>Once your buddies sign up, we will notify you.</div>
             </div>
-            <div className={styles.inviteInfo}>
-              <div className={styles.inviteSent}>Invitation Sent!</div>
-              <div className={styles.inviteDetails}>Once your buddies sign up, we will notify you</div>
+            <div className={`${styles.divider} ${styles.inviteSentDivider}`}></div>
+          </>
+         :
+          <>
+            <div className={styles.noMatch}>
+                <div className={styles.welcome}>Welcome, {auth.user && auth.user.firstName}</div>
+                <div className={styles.noMatchText}>You don't have any buddies to match with yet.</div>
+                <div className={styles.noMatchInfo}>We’re waiting for other buddies to signup. Come back and check out your buddy later.</div>
             </div>
-            <div className={styles.closeInvite} onClick={() => setShowInviteAlert(false)}></div>
-          </div>
-         : null}
-        {
-          auth.user.admin ?
-          <div>
-            <Button as={Link} to={ROUTES.EDIT_COMPANY}>Invite your team members</Button>
-          </div>
-          : null
-        }
+            <div className={`${styles.divider} ${styles.noMatchDivider}`}></div>
+         </>
+         }
       </>
     )
   }
 
   const renderMatchup = () => {
     if(error && state === states.ERROR) return (<div>{error}</div>)
-    if(state === states.loading) return (<div className={styles.loading}>Fetching this week's buddy <Spinner animation="grow" size="sm" /> <Spinner animation="grow" size="sm" /> <Spinner animation="grow" size="sm" /></div>)
-
     return (
       <div className={styles.matchupWrapper}>
         {
@@ -177,10 +191,9 @@ const Dashboard = ({ location }) => {
         {
         activities.length === 0 ?
           <div className={styles.subtext}>It looks like your admin hasn't added any activities for your office yet. Some of our favorite suggestions include grabbing a coffee, playing Ping Pong, or going for a walk.</div> :
-          <div className={styles.activitiesContainer}>
-            <div className={styles.activitiesHeader} onClick={() => setShowActivities(!showActivities)}>
-              <div className={styles.dropDownIcon}>{showActivities ? <img src={arrow_down} alt="Down Arrow" className={styles.downIcon}/> : <img src={arrow_right} alt="Right Arrow" className={styles.rightIcon}/>}</div>
-              <span className={styles.activitiesText}>Other Suggested Activities:</span>
+          <div className={styles.otherItemsContainer}>
+            <div className={styles.otherItemsHeader} onClick={() => setShowActivities(!showActivities)}>
+              <span className={styles.otherItemsText}>View other suggested activities</span>
             </div>
             {
               showActivities ?
@@ -203,42 +216,100 @@ const Dashboard = ({ location }) => {
     )
   }
 
-  const renderNoBuddyActivity = () => {
+  const renderNoBuddyOptions = () => {
     return (
       <>
-        <Alert variant="primary">Your weekly activity will be randomly assigned by WorkBuddies{auth.user.admin ? <span>, customize your activities at <Link to={ROUTES.EDIT_COMPANY}>My Company</Link>.</span> : <span>.</span>}</Alert>
+        <div className={styles.otherLabel}>For a better experience, please complete the following items.</div>
+        {
+          !auth.user.admin ?
+          <>
+            <Link to={ROUTES.MY_ACCOUNT} className={styles.otherItemLink}>
+              <div className={styles.otherItemsContainer}>
+                <div className={styles.otherItemsHeader}>
+                  <span className={styles.otherItemsText}>Manage notifications</span>
+                </div>
+              </div>
+            </Link>
+            <Link to={ROUTES.MY_ACCOUNT} className={styles.otherItemLink}>
+              <div className={styles.otherItemsContainer}>
+                <div className={styles.otherItemsHeader}>
+                  <span className={styles.otherItemsText}>Update your availability</span>
+                </div>
+              </div>
+            </Link>
+          </>
+          :
+          <>
+            <Link to={ROUTES.MY_ACCOUNT} className={styles.otherItemLink}>
+              <div className={styles.otherItemsContainer}>
+                <div className={styles.otherItemsHeader}>
+                  <span className={styles.otherItemsText}>Update your profile</span>
+                  <Check done={auth.user.department || auth.user.about} />
+                </div>
+              </div>
+            </Link>
+            <Link to={ROUTES.EDIT_COMPANY} className={styles.otherItemLink}>
+              <div className={styles.otherItemsContainer}>
+                <div className={styles.otherItemsHeader}>
+                  <span className={styles.otherItemsText}>Pick activities</span>
+                  <Check done={window.localStorage.getItem('activitiesUpdated_' + auth.company.id)} />
+                </div>
+              </div>
+            </Link>
+            <Link to={ROUTES.EDIT_COMPANY} className={styles.otherItemLink}>
+              <div className={styles.otherItemsContainer}>
+                <div className={styles.otherItemsHeader}>
+                  <span className={styles.otherItemsText}>Invite team members</span>
+                  <Check done={window.localStorage.getItem('invitesSent_' + auth.company.id)} />
+                </div>
+              </div>
+            </Link>
+          </>
+        }
       </>
     )
   }
 
-  const renderActivitiesContainer = () => {
+  const renderMoreOptions = () => {
     switch(state) {
-      case states.LOADING: return <div className={styles.loading}><Spinner animation="border" size="lg" variant="primary"/></div>
-      case states.BUDDY: return renderActivities()
-      case states.NO_BUDDY: return renderNoBuddyActivity()
+      case states.BUDDY:
+        return (
+          <>
+          { renderActivities() }
+          <Link to={ROUTES.MY_ACCOUNT} className={styles.otherItemLink}>
+            <div className={styles.otherItemsContainer}>
+              <div className={styles.otherItemsHeader}>
+                <span className={styles.otherItemsText}>Update your availability</span>
+              </div>
+            </div>
+          </Link>
+          </>
+        )
+      case states.NO_BUDDY: return renderNoBuddyOptions()
       case states.ERROR:
       default: return null
     }
   }
 
-  if (auth.waitingForAuth) return <Spinner animation="border" size="lg" variant="primary"/>
+  if (!auth || auth.waitingForAuth || state === states.LOADING) return <div style={{marginTop: '50px'}}><Spinner animation="border" size="lg" variant="primary"/></div>
   return (
     <div>
-      <div className={styles.topBar}>
 
-        <div className={styles.wrapper}>
-
-          <div className={styles.welcome}>Welcome, {auth.user && auth.user.firstName}</div>
-
-          { renderMatchup() }
-        </div>
+      <div className={styles.wrapper}>
+        { renderMatchup() }
       </div>
 
       <div className={`${styles.section} ${styles.wrapper}`}>
-        { renderActivitiesContainer() }
+        { renderMoreOptions() }
       </div>
     </div>
   )
+}
+
+const Check = ({done}) => {
+ return (
+    <span className={`${styles.otherItemCheck} ${done ? styles.checked : ''}`}><CheckIcon /></span>
+ )
 }
 
 export default Dashboard

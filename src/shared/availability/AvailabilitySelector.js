@@ -2,28 +2,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthUserContext } from '../../session'
 import FirebaseContext from '../../firebaseComponents/context'
-import { DAYS } from '../../utils/constants'
+import { DAYS, TIMES } from 'wb-utils/constants'
 import moment from 'moment-timezone'
 import styles from './AvailabilitySelector.module.css'
 
-const weekdays = DAYS.splice(0, 5)
-const times = [
-  { label: '5 a.m.', value: 5},
-  { label: '6 a.m.', value: 6},
-  { label: '7 a.m.', value: 7},
-  { label: '8 a.m.', value: 8},
-  { label: '9 a.m.', value: 9},
-  { label: '10 a.m.', value: 10},
-  { label: '11 a.m.', value: 11},
-  { label: 'Noon', value: 12},
-  { label: '1 p.m.', value: 13},
-  { label: '2 p.m.', value: 14},
-  { label: '3 p.m.', value: 15},
-  { label: '4 p.m.', value: 16},
-  { label: '5 p.m.', value: 17},
-  { label: '6 p.m.', value: 18},
-  { label: '7 p.m.', value: 19},
-]
+const weekdays = [...DAYS].splice(0, 5)
+
 
 const defaultAval = weekdays.map(day => {
   return {day: day.value, times: [null, null]}
@@ -70,30 +54,32 @@ const AvailabilitySelector = () => {
           return (
           <div key={day.label} className={styles.day}>
             <div className={styles.label}>{day.label}</div>
-            <div className={styles.timeSelect}>
-              <select value={availability[day.value - 1].times[0] || ''} onChange={e => updateAvailability(day.value, 0, e.currentTarget.value)}>
+            <div className={styles.timeSelectContainer}>
+              <select value={availability[day.value - 1].times[0] || ''} onChange={e => updateAvailability(day.value, 0, e.currentTarget.value)} className={styles.timeSelect}>
                 <option> -- </option>
                 {
-                  times.map(time => <option value={time.value} key={ day.label + "0" + time.label}>{time.label}</option>)
+                  TIMES.map(time => <option value={time.value} key={ day.label + "0" + time.label}>{time.label}</option>)
                 }
               </select>
             </div>
-            <div className={styles.timeSelect}>
-              <select value={availability[day.value - 1].times[1] || ''} onChange={e => updateAvailability(day.value, 1, e.currentTarget.value)}>
+            <div className={styles.timeSelectContainer}>
+              <select value={availability[day.value - 1].times[1] || ''} onChange={e => updateAvailability(day.value, 1, e.currentTarget.value)} className={styles.timeSelect}>
                 <option> -- </option>
                 {
-                  times.map(time => <option value={time.value} key={ day.label + "0" + time.label}>{time.label}</option>)
+                  TIMES.map(time => <option value={time.value} key={ day.label + "0" + time.label}>{time.label}</option>)
                 }
               </select>
             </div>
           </div>
         )})}
       </div>
-      <select value={timezone} onChange={handleTimezoneChange}>
-        {
-          moment.tz.names().map(tz => <option key={tz}>{tz}</option>)
-        }
-      </select>
+      <div className={styles.tzSelectContainer}>
+        <select value={timezone} onChange={handleTimezoneChange} className={styles.tzSelect}>
+          {
+            moment.tz.names().map(tz => <option key={tz}>{tz}</option>)
+          }
+        </select>
+      </div>
     </div>
   );
 }

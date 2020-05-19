@@ -34,16 +34,12 @@ class EditCompany extends Component {
     this.listener()
   }
 
-  onSubmit({ name, day, hour, timeZone}) {
-    return this.props.auth.companyRef.set({
-      name,
-      day,
-      hour,
-      timeZone
-    })
+  onSubmit(props) {
+    return this.props.auth.companyRef.update(props)
   }
 
   handleActivityEdit(index, {name}) {
+    window.localStorage.setItem('activitiesUpdated_'+ this.props.auth.company.id, true)
     let ref = this.state.activityRefs[index]
 
     ref.ref.set({
@@ -53,6 +49,7 @@ class EditCompany extends Component {
   }
 
   handleActivityDelete(index) {
+    window.localStorage.setItem('activitiesUpdated_'+ this.props.auth.company.id, true)
     // eslint-disable-next-line no-restricted-globals
     if(confirm('Are you sure you want to delete this activity?')) {
       let ref = this.state.activityRefs[index]
@@ -62,6 +59,7 @@ class EditCompany extends Component {
   }
 
   handleAddActivity(name) {
+    window.localStorage.setItem('activitiesUpdated_'+ this.props.auth.company.id, true)
     this.props.auth.companyRef.collection('activities').add({
       name
     }).then(ref => {
@@ -77,7 +75,7 @@ class EditCompany extends Component {
 
     return (
       <div className={styles.wrapper}>
-        <div className={styles.purpleLine}>
+        <div className={styles.section}>
           <div className={styles.companySection}>
             <div className={styles.companyLabel}>My Company</div>
             <CompanyForm
@@ -88,7 +86,7 @@ class EditCompany extends Component {
               onSubmit={this.onSubmit}></CompanyForm>
           </div>
         </div>
-        <div className={styles.whiteLine}>
+        <div className={styles.section}>
           <div className={styles.activitySection}>
             <div className={styles.label}>Activities</div>
             <div className={styles.activities}>
@@ -100,10 +98,13 @@ class EditCompany extends Component {
           </div>
         </div>
 
-        <div className={styles.employeeSection}>
-          <div className={styles.label}>Manage Buddies</div>
-          <div className={styles.editEmployees}>
-            <EditEmployees />
+
+        <div className={styles.section}>
+          <div className={styles.employeeSection}>
+            <div className={styles.label}>Manage Buddies</div>
+            <div className={styles.editEmployees}>
+              <EditEmployees />
+            </div>
           </div>
         </div>
       </div>

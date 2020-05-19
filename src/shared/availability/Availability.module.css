@@ -1,0 +1,37 @@
+.week {
+  display: flex;
+  flex-direction: row;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--main-text);
+  letter-spacing: -0.19px;
+  margin-bottom: 30px;
+  margin-top: 35px;
+}
+
+.day {
+  flex: 1 1 0px;
+  margin: 0 3px;
+  text-align: center;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 11px;
+  color: var(--gray);
+  margin-bottom: 5px;
+}
+
+.timeContainer {
+  width: 100%;
+  border: 1px solid var(--primary-color);
+  border-radius: 3px;
+  color: var(--primary-color);
+  margin: 5px 0;
+  line-height: 30px;
+  font-size: 11px;
+  letter-spacing: -0.12px;
+}

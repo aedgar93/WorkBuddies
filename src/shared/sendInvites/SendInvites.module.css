@@ -7,6 +7,7 @@
   flex-direction: column;
   justify-content: flex-start;
   margin-top: 20px;
+  margin-bottom: 30px;
 }
 
 .invite {
@@ -19,6 +20,9 @@
   position: relative;
 }
 
+.addInput {
+  composes: input from '../../shared.css'
+}
 
 .addInput:first-child {
   margin-right: 10px;
@@ -31,6 +35,10 @@
 
 .buttonSpinner {
   margin-right: 5px;
+}
+
+.importButton {
+  padding: 9px 15px;
 }
 
 .loadingContainer {
@@ -46,4 +54,24 @@
 
 .inviteButton {
   margin-right: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+  .invite {
+    flex-direction: column;
+    padding-right: 0;
+  }
+
+  .addInput:first-child {
+    margin-right: 0;
+  }
+
+  .addInput {
+    margin: 5px 0;
+  }
+
+  .addButton {
+    position: relative;
+    width: 100%;
+  }
 }

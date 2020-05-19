@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Col, Row } from 'react-bootstrap';
+import React, { useState} from 'react';
+import { Form, Col, Row } from 'react-bootstrap';
 import styles from './CompanyForm.module.css'
 import moment from 'moment-timezone'
+import AutosaveInput from '../autosaveInput'
 
 const hours = [
   { label: 'Morning', value: 9 },
@@ -24,27 +25,27 @@ const CompanyForm = (props) => {
   const [hour, setHour] = useState(props.hour ? props.hour : 9)
   const [day, setDay] = useState(props.day ? props.day : 1)
   const [timeZone, setTimeZone] = useState(props.timeZone ? props.timeZone : moment.tz.guess())
-  const [valid, setValid] = useState(props.name && props.name !== '' && typeof props.hour === 'number' && typeof props.day === 'number' && props.timeZone)
 
-  const onSubmit = (event) => {
-    event.preventDefault()
-    props.onSubmit({name, hour, day, timeZone})
+  const onSubmit = (updatedValues) => {
+    let values = {name, hour, day, timeZone, ...updatedValues}
+    return props.onSubmit(values)
   }
 
-  useEffect(() => {
-    let valid = name && name !== '' && typeof hour === 'number' && typeof day === 'number' && timeZone
-    setValid(valid)
-  }, [name, hour, day, timeZone])
+  const handleNameSave = (updatedName) => {
+    return props.onSubmit({name: updatedName})
+  }
 
   return (
     <div className={styles.wrapper}>
-      <Form onSubmit={onSubmit}>
+      <Form>
         <Form.Group controlId="name">
           <Form.Label className={styles.label}>Company Name</Form.Label>
-          <Form.Control
+          <AutosaveInput
+            className={styles.input}
             value={name}
             name="name"
             onChange={e => setName(e.target.value)}
+            onSave={handleNameSave}
             required
             placeholder="Company Name" />
         </Form.Group>
@@ -56,9 +57,14 @@ const CompanyForm = (props) => {
               <Form.Control
                 value={day}
                 name="day"
-                onChange={e => setDay(Number.parseInt(e.target.value))}
+                onChange={e => {
+                  let day = Number.parseInt(e.target.value)
+                  setDay(day)
+                  onSubmit({day})
+                }}
                 required
                 as="select"
+                className={styles.select}
                 placeholder="Select a day">
                 {
                   days.map(day => {
@@ -71,9 +77,14 @@ const CompanyForm = (props) => {
               <Form.Control
                 value={hour}
                 name="hour"
-                onChange={e => setHour(Number.parseInt(e.target.value))}
+                onChange={e => {
+                  let hour = Number.parseInt(e.target.value)
+                  setHour(hour)
+                  onSubmit({hour})
+                }}
                 required
                 as="select"
+                className={styles.select}
                 placeholder="Select a time">
                 {
                   hours.map(time => {
@@ -86,9 +97,14 @@ const CompanyForm = (props) => {
               <Form.Control
                 value={timeZone}
                 name="timeZone"
-                onChange={e => setTimeZone(e.target.value)}
+                onChange={e => {
+                  let timeZone = e.target.value
+                  setTimeZone(timeZone)
+                  onSubmit({timeZone})
+                }}
                 required
                 as="select"
+                className={styles.select}
                 placeholder="Select your timezone">
                 {
                   moment.tz.names().map(zone => {
@@ -102,9 +118,6 @@ const CompanyForm = (props) => {
         {
           props.children
         }
-        <div className={styles.buttonContainer}>
-          <Button variant="primary" type="submit" className={styles.button} disabled={!valid}>Submit</Button>
-        </div>
       </Form>
     </div>
   )

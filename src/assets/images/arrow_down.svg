@@ -4,7 +4,7 @@
     <title>ion-arrow-down-b - Ionicons Copy</title>
     <desc>Created with Sketch.</desc>
     <g id="design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-family="Ionicons" font-size="20" font-weight="400">
-        <g id="suggested-activities-dropdown" transform="translate(-35.000000, -41.000000)" fill="#5B5B5B">
+        <g id="suggested-activities-dropdown" transform="translate(-35.000000, -41.000000)" fill="var(--primary-text)">
             <text id="ion-arrow-down-b---Ionicons-Copy">
                 <tspan x="35" y="53"></tspan>
             </text>

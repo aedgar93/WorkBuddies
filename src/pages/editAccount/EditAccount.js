@@ -5,7 +5,8 @@ import FirebaseContext from '../../firebaseComponents/context'
 import { Form, Button, Spinner, Modal, Alert, Row, Col} from 'react-bootstrap'
 import AvatarEditor from 'react-avatar-editor'
 import ProfilePic from '../../shared/profilePic'
-import AvailabilitySelector from '../../shared/availabilitySelector'
+import { AvailabilitySelector } from '../../shared/availability'
+import AutosaveInput from '../../shared/autosaveInput'
 
 
 const EditAccount = () => {
@@ -15,11 +16,9 @@ const EditAccount = () => {
   let [email, setEmail] = useState(auth.user.email)
   let [firstName, setFirstName] = useState(auth.user.firstName)
   let [lastName, setLastName] = useState(auth.user.lastName)
-  let [department, setDepartment] = useState(auth.user.department ? auth.user.department : null)
-  let [about, setAbout] = useState(auth.user.about ? auth.user.about : null)
-  let [valid, setValid] = useState(true)
+  let [department, setDepartment] = useState(auth.user.department ? auth.user.department : '')
+  let [about, setAbout] = useState(auth.user.about ? auth.user.about : '')
   let [notifyEmail, setNotifyEmail] = useState(auth.user.notifyEmail)
-  let [loading, setLoading] = useState(false)
   let [showModal, setShowModal] = useState(false)
   let [confirmPassword, setConfirmPassword] = useState("")
   let [confirmPasswordError, setConfirmPasswordError] = useState(null)
@@ -87,47 +86,34 @@ const EditAccount = () => {
     return deferred.promise
   }
 
-  const handleSubmit = async (e) => {
+  const updateUserVal = async (name, value) => {
     setMessage(false)
-    e.preventDefault()
-    setLoading(true)
     let promises = []
-    if(email !== auth.user.email) {
+    if(name === 'email' && email !== auth.user.email) {
       await reauth()
-      console.log('here')
       promises.push(auth.updateEmail(email))
     }
 
+    let updateData = {}
+    updateData[name] = value
     promises.push(
-      firebase.db.collection('users').doc(auth.user.id).update({
-        firstName,
-        lastName,
-        email,
-        notifyEmail,
-        department,
-        about
-      })
+      firebase.db.collection('users').doc(auth.user.id).update(updateData)
     )
 
-    Promise.all(promises).then(() => {
+    return Promise.all(promises).then(() => {
       firebase.db.collection('users').doc(auth.user.id).get()
       .then(doc => {
         if(doc.exists) {
           auth.updateUser(doc)
         }
-        setMessage({message : 'Updates Saved!', type: 'success'})
       })
     })
     .catch(err => {
       setMessage({message: err.message ? err.message : err, type: 'danger'})
     })
-    .finally(() => {
-      setLoading(false)
-    })
   }
 
   const updateNotifyEmail = (val) => {
-    console.log(val)
     setNotifyEmail(val)
     firebase.db.collection('users').doc(auth.user.id).update({
       notifyEmail: val
@@ -173,115 +159,104 @@ const EditAccount = () => {
     }
   }
 
-  useEffect(() => {
-    let valid = email && email !== '' && firstName && firstName !== '' && lastName && lastName !== ''
-    setValid(valid)
-  }, [email, firstName, lastName])
-
   return (
-    <div className={styles.wrapper} onSubmit={handleSubmit}>
-      <div className={styles.purpleLine}>
+    <div className={styles.wrapper}>
+      <div className={styles.section}>
+        <div className={styles.sectionInner}>
+          {
+            message ?
+            <Alert variant={message.type ? message.type : 'success'}>{message.message}</Alert>
+            : null
+          }
+          <div className={styles.content}>
 
-
-        <div className={styles.section}>
-        {
-          message ?
-          <Alert variant={message.type ? message.type : 'success'}>{message.message}</Alert>
-          : null
-        }
-        <div className={styles.content}>
-
-          <div className={styles.about}>
-            <div className={styles.title}>Profile</div>
-            <ProfilePic onClick={openPicModal} user={auth.user}>
-              <div className={styles.editPic}>
-                Edit
-              </div>
-            </ProfilePic>
-          </div>
-          <Form className={styles.form}>
-            <Form.Group className={styles.formGroup} bsPrefix="wb">
-              <Form.Label className={styles.label} bsPrefix="wb">Name</Form.Label>
-              <Row>
-                <Col>
-                  <Form.Control
-                    name="firstName"
-                    value={firstName}
-                    placeholder="First name"
-                    required
-                    onChange={e => setFirstName(e.target.value)}
-                  />
-                </Col>
-                <Col>
-                  <Form.Control
-                    name="lastName"
-                    value={lastName}
-                    placeholder="Last name"
-                    required
-                    onChange={e => setLastName(e.target.value)}
-                  />
-                </Col>
-              </Row>
-            </Form.Group>
-            <Form.Group controlId="email" className={styles.formGroup} bsPrefix="wb">
-              <Form.Label className={styles.label} bsPrefix="wb">Email address</Form.Label>
-              <Form.Control
-                required
-                type="email"
-                value={email}
-                placeholder="Enter email"
-                onChange={e => setEmail(e.target.value)}/>
-            </Form.Group>
-            <Form.Group controlId="department" className={styles.formGroup} bsPrefix="wb">
-              <Form.Label className={styles.label} bsPrefix="wb">Department</Form.Label>
-              <Form.Control
-                type="text"
-                value={department}
-                placeholder="Department"
-                onChange={e => setDepartment(e.target.value)}/>
-            </Form.Group>
-            <Form.Group controlId="aboutMe" className={styles.formGroup} bsPrefix="wb">
-              <Form.Label className={styles.label} bsPrefix="wb">About Me</Form.Label>
-              <Form.Control
-                type="text"
-                value={about}
-                placeholder="Tell us a little about yourself"
-                onChange={e => setAbout(e.target.value)}/>
-            </Form.Group>
-            <Button variant="primary" type="submit" className={styles.button} disabled={!valid || loading}>
-              {
-                loading ?
-                  <Spinner
-                    className={styles.buttonSpinner}
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                  /> : null
-              }
-              Submit
-            </Button>
-          </Form>
+            <div className={styles.about}>
+              <div className={styles.title}>Profile</div>
+              <ProfilePic onClick={openPicModal} user={auth.user}>
+                <div className={styles.editPic}>
+                  Edit
+                </div>
+              </ProfilePic>
+            </div>
+            <Form className={styles.form}>
+              <Form.Group className={styles.formGroup} bsPrefix="wb">
+                <Row>
+                  <Col>
+                    <AutosaveInput
+                      className={styles.input}
+                      name="firstName"
+                      value={firstName}
+                      placeholder="First name"
+                      required
+                      onChange={e => setFirstName(e.target.value)}
+                      onSave={val => updateUserVal('firstName', val)}
+                    />
+                  </Col>
+                  <Col>
+                    <AutosaveInput
+                      className={styles.input}
+                      name="lastName"
+                      value={lastName}
+                      placeholder="Last name"
+                      required
+                      onChange={e => setLastName(e.target.value)}
+                      onSave={val => updateUserVal('lastName', val)}
+                    />
+                  </Col>
+                </Row>
+              </Form.Group>
+              <Form.Group controlId="email" className={styles.formGroup} bsPrefix="wb">
+                <AutosaveInput
+                  required
+                  className={styles.input}
+                  type="email"
+                  value={email}
+                  placeholder="Email"
+                  onSave={val => updateUserVal('email', val)}
+                  onChange={e => setEmail(e.target.value)}/>
+              </Form.Group>
+              <Form.Group controlId="department" className={styles.formGroup} bsPrefix="wb">
+                <AutosaveInput
+                  className={styles.input}
+                  type="text"
+                  value={department}
+                  placeholder="Department"
+                  onSave={val => updateUserVal('department', val)}
+                  onChange={e => setDepartment(e.target.value)}/>
+              </Form.Group>
+              <Form.Group controlId="aboutMe" className={styles.formGroup} bsPrefix="wb">
+                <AutosaveInput
+                  as="textarea"
+                  value={about}
+                  placeholder="About me"
+                  className={styles.textarea}
+                  onSave={val => updateUserVal('about', val)}
+                  onChange={e => setAbout(e.target.value)}/>
+              </Form.Group>
+            </Form>
         </div>
       </div>
       </div>
       <div className={styles.section}>
-        <div className={styles.title}>Availability</div>
-        <AvailabilitySelector />
+        <div className={styles.sectionInner}>
+          <div className={styles.title}>Availability</div>
+          <AvailabilitySelector />
+        </div>
       </div>
       <div className={styles.section}>
-        <div className={styles.title}>Notification</div>
-        <Form>
-          <Form.Group controlId="notifications" className={styles.formCheck} bsPrefix="wb">
-              <div className={styles.notifyLabel}>Email</div>
-              <div className={styles.checkboxContainer}>
-                <span className={notifyEmail ? styles.checked : styles.noCheck} onClick={() => updateNotifyEmail(!notifyEmail)}></span>
-                <input id="notifyEmail" checked={notifyEmail} type="checkbox" onChange={e => updateNotifyEmail(e.target.checked)} className={styles.checkInput}/>
-                <label htmlFor="notifyEmail">{ notifyEmail ? 'On' : 'Off'}</label>
-              </div>
-          </Form.Group>
-        </Form>
+        <div className={styles.sectionInner}>
+          <div className={styles.title}>Notification</div>
+          <Form>
+            <Form.Group controlId="notifications" className={styles.formCheck} bsPrefix="wb">
+                <div className={styles.notifyLabel}>Email</div>
+                <div className={styles.checkboxContainer}>
+                  <span className={notifyEmail ? styles.checked : styles.noCheck} onClick={() => updateNotifyEmail(!notifyEmail)}></span>
+                  <input id="notifyEmail" checked={notifyEmail} type="checkbox" onChange={e => updateNotifyEmail(e.target.checked)} className={styles.checkInput}/>
+                  <label htmlFor="notifyEmail">{ notifyEmail ? 'On' : 'Off'}</label>
+                </div>
+            </Form.Group>
+          </Form>
+        </div>
       </div>
       <Modal show={showModal} onHide={handleClose} centered={true}>
         <Modal.Header closeButton>

@@ -26,7 +26,7 @@ const EditActivities = ({ activities, onDelete, onAdd }) => {
       }
       <div className={styles.form}>
         <form onSubmit={handleAddActivity}>
-          <input value={name} onChange={e => setName(e.target.value)} className={styles.input} placeholder="Enter activity"/>
+          <input value={name} onChange={e => setName(e.target.value)} className={styles.input} placeholder="Enter activity here"/>
           <Button type="submit" className={styles.button} size="lg">Add</Button>
         </form>
       </div>

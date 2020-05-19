@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import styles from './SignIn.module.css'
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../../firebaseComponents'
-import { ROUTES } from '../../utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import { Button, Form, Alert } from 'react-bootstrap';
 
 const SignIn = ({ history }) => {
@@ -36,40 +36,36 @@ const SignIn = ({ history }) => {
 
   return (
     <div className={styles.wrapper}>
-      <h3>Sign In</h3>
-      <Form onSubmit={onSubmit} validated={validated}>
+      <h3 className={styles.title}>Login to Work Buddies</h3>
+      <Form onSubmit={onSubmit} validated={validated} className={styles.form}>
         <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
           <Form.Control
+            className={styles.input}
             required
             type="email"
-            placeholder="Enter email"
+            placeholder="Email"
             onChange={e => setEmail(e.target.value)}/>
-          <Form.Text className="text-muted">
-            We'll never share your email with anyone else.
-          </Form.Text>
         </Form.Group>
 
         <Form.Group controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
           <Form.Control
+            className={styles.input}
             required
             type="password"
             placeholder="Password"
             onChange={e => setPassword(e.target.value)}/>
         </Form.Group>
         <div className={styles.buttonContainer}>
-          <Button variant="primary" type="submit"  disabled={!validated || loading}>
-            Submit
+          <Button variant="primary" type="submit"  disabled={!validated || loading} className={styles.button}>
+            Login
           </Button>
+          <Link to={ROUTES.ACCEPT_INVITE} className={styles.inviteLink}>I have an invitation</Link>
+
         </div>
         {
           error ? <Alert variant="danger" className={styles.alert}>Incorrect email address or password</Alert> : null
         }
       </Form>
-      <div className={styles.signUp}>
-        <Link to={ROUTES.SIGN_UP}>I have an invitation.</Link>
-      </div>
     </div>
     );
 }

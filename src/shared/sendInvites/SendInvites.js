@@ -4,6 +4,7 @@ import { Form, Button, Alert } from 'react-bootstrap'
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import CloudSponge from '../cloudSponge'
+import Media from 'react-media'
 
 
 const addBlankInvite = (list) => {
@@ -30,6 +31,7 @@ const SendInvites = ({ onNext, onSubmit }) => {
   const handleSubmit = (event) => {
     //TODO: prevent invites for emails that already have accounts
     //TODO: make sure emails are valid before submitting
+    window.localStorage.setItem('invitesSent_' + auth.company.id, pendingInvites.length)
     setError(null)
     event.preventDefault()
     const form = event.currentTarget;
@@ -115,41 +117,46 @@ const SendInvites = ({ onNext, onSubmit }) => {
   }
 
   return (
-    <div className={styles.container}>
-      <CloudSponge options={{ afterSubmitContacts: getContacts }} ref={addressBookRef}>
-        <Button className="cloudsponge-launch">
-            Add From Address Book
-        </Button>
-      </CloudSponge>
-      <Form onSubmit={handleSubmit}>
-        <div className={styles.inviteForm}>
+    <Media query={{maxWidth: 600}}>
+      {isMobile =>
+      <div className={styles.container}>
+        <CloudSponge options={{ afterSubmitContacts: getContacts }} ref={addressBookRef}>
+          <Button className={`cloudsponge-launch ${styles.importButton}`}>
+              Add From Address Book
+          </Button>
+        </CloudSponge>
+        <Form onSubmit={handleSubmit}>
+          <div className={styles.inviteForm}>
+            {
+              pendingInvites.map((val, i) => {
+                return (
+                  <div key={i} className={styles.invite}>
+                    <Form.Control type="email" placeholder="Name (optional)"  className={styles.addInput} onChange={e => handleNameChange(e, i)} value={val.name}/>
+                    <Form.Control type="email" required placeholder="Email" className={styles.addInput} onChange={e => handleEmailChange(e, i)} value={val.email}/>
+                    {
+                      !isMobile && i === 0 ?
+                        <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button>
+                        : null
+                    }
+                  </div>
+                )
+              })
+            }
+            { isMobile ? <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button> : null }
+          </div>
+          <Button onClick={handleSubmit} disabled={loading} className={styles.inviteButton} size="lg">Invite</Button>
           {
-            pendingInvites.map((val, i) => {
-              return (
-                <div key={i} className={styles.invite}>
-                  <Form.Control type="email" placeholder="Name (optional)"  className={styles.addInput} onChange={e => handleNameChange(e, i)} value={val.name}/>
-                  <Form.Control type="email" required placeholder="Email" className={styles.addInput} onChange={e => handleEmailChange(e, i)} value={val.email}/>
-                  {
-                    i === 0 ?
-                      <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button>
-                      : null
-                  }
-                </div>
-              )
-            })
+            onNext ?
+            <Button onClick={onNext} disabled={loading} variant="outline-primary" size="lg">Next Time</Button>
+            : null
           }
-        </div>
-        <Button onClick={handleSubmit} disabled={loading} className={styles.inviteButton}>Invite</Button>
+        </Form>
         {
-          onNext ?
-          <Button onClick={onNext} disabled={loading} variant="outline-primary">Next Time</Button>
-          : null
+          error ? <Alert variant={error.type ? error.type : 'danger'} className={styles.error}>{error.message ? error.message : error}</Alert> : null
         }
-      </Form>
-      {
-        error ? <Alert variant={error.type ? error.type : 'danger'} className={styles.error}>{error.message ? error.message : error}</Alert> : null
-      }
-    </div>
+      </div>
+    }
+    </Media>
   )
 }
 
