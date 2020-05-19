@@ -5,9 +5,10 @@ import FirebaseContext from '../../firebaseComponents/context'
 import { Form, Button, Spinner, Modal, Alert, Row, Col} from 'react-bootstrap'
 import AvatarEditor from 'react-avatar-editor'
 import ProfilePic from '../../shared/profilePic'
+import AvailabilitySelector from '../../shared/availabilitySelector'
 
 
-const EditAccount = ({history}) => {
+const EditAccount = () => {
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
   const storage = firebase.storage.ref();
@@ -264,6 +265,10 @@ const EditAccount = ({history}) => {
           </Form>
         </div>
       </div>
+      </div>
+      <div className={styles.section}>
+        <div className={styles.title}>Availability</div>
+        <AvailabilitySelector />
       </div>
       <div className={styles.section}>
         <div className={styles.title}>Notification</div>

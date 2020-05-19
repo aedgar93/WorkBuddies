@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 import Firebase, { FirebaseContext } from './firebaseComponents'
 import * as Sentry from '@sentry/browser';
 
-Sentry.init({dsn: "https://dd692b92e63b49828f066d29a0bba831@o386021.ingest.sentry.io/5219753"});
+if(!process.env.REACT_APP_DEV) Sentry.init({dsn: "https://dd692b92e63b49828f066d29a0bba831@o386021.ingest.sentry.io/5219753"});
 
 
 ReactDOM.render(

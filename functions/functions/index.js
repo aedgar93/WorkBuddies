@@ -216,14 +216,14 @@ const notify = (buddy1, buddy2, buddy3,  activity, activitiesHTML, emailInfo) =>
 
 const getOddManOutIndex = (previousMatchups, users) => {
   if(!previousMatchups) return -1
-  let single = previousMatchups.find(matchup => {
-    return matchup.buddies && matchup.buddies.length === 1
+  let singleOrTriple = previousMatchups.find(matchup => {
+    return matchup.buddies && (matchup.buddies.length === 1 || matchup.buddies.length === 3)
   })
-  if (!single) return -1
-  let singleId = single.buddies[0]
+  if (!singleOrTriple) return -1
+  let id = singleOrTriple.buddies[0]
 
   let oddManOut = users.findIndex(user => {
-    return user.id === singleId
+    return user.id === id
   })
   return oddManOut
 }
@@ -479,32 +479,38 @@ exports.newUserHandler = functions.firestore.document('users/{userId}')
           matchups.forEach(matchup => {
             buddiesInMatchup.push(matchup.buddies[0])
             if(matchup.buddies.length > 1) buddiesInMatchup.push(matchup.buddies[1])
+            if(matchup.buddies.length > 2) buddiesInMatchup.push(matchup.buddies[2])
           })
 
           buddy = users.find(buddy => buddiesInMatchup.indexOf(buddy.id) === -1 && buddy.id !== userSnapshot.id)
-          console.log('buddy', buddy)
           if(!buddy) return null
           activity = matchups[0].activity //just use the first activity so we don't have to fetch them all
           matchups.push({buddies: [userSnapshot.id, buddy.id], activity})
         }
 
 
+
         let emailInfo = []
-        addEmailPersonalization(user, buddy.data(), activity, activitiesHTML, emailInfo)
-        addEmailPersonalization(buddy.data(), user, activity, activitiesHTML, emailInfo)
+        notify(user, buddy.data(), null, activity, activitiesHTML, emailInfo)
+        notify(buddy.data(), user, null, activity, activitiesHTML, emailInfo)
 
-        let msg = {
-          personalizations: emailInfo,
-          from: getFromEmail(),
-          html: buddyEmailContent()
+        if(emailInfo.length >= 1) {
+          let msg = {
+            personalizations: emailInfo,
+            from: getFromEmail(),
+            html: buddyEmailContent()
+          }
+
+
+          console.log(msg)
+          return ref.set({matchups})
+          .then(() => {
+            //send email
+            return sgMail.send(msg)
+          })
+        } else {
+          return Promise.resolve()
         }
-
-        console.log(matchups)
-        return ref.set({matchups})
-        .then(() => {
-          //send email
-          return sgMail.send(msg)
-        })
       }
     } catch(e) {
       Sentry.captureException(e)
@@ -553,7 +559,7 @@ exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
 exports.setInitialMatchupTime = functions.firestore.document('companies/{companyId}')
 .onCreate((snapshot, _context) => {
   try {
-    setNextMatchupTime(snapshot.id)
+    return setNextMatchupTime(snapshot.id)
   } catch(e) {
     Sentry.captureException(e)
     return Promise.reject(e)
