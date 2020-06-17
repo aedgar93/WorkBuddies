@@ -24,12 +24,8 @@ import Welcome from './pages/welcome'
 class App extends Component {
   constructor(props) {
     super(props);
-    let authUser = JSON.parse(localStorage.getItem('authUser'))
-    if (authUser) {
-      authUser.user = JSON.parse(localStorage.getItem('user'))
-    }
     this.state = {
-      authUser,
+      authUser: {waitingForAuth: true},
       loading: true
     };
   }

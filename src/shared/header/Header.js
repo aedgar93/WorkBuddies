@@ -45,7 +45,7 @@ const Header = () => {
       </Navbar.Brand>
       <Navbar.Toggle />
       {
-        auth.waitingForAuth ? null :
+        auth && auth.waitingForAuth ? null :
         <Navbar.Collapse className={styles.nav}>
           <Nav>
             {
