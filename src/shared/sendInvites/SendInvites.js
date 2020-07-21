@@ -3,6 +3,8 @@ import styles from './SendInvites.module.css'
 import { Form, Button, Alert } from 'react-bootstrap'
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
+import { TrackingContext } from '../../tracking'
+
 import CloudSponge from '../cloudSponge'
 import Media from 'react-media'
 
@@ -19,6 +21,8 @@ const SendInvites = ({ onNext, onSubmit }) => {
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
   const addressBookRef = React.createRef();
+  const tracking = useContext(TrackingContext)
+
 
 
   //Work around because the address book (cloudsponge) is not part of the react lifecycle
@@ -31,6 +35,8 @@ const SendInvites = ({ onNext, onSubmit }) => {
   const handleSubmit = (event) => {
     //TODO: prevent invites for emails that already have accounts
     //TODO: make sure emails are valid before submitting
+    if(!pendingInvites || !pendingInvites.length) return
+    tracking.invite(pendingInvites.length)
     window.localStorage.setItem('invitesSent_' + auth.company.id, pendingInvites.length)
     setError(null)
     event.preventDefault()

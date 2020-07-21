@@ -3,6 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import styles from './SignIn.module.css'
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../../firebaseComponents'
+import { TrackingContext } from '../../tracking'
 import { ROUTES } from 'wb-utils/constants'
 import { Button, Form, Alert } from 'react-bootstrap';
 
@@ -13,6 +14,7 @@ const SignIn = ({ history }) => {
   const [loading, setLoading] = useState(false)
   const [validated, setValidated] = useState(false);
   let firebase = useContext(FirebaseContext)
+  let tracking = useContext(TrackingContext)
 
   const onSubmit = event => {
     event.preventDefault()
@@ -21,6 +23,7 @@ const SignIn = ({ history }) => {
 
     firebase.signInWithEmailAndPassword(email, password)
     .then(() => {
+      tracking.signIn()
       history.push(ROUTES.BASE)
     })
     .catch(( error ) => {

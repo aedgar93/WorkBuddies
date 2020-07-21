@@ -1,18 +1,21 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState } from 'react'
 import styles from './EditAccount.module.css'
 import { AuthUserContext } from '../../session'
-import FirebaseContext from '../../firebaseComponents/context'
+import { FirebaseContext } from '../../firebaseComponents'
 import { Form, Button, Spinner, Modal, Alert, Row, Col} from 'react-bootstrap'
 import AvatarEditor from 'react-avatar-editor'
 import ProfilePic from '../../shared/profilePic'
 import { AvailabilitySelector } from '../../shared/availability'
 import AutosaveInput from '../../shared/autosaveInput'
+import { TrackingContext } from '../../tracking'
 
 
 const EditAccount = () => {
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
   const storage = firebase.storage.ref();
+  const tracking = useContext(TrackingContext)
+
   let [email, setEmail] = useState(auth.user.email)
   let [firstName, setFirstName] = useState(auth.user.firstName)
   let [lastName, setLastName] = useState(auth.user.lastName)
@@ -30,6 +33,7 @@ const EditAccount = () => {
   let [pic, setPic] = useState(null)
   let [editor, setEditor] = useState(null)
   let [picError, setPicError] = useState(null)
+
 
   const defer = () => {
     var deferred = {
@@ -87,6 +91,7 @@ const EditAccount = () => {
   }
 
   const updateUserVal = async (name, value) => {
+    tracking.updateProfile(name)
     setMessage(false)
     let promises = []
     if(name === 'email' && email !== auth.user.email) {
@@ -114,6 +119,7 @@ const EditAccount = () => {
   }
 
   const updateNotifyEmail = (val) => {
+    tracking.updateProfile('email notifications')
     setNotifyEmail(val)
     firebase.db.collection('users').doc(auth.user.id).update({
       notifyEmail: val
@@ -128,6 +134,7 @@ const EditAccount = () => {
   }
 
   const uploadPic = () => {
+    tracking.updateProfile('picture')
     try {
       let pic = editor.getImageScaledToCanvas()
       if(!pic) return //TODO better error handling

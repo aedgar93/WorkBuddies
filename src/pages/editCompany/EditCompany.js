@@ -7,6 +7,7 @@ import moment from 'moment-timezone'
 import EditActivities from '../../shared/editActivities'
 import CompanyForm from '../../shared/companyForm';
 import EditEmployees from '../../shared/editEmployees'
+import { withTracking } from '../../tracking'
 
 
 class EditCompany extends Component {
@@ -35,10 +36,12 @@ class EditCompany extends Component {
   }
 
   onSubmit(props) {
+    this.props.tracking.updateCompany()
     return this.props.auth.companyRef.update(props)
   }
 
   handleActivityEdit(index, {name}) {
+    this.props.tracking.editActivity(name)
     window.localStorage.setItem('activitiesUpdated_'+ this.props.auth.company.id, true)
     let ref = this.state.activityRefs[index]
 
@@ -53,12 +56,14 @@ class EditCompany extends Component {
     // eslint-disable-next-line no-restricted-globals
     if(confirm('Are you sure you want to delete this activity?')) {
       let ref = this.state.activityRefs[index]
+      this.props.tracking.deleteActivity(ref.data().name)
       ref.ref.delete()
     }
 
   }
 
   handleAddActivity(name) {
+    this.props.tracking.addActivity(name)
     window.localStorage.setItem('activitiesUpdated_'+ this.props.auth.company.id, true)
     this.props.auth.companyRef.collection('activities').add({
       name
@@ -112,4 +117,4 @@ class EditCompany extends Component {
   }
 }
 
-export default withAuth(withFirebase(EditCompany))
+export default withTracking(withAuth(withFirebase(EditCompany)))

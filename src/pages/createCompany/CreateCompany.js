@@ -40,6 +40,7 @@ const CreateCompany = ({ history }) => {
       })
       return Promise.all(promises)
     })
+    .catch(() => updateError())
   }
 
   const updateError = (error) => {
@@ -73,7 +74,7 @@ const CreateCompany = ({ history }) => {
     .then(companyRef => {
       let promises = []
       let companyId = companyRef.id
-      firebase.db.collection('users').add({
+      promises.concat(firebase.db.collection('users').add({
         auth_id: user.uid,
         firstName,
         lastName,
@@ -81,7 +82,7 @@ const CreateCompany = ({ history }) => {
         notifyEmail: true,
         company_uid: companyId,
         admin: true
-      })
+      }))
 
       let activityCollection = companyRef.collection('activities')
       promises.concat(suggestedActivities.map(({name}) => {

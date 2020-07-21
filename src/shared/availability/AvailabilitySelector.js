@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthUserContext } from '../../session'
-import FirebaseContext from '../../firebaseComponents/context'
+import { FirebaseContext } from '../../firebaseComponents'
+import { TrackingContext } from '../../tracking'
 import { DAYS, TIMES } from 'wb-utils/constants'
 import moment from 'moment-timezone'
 import styles from './AvailabilitySelector.module.css'
@@ -16,6 +17,7 @@ const defaultAval = weekdays.map(day => {
 const AvailabilitySelector = () => {
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
+  const tracking = useContext(TrackingContext)
   const [availability, setAvailability] = useState(auth.user.availability || defaultAval)
   const [timezone, setTimezone] = useState(auth.user.timezone ||  moment.tz.guess())
 
@@ -30,6 +32,7 @@ const AvailabilitySelector = () => {
   }, [])
 
   const handleTimezoneChange = (event) => {
+    tracking.updateProfile('timezone')
     setTimezone(event.currentTarget.value)
     firebase.db.collection('users').doc(auth.user.id).update({
       timezone: event.currentTarget.value
@@ -37,6 +40,8 @@ const AvailabilitySelector = () => {
   }
 
   const updateAvailability = (day, index, value) => {
+    tracking.updateProfile('availability')
+
     let avalCopy = [...availability]
 
     avalCopy[day - 1].times[index] = value ? parseInt(value) : null

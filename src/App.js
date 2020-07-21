@@ -21,6 +21,7 @@ import SetUpEmployees from './pages/setUpEmployees';
 import LandingPage from './pages/landingPage';
 import Welcome from './pages/welcome'
 import ScrollToTop from './shared/scrollToTop'
+import { withTracking } from './tracking'
 
 class App extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.props.tracking.mixpanel.track('App Open')
     let findAuthListener
     this.listener = this.props.firebase.auth.onAuthStateChanged(async authUser => {
       if (authUser) {
@@ -42,7 +44,10 @@ class App extends Component {
         .onSnapshot(snapshot => {
           if(!snapshot || !snapshot.docs || snapshot.docs.length === 0) return
           authUser.user = snapshot.docs[0].data()
-          authUser.user.id = snapshot.docs[0].id
+          let id = snapshot.docs[0].id
+          authUser.user.id = id
+          this.props.tracking.initUser(authUser.user)
+
           authUser.updateUser = (val) => {
             authUser.user = val.data()
             authUser.user.id = val.id
@@ -69,7 +74,7 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    this.listener();
+    this.listener && this.listener();
   }
 
   render() {
@@ -116,4 +121,4 @@ class App extends Component {
 }
 
 
-export default withFirebase(App);
+export default withTracking(withFirebase(App));

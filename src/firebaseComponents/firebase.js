@@ -13,20 +13,25 @@ const config = {
 };
 
 class Firebase {
-  constructor() {
+  constructor(tracking) {
     app.initializeApp(config);
 
     this.auth = app.auth();
     this.db = app.firestore()
     this.storage = app.storage()
     this.firestore = app.firestore
+    this.tracking = tracking
   }
 
-  createUserWithEmailAndPassword = (email, password) =>
-    this.auth.createUserWithEmailAndPassword(email, password);
+  createUserWithEmailAndPassword = (email, password) => {
+    this.tracking.signIn()
+    return this.auth.createUserWithEmailAndPassword(email, password);
+  }
 
-  signInWithEmailAndPassword = (email, password) =>
-    this.auth.signInWithEmailAndPassword(email, password);
+  signInWithEmailAndPassword = (email, password) => {
+    this.tracking.signIn()
+    return this.auth.signInWithEmailAndPassword(email, password);
+  }
 
   signOut = () => this.auth.signOut();
 

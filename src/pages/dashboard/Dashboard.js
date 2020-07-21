@@ -14,6 +14,7 @@ import invite_icon from '../../assets/images/invite.svg'
 import { Availability } from '../../shared/availability';
 import calendar_icon from '../../assets/images/calendar.svg'
 import { ReactComponent as CheckIcon } from '../../assets/images/check_circle.svg'
+import { TrackingContext } from '../../tracking'
 
 
 const states = {
@@ -35,6 +36,7 @@ const Dashboard = ({ location }) => {
   const defaultErrorMessage = 'Oh no! Something went wrong.'
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
+  const tracking = useContext(TrackingContext)
 
   async function fetchBuddies(){
     //Get your buddy
@@ -94,6 +96,7 @@ const Dashboard = ({ location }) => {
   }, [auth.waitingForAuth])
 
   const schedule = (buddy1, buddy2) => {
+    tracking.mixpanel.track('schedule click')
     let subject = "I'm your weekly buddy"
     let body = `Hello ${buddy1.firstName}${buddy2 && buddy2.email ? ' and ' + buddy2.firstName : ''},%0D%0A %0D%0A We've been matched up as work buddies this week. Can we schedule a time this week to ${activity.name}?%0D%0A %0D%0ASincerely, ${auth.user.firstName}`
     window.location.href = `mailto:${buddy1.email}${buddy2 ? `,${buddy2.email}` : ''}?subject=${subject}&body=${body}`;
