@@ -8,14 +8,14 @@ import ProfilePic from '../../shared/profilePic'
 import { AvailabilitySelector } from '../../shared/availability'
 import AutosaveInput from '../../shared/autosaveInput'
 import { TrackingContext } from '../../tracking'
-
+import Checkbox from '../../shared/checkbox'
+import { CookieSettings } from '../../shared/cookies'
 
 const EditAccount = () => {
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
   const storage = firebase.storage.ref();
   const tracking = useContext(TrackingContext)
-
   let [email, setEmail] = useState(auth.user.email)
   let [firstName, setFirstName] = useState(auth.user.firstName)
   let [lastName, setLastName] = useState(auth.user.lastName)
@@ -33,7 +33,7 @@ const EditAccount = () => {
   let [pic, setPic] = useState(null)
   let [editor, setEditor] = useState(null)
   let [picError, setPicError] = useState(null)
-
+  let [isCookiePopupVisible, setIsCookiePopupVisible] = useState(false)
 
   const defer = () => {
     var deferred = {
@@ -256,14 +256,28 @@ const EditAccount = () => {
           <Form>
             <Form.Group controlId="notifications" className={styles.formCheck} bsPrefix="wb">
                 <div className={styles.notifyLabel}>Email</div>
-                <div className={styles.checkboxContainer}>
-                  <span className={notifyEmail ? styles.checked : styles.noCheck} onClick={() => updateNotifyEmail(!notifyEmail)}></span>
-                  <input id="notifyEmail" checked={notifyEmail} type="checkbox" onChange={e => updateNotifyEmail(e.target.checked)} className={styles.checkInput}/>
-                  <label htmlFor="notifyEmail">{ notifyEmail ? 'On' : 'Off'}</label>
-                </div>
+                <Checkbox id="notifyEmail" checked={notifyEmail} onChange={updateNotifyEmail} />
             </Form.Group>
           </Form>
         </div>
+      </div>
+      <div className={styles.section}>
+        <div className={styles.sectionInner}>
+          <div className={styles.title}>Cookies</div>
+          <Form>
+            <Form.Group controlId="cookies" className={styles.formCheck} bsPrefix="wb">
+              <Checkbox id="cookies" checked={tracking.consent} onChange={tracking.setConsent} />
+              <div className={styles.cookieSettings} onClick={() => setIsCookiePopupVisible(!isCookiePopupVisible)}>Settings<span className={styles.arrow}> {isCookiePopupVisible ? "<" : ">" }</span></div>
+            </Form.Group>
+          </Form>
+        </div>
+        { isCookiePopupVisible ? (
+        <div className={styles.cookieWrapper}>
+          <div className={styles.cookiesInner}>
+            <CookieSettings />
+          </div>
+        </div>
+        ) : null }
       </div>
       <Modal show={showModal} onHide={handleClose} centered={true}>
         <Modal.Header closeButton>

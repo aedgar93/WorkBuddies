@@ -7,6 +7,7 @@ import { Alert, Spinner, Modal, Button } from 'react-bootstrap'
 import SignUpForm from '../../shared/signUpForm/SignUpForm';
 import icon from '../../assets/images/single_matchup_icons.svg'
 import acceptInvite from 'wb-utils/acceptInvite'
+import { TrackingContext } from '../../tracking'
 
 const AcceptInvite = ({ history, location }) => {
   const [error, setError] = useState(null)
@@ -18,6 +19,7 @@ const AcceptInvite = ({ history, location }) => {
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState(null)
   const firebase = useContext(FirebaseContext)
+  const tracking = useContext(TrackingContext)
 
   useEffect(() => {
     let id = new URLSearchParams(location.search).get('id') || localStorage.getItem('inviteId')
@@ -80,10 +82,8 @@ const AcceptInvite = ({ history, location }) => {
       .then(snapshot => {
         let results = snapshot.docs || []
         if(inviteFromLink) {
-          console.log(results)
           results = results.filter(invite => invite.id !== inviteFromLink.id)
           results.push(inviteFromLink)
-          console.log(results)
         }
         return results
       })
@@ -92,6 +92,7 @@ const AcceptInvite = ({ history, location }) => {
   const acceptInviteHandler = async (companyId, inviteId, info = accountInfo) => {
     acceptInvite(firebase, companyId, inviteId, info)
     .then(() => {
+      tracking.signIn()
       history.push(ROUTES.BASE)
     })
     .catch(error => {

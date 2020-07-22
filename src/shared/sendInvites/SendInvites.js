@@ -93,8 +93,6 @@ const SendInvites = ({ onNext, onSubmit }) => {
 
   const getContacts = (results) => {
     setError(null)
-    console.log(getPendingInvites())
-
     if(!results || results.length === 0) return
     let invitesCopy = [...getPendingInvites()]
 

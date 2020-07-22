@@ -5,6 +5,7 @@ const moment = require('moment-timezone');
 const initQueries = require('./queries.js');
 const uuidv1 = require('uuid/v1');
 const { TIMES, ROUTES }= require('wb-utils/constants')
+const { PubSub } = require('@google-cloud/pubsub');
 const fs = require('fs');
 const { promisify } = require('util');
 const read = promisify(fs.readFile);
@@ -16,10 +17,20 @@ Sentry.init({ dsn: 'https://abc4cbf3abff4a19975d97ee9e6bfcd6@o386021.ingest.sent
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-admin.initializeApp();
+var serviceAccount = require("./admin-service-account.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://work-buddies-2e620.firebaseio.com"
+});
+
 
 const config = functions.config()
 
+const pubsub = new PubSub({
+  projectId: process.env.GCLOUD_PROJECT,
+  keyFilename: './admin-service-account.json'
+});
 
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
@@ -540,7 +551,7 @@ let publishToTopic = topic =>
       let iso = new Date().toISOString();
       console.info(`[${iso}] Publishing to topic: '${topic}'`);
       console.info(`[${iso}] Event ID: ${event_id}`);
-      return functions.pubsub.topic(topic).publish(
+      return pubsub.topic(topic).publish(
         Buffer.from(JSON.stringify({
           id: v.id,
           event_id

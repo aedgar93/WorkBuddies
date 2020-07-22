@@ -3,6 +3,7 @@ import styles from './CreateCompany.module.css'
 import { ROUTES } from 'wb-utils/constants'
 import { Alert, Modal, Button } from 'react-bootstrap'
 import { FirebaseContext } from '../../firebaseComponents'
+import { TrackingContext } from '../../tracking'
 import SignUpForm from '../../shared/signUpForm'
 import moment from 'moment-timezone'
 import suggestedActivities from 'wb-utils/sampleActivities'
@@ -17,6 +18,7 @@ const CreateCompany = ({ history }) => {
   const [loading, setLoading] = useState(false)
   const [accountInfo, setAccountInfo] = useState(null)
   const firebase = useContext(FirebaseContext)
+  const tracking = useContext(TrackingContext)
   const genericError = 'Something went wrong! Please try again.'
 
 
@@ -92,7 +94,10 @@ const CreateCompany = ({ history }) => {
       }))
 
       Promise.all(promises)
-      .then(() => { history.push(ROUTES.WELCOME) })
+      .then(() => {
+        history.push(ROUTES.WELCOME)
+        tracking.signIn()
+      })
       .catch((error) => {
         console.error(error)
         updateError(genericError)

@@ -22,6 +22,7 @@ import LandingPage from './pages/landingPage';
 import Welcome from './pages/welcome'
 import ScrollToTop from './shared/scrollToTop'
 import { withTracking } from './tracking'
+import CookieBanner from './shared/cookies'
 
 class App extends Component {
   constructor(props) {
@@ -37,7 +38,6 @@ class App extends Component {
     let findAuthListener
     this.listener = this.props.firebase.auth.onAuthStateChanged(async authUser => {
       if (authUser) {
-        console.log('auth state changing!')
         this.setState({ authUser : { waitingForAuth: true }})
         if (this.props.firebase.creatingUserPromise) await this.props.firebase.creatingUserPromise
         findAuthListener =this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid)
@@ -111,6 +111,7 @@ class App extends Component {
                   }
                 </div>
                 <Footer />
+                <CookieBanner />
               </ScrollToTop>
             </Router>
           </>

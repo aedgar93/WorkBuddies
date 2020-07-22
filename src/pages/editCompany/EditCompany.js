@@ -69,8 +69,6 @@ class EditCompany extends Component {
       name
     }).then(ref => {
       this.setState({adding: null})
-    }).catch(error => {
-      console.log(error)
     })
   }
 
