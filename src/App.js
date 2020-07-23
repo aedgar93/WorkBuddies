@@ -23,6 +23,8 @@ import Welcome from './pages/welcome'
 import ScrollToTop from './shared/scrollToTop'
 import { withTracking } from './tracking'
 import CookieBanner from './shared/cookies'
+import PrivacyPolicy from './pages/privacy'
+import TermsOfUse from './pages/terms'
 
 class App extends Component {
   constructor(props) {
@@ -104,6 +106,9 @@ class App extends Component {
                           { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
 
                           <Route path={ROUTES.WELCOME} component={Welcome}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
+
+                          <Route path={ROUTES.PRIVACY} component={PrivacyPolicy}></Route>
+                          <Route path={ROUTES.TERMS} component={TermsOfUse}></Route>
 
                           { /* Default */ }
                           { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }

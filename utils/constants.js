@@ -1,3 +1,5 @@
+const SUPPORT_EMAIL = "dev@tangcapital.com"
+
 const ROUTES = {
   BASE: '/',
   MY_ACCOUNT: '/my_account',
@@ -7,7 +9,9 @@ const ROUTES = {
   EDIT_COMPANY: '/edit_company',
   SET_UP_ACTIVITIES: '/set_up_activities',
   SET_UP_EMPLOYEES: '/set_up_employees',
-  WELCOME: '/welcome'
+  WELCOME: '/welcome',
+  PRIVACY: '/privacy_policy',
+  TERMS: '/terms_of_use'
 }
 
 const DAYS = [
@@ -42,5 +46,6 @@ const TIMES = [
 module.exports = {
   ROUTES,
   DAYS,
-  TIMES
+  TIMES,
+  SUPPORT_EMAIL
 }

@@ -1,16 +1,18 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useContext } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom'
+import { ROUTES, SUPPORT_EMAIL } from 'wb-utils/constants'
 import styles from './Footer.module.css'
 import { withRouter } from 'react-router-dom'
-import { AuthUserContext } from '../../session'
 
-
-const Footer = ({ location }) => {
-  const auth = useContext(AuthUserContext)
-
-
+const Footer = () => {
   return (
-    <div className={`${styles.footer} ${location.pathname === '/' && (!auth || !auth.user) ? styles.home : ''}`}>
+    <div className={styles.footer}>
+      <div className={styles.topLinks}>
+        <Link to={ROUTES.PRIVACY}>Privacy Policy</Link>
+        <Link to={ROUTES.TERMS}>Terms of Use</Link>
+        <a href={`mailto:${SUPPORT_EMAIL}`}>Contact Us</a>
+      </div>
       © 2020 Tang Labs, LLC
     </div>
   )
