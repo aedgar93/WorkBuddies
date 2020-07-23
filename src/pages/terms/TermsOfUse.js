@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from './TermsOfUse.module.css'
 
-const TermsOfUse = ({ }) => {
+const TermsOfUse = () => {
 
   return (
     <div>
