@@ -9,6 +9,8 @@
   --error-color: #dc3545;
   --wrapper-top: 140px;
   --title-size: 34px;
+  --vertical-padding: 60px;
+  --page-top: 75px;
 }
 
 @media only screen and (max-width: 600px) {
@@ -50,10 +52,6 @@ h1 {
   min-width: 100%;
   box-sizing: border-box;
   max-width: 100%;
-}
-
-.content > div {
-  padding: 0 20px;
 }
 
 .slideIn-enter {

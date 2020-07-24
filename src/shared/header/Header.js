@@ -1,26 +1,28 @@
 // eslint-disable-next-line no-unused-vars
 import React, {
-   useContext
+   useContext, useState
 } from 'react';
 import {
-  Link
+  Link, useHistory, useLocation
 } from 'react-router-dom';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import { Navbar, Nav } from 'react-bootstrap'
 import { ROUTES } from 'wb-utils/constants'
-import { useHistory } from "react-router-dom";
 import logo from '../../assets/images/logo.svg'
 import logo_small from '../../assets/images/logo_small.svg'
 import styles from './Header.module.css'
 import Media from 'react-media';
 import Button from 'react-bootstrap/Button'
+import ProfilePic from '../profilePic'
 
 
 const Header = () => {
   const history = useHistory()
+  const location = useLocation()
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
+  const [profileOpen, setProfileOpen] = useState(null)
 
   const signOut = () => {
     firebase.signOut()
@@ -50,13 +52,27 @@ const Header = () => {
             {
               auth && auth.user ?
               <>
-                <Nav.Link to={ROUTES.BASE} as={Link} className={styles.navLink}>Home</Nav.Link>
-                <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link} className={styles.navLink}>Profile</Nav.Link>
+                <Nav.Link to={ROUTES.BASE} as={Link} className={`${styles.navLink} ${location.pathname === '/' ? styles.active : ''}`}>Home</Nav.Link>
                 { auth && auth.user && auth.user.admin ?
-                  <Nav.Link to={ROUTES.EDIT_COMPANY} as={Link} className={styles.navLink}>My Company</Nav.Link>
+                  <Nav.Link to={ROUTES.EDIT_COMPANY} as={Link} className={`${styles.navLink} ${location.pathname === ROUTES.EDIT_COMPANY ? styles.active : ''}`}>My Company</Nav.Link>
                   : null
                 }
-                <Nav.Link onClick={signOut} className={styles.navLink}>Log Out</Nav.Link>
+                <Media query={{maxWidth: 991}}>
+                  { matches => matches ?
+                    <>
+                      <Nav.Link to={ROUTES.MY_ACCOUNT} as={Link} className={`${styles.navLink} ${location.pathname === ROUTES.MY_ACCOUNT ? styles.active : ''}`}>Profile</Nav.Link>
+                      <Nav.Link onClick={signOut} className={styles.navLink}>Log Out</Nav.Link>
+                    </>
+                  :
+                  ( <div className={`${styles.profile} ${location.pathname === ROUTES.MY_ACCOUNT ? styles.activeProfile : ''}`} onClick={() => setProfileOpen(!profileOpen)}>
+                    <ProfilePic user={auth.user} size={27} active={location.pathname === ROUTES.MY_ACCOUNT}/>
+                    <div className={`${styles.profileOptions} ${profileOpen ? styles.profileOptionsOpen : ''}`} >
+                      <Nav.Link as={Link} to={ROUTES.MY_ACCOUNT} className={`${location.pathname === ROUTES.MY_ACCOUNT ? styles.active : ''}`}>Profile</Nav.Link>
+                      <Nav.Link onClick={signOut}>Log Out</Nav.Link>
+                    </div>
+                  </div> )
+                }
+                </Media>
               </>
               :
               <>

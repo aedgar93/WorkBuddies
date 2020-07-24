@@ -1,33 +1,52 @@
 .wrapper {
+  margin-top: var(--page-top);
+}
+
+.nav {
   text-align: left;
 }
 
-.section {
-  composes: section from '../../shared.css'
-
+.navButton {
+  display: block;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--primary-text);
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: -.17px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 210px;
+  height: 30px;
+  line-height: 30px;
+  text-align: left;
 }
 
-.companySection, .activitySection, .employeeSection {
-  composes: sectionInner from '../../shared.css'
+.navButtonActive {
+  background-color: #F2F2F2;
 }
 
-
-.companySection {
+.infoSection {
   display: flex;
   flex-direction: row;
 }
 
-.label, .companyLabel {
+
+.sectionLabel {
   font-weight: bold;
   font-size: 24px;
   color: var(--primary-text);
   letter-spacing: -0.25px;
+  text-align: left;
 }
 
-.companyLabel {
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin-right: 60px;
+.infoSection .sectionLabel {
+  margin-right: 70px;
+}
+
+.section .sectionLabel {
+  margin-bottom: 30px;
 }
 
 .activities {
@@ -46,8 +65,17 @@
   margin-right: 5px;
 }
 
-@media only screen and (max-width: 480px) {
-  .companySection {
+@media only screen and (max-width: 768px) {
+  .infoSection {
     flex-direction: column;
   }
+
+  .nav {
+    margin-bottom: 30px;
+  }
+
+}
+
+@media only screen and (max-width: 480px) {
+
 }

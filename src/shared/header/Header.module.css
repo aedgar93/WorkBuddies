@@ -1,5 +1,5 @@
 .navBar {
-  padding: 20px 63px;
+  padding: 0 var(--vertical-padding);
   border-bottom: 1px solid var(--divider);
 }
 
@@ -8,7 +8,7 @@
 }
 
 .logoContainer {
-  padding: 0;
+  padding: 20px 0;
 }
 
 .logo {
@@ -19,13 +19,21 @@
 .navLink {
   color: var(--primary-text) !important;
   font-weight: bold;
-  padding: 0;
-  font-size: 14px;
+  padding: 20px 0;;
+  font-size: 16px;
   line-height: 35px;
+  padding-right: 0;
+  padding-left: 0;
+  margin: 0 50px;
+  letter-spacing: -0.17px;
 }
 
 .navLink:hover {
   text-decoration: none;
+}
+
+.navLink.active {
+  border-bottom: 3px solid var(--primary-color);
 }
 
 .signUp {
@@ -37,6 +45,53 @@
 .login {
   margin-right: 57px;
   line-height: 41px;;
+}
+
+.profile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  padding-right: 20px;
+  margin-left: 50px;
+}
+
+.activeProfile {
+  padding-right: 18px;
+}
+
+.profile a {
+  border-bottom: 1px solid #DEDEDE;
+  font-weight: bold;
+  font-size: 16px;
+  color: #5B5B5B;
+  letter-spacing: -0.17px;
+}
+
+.profile a.active {
+  color: var(--primary-color) !important;
+}
+
+.profile a:last-child {
+  border-bottom: none;
+}
+
+.profileOptions {
+  display: none;
+  position: absolute;
+  background: #FFFFFF;
+  border: 1px solid #F9F9F9;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.23);
+  border-radius: 4px;
+  top: 65px;
+  width: 135px;
+  padding: 0 7px;
+  left: calc(50% - 10px);
+  transform: translateX(-50%);
+}
+
+.profileOptionsOpen {
+  display: block;
 }
 
 @media only screen and (max-width: 991px){

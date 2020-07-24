@@ -1,6 +1,44 @@
 .wrapper {
   text-align: left;
+  margin-top: var(--page-top);
 }
+
+.nav {
+  text-align: left;
+}
+
+.navButton, .subNavButton {
+  display: block;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--primary-text);
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: -.17px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 210px;
+  height: 30px;
+  line-height: 30px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.subNavButton {
+  margin-left: 33px;
+}
+
+.subNavButton:hover {
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.navButtonActive {
+  background-color: #F2F2F2;
+}
+
+
 
 .title {
   font-weight: bold;
@@ -10,22 +48,16 @@
   margin-bottom: 25px;
 }
 
-.about {
+.leftLabel {
+  display: inline-block;
+  width: 150px;
   margin-right: 100px;
 }
 
 .content {
   display: flex;
   flex-direction: row;
-}
-
-.section {
-  composes: section from '../../shared.css'
-}
-
-.sectionInner, .cookiesInner {
-  composes: sectionInner from '../../shared.css'
-
+  width: 100%;
 }
 
 .form {
@@ -34,6 +66,12 @@
 
 .button {
   float: right;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 76px;
 }
 
 .formGroup {
@@ -89,6 +127,7 @@
 .cookieWrapper {
   background-color: #F9F9F9;
   padding: 25px 0;
+  margin-top: -50px;
 }
 
 .cookiesInner {
@@ -107,7 +146,16 @@
   align-items: center;
 }
 
+@media only screen and (max-width: 768px) {
 
+  .profileSection {
+    flex-direction: column;
+  }
+
+  .leftLabel {
+    width: 100%;
+  }
+}
 
 
 @media only screen and (max-width: 600px) {

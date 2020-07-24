@@ -1,11 +1,23 @@
 .wrapper {
   text-align: left;
-  max-width: 900px;
   margin: 0 auto;
 }
 
 .section {
   margin-bottom: 50px;
+}
+
+.sectionLabel {
+  font-weight: bold;
+  font-size: 24px;
+  color: var(--primary-text);
+  letter-spacing: -0.25px;
+  text-align: left;
+  margin-top: 60px;
+}
+
+.picContainer {
+  margin-right: 35px;
 }
 
 .user {
@@ -47,11 +59,16 @@
 }
 
 @media only screen and (max-width: 480px) {
+
   .inviteContainer {
     flex-direction: column;
   }
 
   .name, .email, .delete {
     margin: 5px 0;
+  }
+
+  .picContainer {
+    margin-right: 0;
   }
 }

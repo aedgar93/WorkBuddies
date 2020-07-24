@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ProfilePic.module.css'
 
-const ProfilePic = ({ onClick, children, user, size, style}) => {
+const ProfilePic = ({ onClick, children, user, size, style, active}) => {
 
   style = style || {}
   let initialsStyle = {}
@@ -16,7 +16,7 @@ const ProfilePic = ({ onClick, children, user, size, style}) => {
   }
   return (
     <>
-      <div onClick={() => onClick && onClick()} className={`${styles.wrapper} ${onClick ? styles.clickable : null}`} data-size={size} style={style}>
+      <div onClick={() => onClick && onClick()} className={`${styles.wrapper} ${onClick ? styles.clickable : null} ${active ? styles.active : ''}`} data-size={size} style={style}>
         { user.profilePic ?
           <img src={user.profilePic} className={styles.pic} alt="Profile"/>
           :

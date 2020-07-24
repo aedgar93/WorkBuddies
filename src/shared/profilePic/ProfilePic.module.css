@@ -13,6 +13,11 @@
   flex-grow: 0;
 }
 
+.active {
+  border: 2px solid var(--primary-color);
+  box-sizing: content-box;
+}
+
 
 .pic {
   width: 100%;

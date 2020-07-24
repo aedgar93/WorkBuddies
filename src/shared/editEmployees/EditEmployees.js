@@ -3,12 +3,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import styles from './EditEmployees.module.css'
-import UserCard from '../userCard'
-import { Row, Col, Spinner, Button } from 'react-bootstrap'
+import ProfilePic from '../profilePic'
+import { Spinner, Button } from 'react-bootstrap'
 import SendInvites from '../sendInvites'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-const EditEmployees = () => {
+const EditEmployees = ({ showEmployees = true, showInvites = true}) => {
   const [userRefs, setUserRefs] = useState([])
   const [inviteRefs, setInviteRefs] = useState(null)
   const [updating, setUpdating] = useState(false)
@@ -46,8 +46,7 @@ const EditEmployees = () => {
   }
 
   const handleDeleteInvite = (ref, index) => {
-    // eslint-disable-next-line no-restricted-globals
-    if(confirm('Are you sure you want to delete this invite?')) {
+    if(window.confirm('Are you sure you want to delete this invite?')) {
       ref.ref.delete()
       let invitesCopy = [...inviteRefs]
       invitesCopy.splice(index, 1)
@@ -55,9 +54,19 @@ const EditEmployees = () => {
     }
   }
 
+  const handleDeleteUser = (user) => {
+    if(window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return
+    }
+  }
+
+
   const getInvites = () => {
     return (
-      inviteRefs ? inviteRefs.map((ref, i) => {
+      <>
+        <div className={styles.sectionLabel}>Pending Invitations</div>
+
+      { inviteRefs ? inviteRefs.map((ref, i) => {
 
         let invite = ref.data()
         return (
@@ -67,53 +76,69 @@ const EditEmployees = () => {
             timeout={{
               enter: 500,
               exit: 300,
-           }}>
-            <div className={styles.inviteContainer}>
-              <div className={styles.name}>
-                {invite.name}
-              </div>
-              <div className={styles.email}>
-                {invite.email}
-              </div>
-              <Button variant="outline-danger" onClick={() => handleDeleteInvite(ref, i)} className={styles.delete}>Delete</Button>
-            </div>
+          }}>
+            { renderUser(invite, invite.email + "_" + i, false, () => handleDeleteInvite(ref, i))}
           </CSSTransition>
         )
-      }) : null
+      }) : null }
+      </>
+    )
+  }
+
+  const renderUser = (user, key, showPic, handleDelete) => {
+    let { name, email } = user
+    return (
+      <div className={styles.inviteContainer} key={key}>
+        { showPic ? (
+          <div className={styles.picContainer}>
+            <ProfilePic user={user} size={46}/>
+          </div>
+        ) : null }
+        <div className={styles.name}>
+          {name}
+        </div>
+        <div className={styles.email}>
+          {email}
+        </div>
+        { handleDelete ? <Button variant="outline-danger" onClick={handleDelete} className={styles.delete}>Delete</Button> : null }
+      </div>
     )
   }
 
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.section}>
-        {
-          userRefs ?
-            <Row>
-              {userRefs.map((ref, i) => {
-                let user = ref.data()
-                return (
-                  <Col xs={12} s={6} m={6} l={6} xl={6} key={i} className={styles.user}>
-                    <UserCard user={user}/>
-                  </Col>
-                )
-              })}
-            </Row> :
-            <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
-        }
-      </div>
-
-      <div className={styles.section}>
-        <SendInvites onSubmit={updateInvites}/>
-        {
-          updating ? <Spinner /> : null
-        }
-        <TransitionGroup>
+      { showEmployees ? (
+        <div className={styles.section}>
           {
-            getInvites()
+            userRefs ?
+              <>
+                {userRefs.map((ref, i) => {
+                  let user = ref.data()
+                  user.id = ref.id
+                  user.name = user.firstName + " " + user.lastName
+                  return renderUser(user, user.id, true)
+                })}
+              </> :
+              <div className={styles.loadingContainer}><Spinner animation="border" size="lg" variant="primary" /></div>
           }
-        </TransitionGroup>
-      </div>
+        </div> ) : null
+      }
+
+      {
+        showInvites ? (
+          <div className={styles.section}>
+            <SendInvites onSubmit={updateInvites}/>
+            {
+              updating ? <Spinner /> : null
+            }
+            <TransitionGroup>
+              {
+                getInvites()
+              }
+            </TransitionGroup>
+          </div>
+        ) : null }
     </div>
   )
 }
