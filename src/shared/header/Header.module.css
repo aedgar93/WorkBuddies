@@ -7,6 +7,10 @@
   justify-content: flex-end
 }
 
+.nav div {
+  align-items: center;
+}
+
 .logoContainer {
   padding: 20px 0;
 }
@@ -40,6 +44,7 @@
   margin-right: 40px;
   font-size: 14px;
   padding: 9px 29px;
+  height: 42px;
 }
 
 .login {
@@ -105,7 +110,8 @@
   }
 
   .login {
-    margin-right: 0;
+    margin-right: auto;
+    margin-left: auto;
     margin-top: 10px;
   }
 
