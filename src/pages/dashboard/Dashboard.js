@@ -233,7 +233,7 @@ const Dashboard = ({ location }) => {
                 </div>
               </div>
             </Link>
-            <Link to={ROUTES.MY_ACCOUNT} className={styles.otherItemLink}>
+            <Link to={{pathname: ROUTES.MY_ACCOUNT, state: {activeSection: 1}}} className={styles.otherItemLink}>
               <div className={styles.otherItemsContainer}>
                 <div className={styles.otherItemsHeader}>
                   <span className={styles.otherItemsText}>Update your availability</span>
@@ -279,7 +279,7 @@ const Dashboard = ({ location }) => {
         return (
           <>
           { renderActivities() }
-          <Link to={ROUTES.MY_ACCOUNT} className={styles.otherItemLink}>
+          <Link to={{pathname: ROUTES.MY_ACCOUNT, state: {activeSection: 1}}}  className={styles.otherItemLink}>
             <div className={styles.otherItemsContainer}>
               <div className={styles.otherItemsHeader}>
                 <span className={styles.otherItemsText}>Update your availability</span>

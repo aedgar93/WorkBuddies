@@ -1,4 +1,7 @@
 import React, { useContext, useState } from 'react'
+import {
+  useLocation
+} from 'react-router-dom';
 import styles from './EditAccount.module.css'
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
@@ -17,6 +20,8 @@ const SECTIONS = {
 }
 
 const EditAccount = () => {
+  const location = useLocation()
+  console.log(location.state)
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
   const storage = firebase.storage.ref();
@@ -39,7 +44,7 @@ const EditAccount = () => {
   const [editor, setEditor] = useState(null)
   const [picError, setPicError] = useState(null)
   const [isCookiePopupVisible, setIsCookiePopupVisible] = useState(false)
-  const [activeSection, setActiveSection] = useState(SECTIONS.PROFILE)
+  const [activeSection, setActiveSection] = useState(location.state && typeof location.state.activeSection !== 'undefined' ? location.state.activeSection : SECTIONS.PROFILE)
 
   const defer = () => {
     var deferred = {
