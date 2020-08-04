@@ -101,7 +101,7 @@
 
 @media only screen and (max-width: 991px){
   .nav {
-    margin-top: 30px;
+    margin-top: 0px;
   }
 
   .signUp {
@@ -113,6 +113,11 @@
     margin-right: auto;
     margin-left: auto;
     margin-top: 10px;
+  }
+
+  .navLink {
+    padding: 0;
+    margin: 10px 0;
   }
 
 }

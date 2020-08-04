@@ -251,7 +251,7 @@ const Dashboard = ({ location }) => {
                 </div>
               </div>
             </Link>
-            <Link to={ROUTES.EDIT_COMPANY} className={styles.otherItemLink}>
+            <Link to={{pathname: ROUTES.EDIT_COMPANY, state: {activeSection: 1}}} className={styles.otherItemLink}>
               <div className={styles.otherItemsContainer}>
                 <div className={styles.otherItemsHeader}>
                   <span className={styles.otherItemsText}>Pick activities</span>
@@ -259,7 +259,7 @@ const Dashboard = ({ location }) => {
                 </div>
               </div>
             </Link>
-            <Link to={ROUTES.EDIT_COMPANY} className={styles.otherItemLink}>
+            <Link to={{pathname: ROUTES.EDIT_COMPANY, state: {activeSection: 3}}} className={styles.otherItemLink}>
               <div className={styles.otherItemsContainer}>
                 <div className={styles.otherItemsHeader}>
                   <span className={styles.otherItemsText}>Invite team members</span>

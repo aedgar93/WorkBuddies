@@ -5,6 +5,8 @@
 
 .nav {
   text-align: left;
+  padding-left: calc(var(--vertical-padding) - 15px);
+
 }
 
 .navButton, .subNavButton {
@@ -147,6 +149,11 @@
 }
 
 @media only screen and (max-width: 768px) {
+
+  .nav {
+    margin-bottom: 50px;
+    padding-left: 0;
+  }
 
   .profileSection {
     flex-direction: column;

@@ -3,16 +3,16 @@ const sample = [
     name: "Grab a Coffee",
   },
   {
-    name: "Ping Pong",
+    name: "Play Ping Pong",
   },
   {
     name: "Go for a Walk",
   },
   {
-    name: "Foosball",
+    name: "Play Foosball",
   },
   {
-    name: "Video Games",
+    name: "Play Video Games",
   },
   {
     name: "Grab lunch together"

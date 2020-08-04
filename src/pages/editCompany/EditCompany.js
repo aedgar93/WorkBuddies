@@ -23,9 +23,10 @@ class EditCompany extends Component {
 
   constructor(props) {
     super(props)
+    let location = props.location
     this.state = {
       activityRefs: null,
-      activeSection: SECTIONS.INFO
+      activeSection: location.state && typeof location.state.activeSection !== 'undefined' ? location.state.activeSection : SECTIONS.INFO
 
     }
     this.onSubmit = this.onSubmit.bind(this)
