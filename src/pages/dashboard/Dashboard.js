@@ -143,7 +143,7 @@ const Dashboard = ({ location }) => {
             buddy1.availability || (buddy2 && buddy2.availability) ?
             <div className={styles.scheduleNote}>
               Here are a couple available time slots from {buddy2 ? 'your buddies' : buddy1.firstName}. <br/>
-              Don’t hesitate reach out if you don’t see a fit here.
+              Don’t hesitate to reach out if you don’t see a fit here.
             </div>
             : null
           }
