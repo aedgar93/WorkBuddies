@@ -17,20 +17,11 @@ Sentry.init({ dsn: 'https://abc4cbf3abff4a19975d97ee9e6bfcd6@o386021.ingest.sent
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-var serviceAccount = require("./admin-service-account.json");
+admin.initializeApp();
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://work-buddies-2e620.firebaseio.com"
-});
-
+const pubsub = new PubSub()
 
 const config = functions.config()
-
-const pubsub = new PubSub({
-  projectId: process.env.GCLOUD_PROJECT,
-  keyFilename: './admin-service-account.json'
-});
 
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
