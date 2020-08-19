@@ -95,7 +95,13 @@ class Tracking {
   constructor() {
     mixpanel.init(token, {opt_out_tracking_by_default: true});
     this.mixpanel = mixpanel
-    this.cookies = new Cookies(() => mixpanel.opt_in_tracking(), () => mixpanel.opt_out_tracking())
+    this.cookies = new Cookies(() => {
+      if(mixpanel.has_opted_in_tracking()) return
+      mixpanel.opt_in_tracking()
+    }, () => {
+      if(mixpanel.has_opted_out_tracking()) return
+      mixpanel.opt_out_tracking()
+    })
     this.cookies.init()
   }
 
