@@ -13,8 +13,57 @@ I also noticed that while my company has a lot of cool toys (ping pong, foosball
 That's where Work Buddies come in. It encourages people to get to know each other, on a more regular basis. Instead of facing a lengthy after work party, with a bunch of people you barely know, you can spend 15 minutes a week building up relationships. Hopefully it will help break the ice, introduce different departments to one another, and encourage healthy interactions.
 
 
+## Setup
+
+### Front End
+1. `yarn install`
+1. create a .env file in the root folder. You can find a copy of the .env file for staging in LastPass
+
+### Firebase Functions
+1. If you have not already, install the firebase cli: `npm install -g firebase-tools`
+1. `firebase login`
+1. `cd functions/functions`
+1. `npm install`
+
 ### Install utils package so it updates when you make changes
 1. `cd utils`
 1. `yarn link`
 1. `cd ..`
 1. `yarn link wb-utils`
+
+
+## Run
+From the root folder, run `yarn`
+
+## Deploy
+
+### Front End
+The app can be deployed from heroku. Log in to heroku and select the app you would like to deploy (work-buddies or work-buddies staging).
+
+### Firebase Functions
+1. `cd functions/functions`
+1. Switch to the app you would like to use. Either `firebase use default` for production or `firebase use staging`
+1. `npm run deploy`
+
+
+
+## Other info
+
+* Manually triggering a weekly matchup:
+  * Find the company in the Firebase Cloud Firestore console (console.firebase.google.com)
+  * set the matchUpTime to 0
+  * The matchup job runs automatically every 5 minutes and will pick up your company the next time it runs
+* We use React Bootstrap for many of our components. You can find examples of buttons, alerts, the navbar and more at https://react-bootstrap.github.io/components/
+
+
+## Accounts
+All logins can be found in LastPass, unless otherwise mentioned
+
+* CloudSponge: contacts import tool
+  * https://www.cloudsponge.com/
+* Firebase/Google Cloud
+  * ttglabs@gmail.com account has access. You can log in and add your own account in the Settings/Users and Permissions section
+* Heroku
+  * ttglabs@gmail.com account has access. You can log in and add your own account by selecting the work-buddies-pipeline and adding your account under the access tab
+* Sentry: error alerting tool
+
