@@ -59,11 +59,13 @@ The app can be deployed from heroku. Log in to heroku and select the app you wou
 ## Accounts
 All logins can be found in LastPass, unless otherwise mentioned
 
-* CloudSponge: contacts import tool
-  * https://www.cloudsponge.com/
 * Firebase/Google Cloud
   * ttglabs@gmail.com account has access. You can log in and add your own account in the Settings/Users and Permissions section
 * Heroku
   * ttglabs@gmail.com account has access. You can log in and add your own account by selecting the work-buddies-pipeline and adding your account under the access tab
 * Sentry: error alerting tool
+* Microsoft Azure https://portal.azure.com/
+  * Used to login users with Outlook so they can import their contacts
+  * You will need a Microsoft account to access (Outlook, Live, etc). Ask Anna to add you to the project.
+
 

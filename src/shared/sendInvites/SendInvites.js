@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import styles from './SendInvites.module.css'
 import { Form, Button, Alert } from 'react-bootstrap'
 import { AuthUserContext } from '../../session'
 import { FirebaseContext } from '../../firebaseComponents'
 import { TrackingContext } from '../../tracking'
-
-import CloudSponge from '../cloudSponge'
 import Media from 'react-media'
-
+import ContactImport from '../contactImport'
 
 const addBlankInvite = (list) => {
   list.push({name: '', email: ''})
@@ -18,18 +16,11 @@ const SendInvites = ({ onNext, onSubmit }) => {
   const [loading, setLoading] = useState(false)
   const [pendingInvites, setPendingInvites] = useState(addBlankInvite([]))
   const [error, setError] = useState(null)
+  const [showImporter, setShowImporter] = useState(false)
   const auth = useContext(AuthUserContext)
   const firebase = useContext(FirebaseContext)
-  const addressBookRef = React.createRef();
   const tracking = useContext(TrackingContext)
 
-
-
-  //Work around because the address book (cloudsponge) is not part of the react lifecycle
-  useEffect(() => {
-    addressBookRef.current.updateOptions({ afterSubmitContacts: getContacts })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ pendingInvites ])
 
 
   const handleSubmit = (event) => {
@@ -93,6 +84,7 @@ const SendInvites = ({ onNext, onSubmit }) => {
 
   const getContacts = (results) => {
     setError(null)
+    setShowImporter(false)
     if(!results || results.length === 0) return
     let invitesCopy = [...getPendingInvites()]
 
@@ -103,11 +95,11 @@ const SendInvites = ({ onNext, onSubmit }) => {
     }
 
     results.forEach(contact => {
-      let email = contact.selectedEmail() || ""
+      let email = contact.email || ""
       if (!email) return null
       invitesCopy.push({
         email,
-        name: contact.fullName() || ""
+        name: contact.name || ""
       })
     })
 
@@ -121,46 +113,47 @@ const SendInvites = ({ onNext, onSubmit }) => {
   }
 
   return (
-    <Media query={{maxWidth: 600}}>
-      {isMobile =>
-      <div className={styles.container}>
-        <CloudSponge options={{ afterSubmitContacts: getContacts }} ref={addressBookRef}>
-          <Button className={`cloudsponge-launch ${styles.importButton}`}>
+    <>
+      <Media query={{maxWidth: 600}}>
+        {isMobile =>
+        <div className={styles.container}>
+          <Button className={styles.importButton} onClick={() => setShowImporter(true)}>
               Add From Address Book
           </Button>
-        </CloudSponge>
-        <Form onSubmit={handleSubmit}>
-          <div className={styles.inviteForm}>
+          <ContactImport onSubmit={getContacts} isVisible={showImporter} setIsVisible={setShowImporter}/>
+          <Form onSubmit={handleSubmit}>
+            <div className={styles.inviteForm}>
+              {
+                pendingInvites.map((val, i) => {
+                  return (
+                    <div key={i} className={styles.invite}>
+                      <Form.Control type="email" placeholder="Name (optional)"  className={styles.addInput} onChange={e => handleNameChange(e, i)} value={val.name}/>
+                      <Form.Control type="email" required placeholder="Email" className={styles.addInput} onChange={e => handleEmailChange(e, i)} value={val.email}/>
+                      {
+                        !isMobile && i === 0 ?
+                          <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button>
+                          : null
+                      }
+                    </div>
+                  )
+                })
+              }
+              { isMobile ? <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button> : null }
+            </div>
+            <Button onClick={handleSubmit} disabled={loading} className={styles.inviteButton} size="lg">Invite</Button>
             {
-              pendingInvites.map((val, i) => {
-                return (
-                  <div key={i} className={styles.invite}>
-                    <Form.Control type="email" placeholder="Name (optional)"  className={styles.addInput} onChange={e => handleNameChange(e, i)} value={val.name}/>
-                    <Form.Control type="email" required placeholder="Email" className={styles.addInput} onChange={e => handleEmailChange(e, i)} value={val.email}/>
-                    {
-                      !isMobile && i === 0 ?
-                        <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button>
-                        : null
-                    }
-                  </div>
-                )
-              })
+              onNext ?
+              <Button onClick={onNext} disabled={loading} variant="outline-primary" size="lg">Next Time</Button>
+              : null
             }
-            { isMobile ? <Button className={styles.addButton} onClick={appendNewInvite} variant="outline-primary"> Add </Button> : null }
-          </div>
-          <Button onClick={handleSubmit} disabled={loading} className={styles.inviteButton} size="lg">Invite</Button>
+          </Form>
           {
-            onNext ?
-            <Button onClick={onNext} disabled={loading} variant="outline-primary" size="lg">Next Time</Button>
-            : null
+            error ? <Alert variant={error.type ? error.type : 'danger'} className={styles.error}>{error.message ? error.message : error}</Alert> : null
           }
-        </Form>
-        {
-          error ? <Alert variant={error.type ? error.type : 'danger'} className={styles.error}>{error.message ? error.message : error}</Alert> : null
-        }
-      </div>
-    }
-    </Media>
+        </div>
+      }
+      </Media>
+    </>
   )
 }
 

@@ -7,6 +7,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  vertical-align: top;
 }
 
 .checkboxContainer label {
@@ -45,6 +46,7 @@
   background-image: url('../../assets/images/check.svg');
   background-repeat: no-repeat;
   background-position: center;
+  background-size: 60%;
 }
 
 @media only screen and (max-width: 600px) {

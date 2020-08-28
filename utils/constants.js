@@ -11,7 +11,8 @@ const ROUTES = {
   SET_UP_EMPLOYEES: '/set_up_employees',
   WELCOME: '/welcome',
   PRIVACY: '/privacy_policy',
-  TERMS: '/terms_of_use'
+  TERMS: '/terms_of_use',
+  REDIRECT: '/redirect'
 }
 
 const DAYS = [

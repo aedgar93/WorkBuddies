@@ -25,6 +25,8 @@ import { withTracking } from './tracking'
 import CookieBanner from './shared/cookies'
 import PrivacyPolicy from './pages/privacy'
 import TermsOfUse from './pages/terms'
+import MSRedirect from './pages/msRedirect'
+
 
 class App extends Component {
   constructor(props) {
@@ -109,6 +111,7 @@ class App extends Component {
 
                           <Route path={ROUTES.PRIVACY} component={PrivacyPolicy}></Route>
                           <Route path={ROUTES.TERMS} component={TermsOfUse}></Route>
+                          <Route path={ROUTES.REDIRECT} component={MSRedirect}></Route>
 
                           { /* Default */ }
                           { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }
