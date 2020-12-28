@@ -1,17 +1,16 @@
 import React from 'react'
 import styles from './UserCard.module.css'
+import ProfilePic from '../profilePic'
 
-const UserCard = ({ firstName, lastName, email, slack }) => {
+const UserCard = ({ user }) => {
 
   return (
     <div className={styles.card}>
-      <div className={styles.imgContainer}>
-
-      </div>
+      <ProfilePic user={user} size={75}/>
       <div className={styles.info}>
-          <div className={styles.name}>{firstName} {lastName}</div>
-          { email ? <div className={styles.contact}><i className="la la-envelope"></i><a className={styles.detail} href={`mailto:${email}`}>{email}</a></div> : null}
-          { slack ? <div className={styles.contact}><i className="la la-comment-dots"></i><span className={styles.detail}>Slack: {slack}</span></div> : null}
+          <div className={styles.name}>{user.firstName} {user.lastName}</div>
+          { user.email ? <div className={styles.contact}><i className="la la-envelope"></i><a className={styles.detail} href={`mailto:${user.email}`}>{user.email}</a></div> : null}
+          { user.slack ? <div className={styles.contact}><i className="la la-comment-dots"></i><span className={styles.detail}>Slack: {user.slack}</span></div> : null}
       </div>
     </div>
   )

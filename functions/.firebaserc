@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "work-buddies-258423"
+    "default": "work-buddies-2e620",
+    "staging": "work-buddies-staging"
   }
 }

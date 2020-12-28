@@ -1,0 +1,13 @@
+.spinner {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: .5;
+}
+
+textarea + .spinner {
+  top: auto;
+  bottom: 4px;
+  transform: none;
+}

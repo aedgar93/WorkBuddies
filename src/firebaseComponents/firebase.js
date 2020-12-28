@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore'
+import 'firebase/storage'
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,18 +15,19 @@ const config = {
 class Firebase {
   constructor() {
     app.initializeApp(config);
-
     this.auth = app.auth();
     this.db = app.firestore()
+    this.storage = app.storage()
     this.firestore = app.firestore
-    this.createUserPromise = false
   }
 
-  createUserWithEmailAndPassword = (email, password) =>
-    this.auth.createUserWithEmailAndPassword(email, password);
+  createUserWithEmailAndPassword = (email, password) => {
+    return this.auth.createUserWithEmailAndPassword(email, password);
+  }
 
-  signInWithEmailAndPassword = (email, password) =>
-    this.auth.signInWithEmailAndPassword(email, password);
+  signInWithEmailAndPassword = (email, password) => {
+    return this.auth.signInWithEmailAndPassword(email, password);
+  }
 
   signOut = () => this.auth.signOut();
 
@@ -33,6 +35,11 @@ class Firebase {
 
   passwordUpdate = password =>
     this.auth.currentUser.updatePassword(password);
+
+  doesUserExistForEmail = async email => {
+    let results = await this.auth.fetchSignInMethodsForEmail(email)
+    return results && results.length > 0
+  }
 
 
 }

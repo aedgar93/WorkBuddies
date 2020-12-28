@@ -1,20 +1,40 @@
 .wrapper {
-  width: 500px;
+  width: 575px;
   max-width: 100%;
   margin: auto;
+  margin-top: var(--wrapper-top);
   text-align: left;
 }
 
-.buttonContainer {
-  text-align: right;
+.title {
+  composes: title from '../../shared.css';
 }
 
-.signUp {
-  clear: both;
-  margin-top: 150px;
-  text-align: center;
+
+.form {
+  margin-top: 50px;
 }
+
+.input {
+  composes: input from '../../shared.css';
+}
+
 
 .alert {
   margin-top: 50px;
+}
+
+.inviteLink {
+  margin-left: 30px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.buttonContainer {
+  margin-top: 30px;
+}
+
+.button {
+  padding: 11px 29px;
+  box-sizing: border-box;
 }

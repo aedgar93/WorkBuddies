@@ -1,33 +1,16 @@
 .card {
-  border: 1px solid rgba(0,0,0,.125);
-  border-radius: 5px;
-  height: 75px;
+  border-radius: 24px;
+  border: 1px solid var(--primary-color);
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--primary-color);
+  letter-spacing: -0.15px;
+  padding: 13px 13px;
+  margin: 15px;
+  position: relative;
   display: flex;
   flex-direction: row;
-  flex: 1 0 1;
-  margin: 5px;
-  width: 250px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.selected {
-  border-color: #007bff;
-  box-shadow: 0 0 10px #9ecaed;
-}
-
-.editCard {
-  width: 100%;
-  cursor: pointer;
-}
-
-.iconContainer {
-  height: 100%;
-  width: 75px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  background: rgba(0,0,0,.125);
-  display: flex;
+  align-items: center;
 }
 
 .name {
@@ -38,51 +21,39 @@
   box-sizing: border-box;
 }
 
-.editName {
-  align-self: center;
-  flex-grow: 1;
-}
-
-.input {
-  max-width: 100%;
-  width: 100%;
-  border: none;
-  outline: none;
-  padding-left: 5px;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.editIcon {
-  color: rgba(0,0,0,.5);
-  font-size: 12px;
-  text-align: center;
-  align-self: center;
-}
-
-.action {
-  width: 100px;
-  line-height: 75px;
-  text-align: center;
+.closeContainer {
+  border: 2px solid var(--primary-color);
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
 }
 
-.save {
-  background: #d4edda;
-  color: #155724;
+.close {
+  width: 10px;
+  height: 10px;
 }
 
-.save:hover {
-  background: #155724;
-  color:  #d4edda;
+.close g {
+  font-weight: 800;
 }
 
-.delete {
-  color: #721c24;
-  background-color: #f8d7da;
+.closeContainer:hover, .closeContainer:hover g {
+  border-color: #5f42ff;
+  stroke: #5f42ff;
 }
 
-.delete:hover {
-  color: #f8d7da;
-  background-color: #721c24;
+@media only screen and (max-width: 480px) {
+  .card {
+    margin: 10px 5px;
+    padding: 10px;
+  }
+
+  .name {
+    padding: 0 5px;
+    font-size: 12px;
+  }
 }

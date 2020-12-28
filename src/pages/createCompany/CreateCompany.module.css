@@ -1,8 +1,15 @@
+.outerWrapper {
+  padding-bottom: 150px;
+  position: relative;
+}
+
 .wrapper {
-  width: 800px;
+  width: 650px;
   max-width: 100%;
   margin: auto;
+  margin-top: var(--wrapper-top);
   text-align: left;
+  z-index: 2;
 }
 
 .subtitle {
@@ -25,4 +32,38 @@
   border: none;
   outline: none;
   color: #007bff;
+}
+
+
+.title {
+  composes: title from '../../shared.css';
+}
+
+.bg {
+  z-index: -1;
+  position: absolute;
+  bottom: 0;
+  left: 40px;
+}
+
+.alertText {
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+.selectCompany {
+  display: inline-block;
+  margin-right: 36px;
+  margin-bottom: 15px;
+}
+
+@media only screen and (max-width: 1550px) {
+  .bg {
+    opacity: 1;
+    position: relative;
+    margin-top: 20px;
+    max-width: 70%;
+    left: initial;
+    right: -40px;
+  }
 }

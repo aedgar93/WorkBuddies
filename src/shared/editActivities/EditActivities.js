@@ -1,53 +1,35 @@
-import React, {useState} from 'react'
-import Activity, { EditActivity } from '../activity';
-import Button from 'react-bootstrap/Button'
+import React, { useState } from 'react'
+import Activity from '../activity';
+import { Button } from 'react-bootstrap'
 import styles from './EditActivities.module.css'
 
 
-const EditActivities = ({ activities, onDelete, onEdit, onAdd, alwaysSelected }) => {
-  const [adding, setAdding] = useState(null)
-  const [editIndex, setEditIndex] = useState(null)
+const EditActivities = ({ activities, onDelete, onAdd }) => {
+  const [name, setName] = useState('')
 
-  const handleDeleteActivity = (index, activity) => {
-    onDelete(index, activity)
-    setEditIndex(null)
+  const handleDeleteActivity = (index) => {
+    onDelete(index)
   }
 
-  const handleEditActivity = (index, activity) => {
-    onEdit(index, activity)
-    setEditIndex(null)
-  }
-
-  const handleAddActivity = (name, icon) => {
-    onAdd(name, icon)
-    setAdding(null)
-  }
-
-
-  const handleOpenAdd = () => {
-    setEditIndex(null)
-    setAdding({name: "", icon: ""})
-  }
-
-  const handleStartEdit = (index) => {
-    setEditIndex(index)
-    setAdding(null)
+  const handleAddActivity = (e) => {
+    e.preventDefault()
+    onAdd(name)
+    setName('')
   }
 
   return (
       <>
       {
         activities.map((activity, index) => {
-          return index === editIndex ?
-            <EditActivity key={activity.name + index} name={activity.name} icon={activity.icon} onDelete={activity => handleDeleteActivity(index, activity)} onSave={activity => handleEditActivity(index, activity)}/> :
-            <Activity key={activity.name + index} name={activity.name} icon={activity.icon} onClick={() =>  handleStartEdit(index)} selected={alwaysSelected}/>
+          return <span className={styles.activityWrapper} key={activity.name + index}><Activity name={activity.name}  onDelete={() =>  handleDeleteActivity(index)}/></span>
         })
       }
-      {
-        adding ?
-        <EditActivity name={adding.name} icon={adding.icon} onDelete={() => setAdding(null)} onSave={handleAddActivity} /> :
-        <Button variant="outline-success" onClick={handleOpenAdd} className={styles.addButton} >Add</Button>
-      }
+      <div className={styles.form}>
+        <form onSubmit={handleAddActivity}>
+          <input value={name} onChange={e => setName(e.target.value)} className={styles.input} placeholder="Enter activity here"/>
+          <Button type="submit" className={styles.button} size="lg">Add</Button>
+        </form>
+      </div>
     </>
   )
 }

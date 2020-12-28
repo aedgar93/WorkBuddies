@@ -1,15 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './bootstrap-custom.scss';
 import './index.css';
+import './shared.css'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import Firebase, { FirebaseContext } from './firebaseComponents'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import * as Sentry from '@sentry/browser';
+import { TrackingProvider } from './tracking'
+
+if(!process.env.REACT_APP_DEV) Sentry.init({dsn: "https://dd692b92e63b49828f066d29a0bba831@o386021.ingest.sentry.io/5219753"});
+
 
 ReactDOM.render(
-  <FirebaseContext.Provider value={new Firebase()}>
-    <App />
-  </FirebaseContext.Provider>,
+  <TrackingProvider>
+    <FirebaseContext.Provider value={new Firebase()}>
+      <App />
+    </FirebaseContext.Provider>
+  </TrackingProvider>,
   document.getElementById('root'),
 );
 

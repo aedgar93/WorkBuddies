@@ -1,2 +1,4 @@
 node_modules/
-admin-service-account.json
+admin-service-account*.json
+*.tgz
+.env*

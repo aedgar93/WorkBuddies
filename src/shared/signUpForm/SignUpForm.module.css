@@ -1,8 +1,30 @@
 .content {
-  margin-top: 50px;
+  margin-top: 40px;
   text-align: left;
 }
 
 .buttonContainer {
-  text-align: right;
+  text-align: left;
+  margin-top: 30px;
+}
+
+.input {
+  composes: input from '../../shared.css';
+}
+
+.formGroup {
+  margin: 25px 0;
+}
+
+.passwordError {
+  height: 20px;
+  line-height: 20px;
+  color: var(--error-color);
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 576px) {
+  .column:first-child {
+    margin-bottom: 25px;
+  }
 }

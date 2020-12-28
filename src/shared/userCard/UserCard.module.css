@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: row;
   height: 100%;
+  padding: 5px;
 }
 
 .info {
@@ -12,14 +13,7 @@
   justify-content: center;
   margin-left: 10px;
   margin-right: 10px;
-}
-
-.imgContainer {
-  height: 75px;
-  width: 75px;
-  border-radius: 50%;
-  background: rgba(0,0,0,.5);
-  margin: 15px;
+  flex-grow: 1;
 }
 
 .name {

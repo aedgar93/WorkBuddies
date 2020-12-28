@@ -1,21 +1,38 @@
 .wrapper {
-  text-align: left;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.sectionWidth {
+  width: 700px;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.divider {
+  border-bottom: 1px solid var(--divider);
+  width: 100%;
+  margin: 40px 0;
+}
+
+.topCard {
+  composes: sectionWidth;
+  margin: 50px auto;
+  padding: 30px 100px;
+  background: #FFFFFF;
+  border: 1px solid #F9F9F9;
+  box-shadow: 2px 2px 6px 0 rgba(0,0,0,0.21);
+  border-radius: 10px;
+
 }
 
 .section {
-  margin: 30px 0;
-}
-
-.subtext {
-  font-size: 14px;
-  color: rgba(0,0,0, .5);
-}
-
-.matchup {
-  margin: 20px 0;
+  margin-top: 75px;
+  composes: sectionWidth;
 }
 
 .loading {
+  margin-top: 100px;
   text-align: center;
 }
 
@@ -23,4 +40,292 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+
+.title {
+  text-align: left;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.welcome {
+  font-size: 20px;
+  color: var(--primary-text);
+  letter-spacing: -0.21px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.noMatch {
+  margin-top: 50px;
+}
+
+.noMatchText {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--primary-color);
+  letter-spacing: -0.21px;
+}
+
+.noMatchInfo {
+  font-size: 16px;
+  color: #5B5B5B;
+  letter-spacing: -0.17px;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.noMatchDivider {
+  margin-top: 100px;
+  margin-bottom: 60px;
+}
+
+.activity {
+  color: var(--primary-color);
+}
+
+.picWrapper {
+  flex-grow: 0;
+  position: relative;
+}
+
+.activityText {
+  max-height: 16px;
+  line-height: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.matchups {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.matchup {
+  color: var(--primary-text);
+}
+
+.info {
+  color: #4A4A4A;
+  flex-grow: 1;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: -0.19px;
+  margin: 15px 0;
+}
+
+.department {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 20px;
+  margin: 15px 0;
+}
+
+.about {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+
+.scheduleButton {
+  margin: 0 auto;
+  display: inline-block;
+  margin-top: 45px;
+}
+
+.scheduleIcon {
+  height: 22px;
+  width: 22px;
+  margin: 10px 10px 10px 0;
+}
+
+.scheduleNote {
+  font-size: 14px;
+  color: var(--gray);
+  letter-spacing: -0.15px;
+  text-align: center;
+  line-height: 16px;
+  margin-top: 30px;
+}
+
+.otherLabel {
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.inviteCard {
+  margin-top: var(--wrapper-top);
+}
+
+.inviteImage {
+  margin-right: 20px;
+  width: 24px;
+  height: 21px;
+  margin-bottom: 1px;
+}
+
+.inviteSent {
+  font-weight: bold;
+  font-size: 20px;
+  height: 22px;
+  color: var(--primary-color);
+  letter-spacing: -0.21px;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.inviteDetails {
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--primary-text);
+  line-height: 22px;
+  margin-top: 10px;
+}
+
+.inviteSentDivider {
+  margin-top: var(--wrapper-top);
+  margin-bottom: 60px;
+}
+
+.otherItemsContainer {
+  background: white;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.20);
+  border-radius: 9px;
+  padding: 25px;
+  padding-bottom: 23px;
+  margin: 20px 0;
+}
+
+.otherItemsHeader {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.otherItemLink:hover {
+  text-decoration: none !important;
+}
+
+.otherItemsText {
+  line-height: 27px;
+  height: 27px;
+  display: inline-block;
+  font-weight: bold;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: -0.19px;
+}
+
+.otherItemCheck svg g {
+  fill: #CBCBCB;
+}
+
+.otherItemCheck.checked svg g {
+  fill: var(--primary-color);
+}
+
+.dropDownIcon {
+  display: inline-block;
+  width: 45px;
+}
+
+.downIcon {
+  height: 13px;
+  width: 21px;
+}
+
+.rightIcon {
+  height: 21px;
+  width: 13px;
+}
+
+.edit {
+  display: block;
+  text-align: right;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+@media only screen and (max-width: 800px) {
+  .matchup {
+    flex-direction: column;
+    width: auto;
+  }
+
+  .info {
+    margin-top: 30px;
+  }
+
+  .picWrapper {
+    margin: 0;
+  }
+}
+
+
+@media only screen and (max-width: 600px) {
+
+  .title {
+    text-align: center;
+  }
+
+  .topCard {
+    box-shadow: none;
+    border: none;
+    margin: var(--wrapper-top) auto;
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .activityText {
+    max-width: 100px;
+  }
+
+  .activitiesText {
+    font-size: 16px;
+  }
+
+  .dropDownIcon {
+    width: 20px;
+  }
+
+  .rightIcon {
+    width: 8px;
+    height: 12px;
+  }
+
+  .downIcon {
+    width: 12px;
+    height: 8px;
+  }
+
+  .activities {
+    margin-top: 20px;
+  }
+
+  .otherItemsText {
+    font-size: 16px;
+  }
+
+  .noMatchDivider {
+    margin: 40px 0;
+  }
+
+  .section {
+    margin-top: 40px;
+  }
+
 }

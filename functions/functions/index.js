@@ -4,74 +4,95 @@ const sgMail = require('@sendgrid/mail');
 const moment = require('moment-timezone');
 const initQueries = require('./queries.js');
 const uuidv1 = require('uuid/v1');
+const { TIMES, ROUTES }= require('wb-utils/constants')
 const { PubSub } = require('@google-cloud/pubsub');
+const fs = require('fs');
+const { promisify } = require('util');
+const read = promisify(fs.readFile);
+
+const Sentry = require('@sentry/node')
+
+Sentry.init({ dsn: 'https://abc4cbf3abff4a19975d97ee9e6bfcd6@o386021.ingest.sentry.io/5219768' });
+
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-var serviceAccount = require("./admin-service-account.json");
+admin.initializeApp();
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://hr-app-391b3.firebaseio.com"
-});
+const pubsub = new PubSub()
 
 const config = functions.config()
 
-const pubsub = new PubSub({
-  projectId: process.env.GCLOUD_PROJECT,
-  keyFilename: './admin-service-account.json'
-});
 sgMail.setApiKey(config && config.mail ? config.mail.key : "");
 sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
 
+//Delete all invites for an email when a user joins
+exports.inviteAccepted = functions.firestore.document('users/{userId}')
+  .onCreate((userSnapshot, _ctx) => {
+    try {
+      const firestore = admin.firestore();
+      const invitesRef = firestore.collection('invites');
+      let email = userSnapshot.data().email
+
+      return invitesRef.where('email', '==', email).get()
+      .then(snapshot => {
+        var batch = firestore.batch()
+
+        snapshot.docs.forEach(doc => {
+          batch.delete(doc.ref)
+        })
+        return batch.commit()
+      })
+    } catch(e) {
+      Sentry.captureException(e)
+      return Promise.reject(e)
+    }
+  })
 
 //INVITE EMAIL
-const inviteEmailContent = () => {
-  return `
-    <p>Welcome to Work Buddies! Please follow this link to join {companyName}: {link}
-  `
-}
 const getFromEmail = () => {
-  return functions.config().mail ? functions.config().mail.email : 'annadesiree11@gmail.com'
+  return config && config.mail ? config.mail.email : 'annadesiree11@gmail.com'
 }
 
-const foods = ["soup", "coffee", "pancake", "pizza", "sushi", "ramen", "burrito", "gyros", "pasta", "curry", "bratwurst"];
-const generateCode = () => foods[Math.floor(Math.random() * foods.length)] + Math.floor(1000 + Math.random() * 9000);
-const signupLink = `${config && config.host ? config.host : 'http://localhost'}/signup?code=`
+const signupLink = `${config && config.host && config.host.url ? config.host.url : 'http://localhost:3000'}${ROUTES.ACCEPT_INVITE}`
 
 
 
 exports.inviteHandler = functions.firestore.document('invites/{inviteId}')
   .onCreate((inviteSnapshot, _ctx) => {
-    const firestore = admin.firestore();
-    const invitesRef = firestore.collection('invites');
-    const companiesRef = firestore.collection('companies');
+    try {
+      const firestore = admin.firestore();
+      const adminRef = firestore.collection('users');
+      const data = inviteSnapshot.data()
 
-    return Promise.all([getCode(), companiesRef.doc(inviteSnapshot.data().company_uid).get()]).then(results => {
-      let code = results[0];
-      let companyRef = results[1];
+      return Promise.all([
+        adminRef.doc(data.invitedBy).get(),
+        read('emails/invite.html', 'utf8')
+      ])
+      .then(([results, emailContent]) => {
+        let admin = results.data();
 
-      let emailContent = inviteEmailContent();
-      let link = signupLink + code
-      emailContent = emailContent.replace('{link}', link);
-      emailContent = emailContent.replace('{companyName}', companyRef.data().name);
+        let link = `${signupLink}?id=${encodeURIComponent(inviteSnapshot.id)}`
+        emailContent = emailContent.replace('{{link}}', link);
+        if(inviteSnapshot.data().name) {
+          emailContent = emailContent.replace('{{greeting}}', `Hi ${inviteSnapshot.data().name},`)
+        } else {
+          emailContent = emailContent.replace('{{greeting}}', 'Hi,')
+        }
+        emailContent = emailContent.replace('{{admin_name}}', admin.firstName);
 
-      const msg = {
-        to: inviteSnapshot.data().email,
-        from: getFromEmail(),
-        subject: 'You\'re Invited to Work Buddies!',
-        html: emailContent,
-      };
+        const msg = {
+          to: inviteSnapshot.data().email,
+          from: getFromEmail(),
+          subject: 'You\'re Invited to Work Buddies!',
+          html: emailContent,
+        };
 
-      return Promise.all([inviteSnapshot.ref.update({ code }), sgMail.send(msg)]);
-    });
-
-    function getCode() {
-      let code = generateCode();
-      return invitesRef.where('code', '==', code).get()
-        .then(snapshot => {
-          return !snapshot.docs || snapshot.docs.length === 0 ? code : getCode();
-        });
+        return sgMail.send(msg);
+      });
+    } catch(e) {
+      Sentry.captureException(e)
+      return Promise.reject(e)
     }
   });
 
@@ -98,28 +119,104 @@ const getRandom = (collection) => {
   return collection[Math.floor(Math.random()*collection.length)]
 }
 
-const buddyEmail = "Hello {{buddy1}} and {{buddy2}},<br/><br/> You have been match up as Work Buddies this week! {{activityString}} <br/> <br/> Sincerely,<br/> the Work Buddies Team"
 const noBuddyEmail = "Hello {{buddy1}},<br/><br/> Unfortunately there is an odd number of people in your group, so you did not get matched up with a buddy this week. Please check back next week for your new matchup. <br/><br/> Sincerely,<br/> the Work Buddies Team"
 
-const getPersonalization = (buddy1, buddy2, activity) => {
-  if (!buddy1) return null
 
-  let activityString = activity ? `You activity this week is ${activity.name}. Don't like the suggested activity? That's okay! You and your buddy can do whatever you'd like, as long as you spend a few minutes together this week.` : "Talk with your buddy and pick something around the office to do this week. We recommend grabbing a coffee or going for a walk."
-  let to = [{email: buddy1.email}]
-  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString }
-  if (buddy2) {
-    to.push({email: buddy2.email})
-    substitutions["buddy2"] = `${buddy2.firstName} ${buddy2.lastName}`
+const addBuddySubstitutions = (buddy, suffix, substitutions) => {
+  substitutions['buddy' + suffix] = `${buddy.firstName}`
+  if(buddy.profilePic) {
+    substitutions['profilePic_' + suffix] = `<img src=${buddy.profilePic} style="width:93px;height:93px;"></img>`
+  } else {
+    substitutions['profilePic_' + suffix] = `<div class="profileImgText">${buddy.firstName[0]}${buddy.lastName[0]}</div>`
   }
-
-  return { to, substitutions, subject: "Your Weekly Buddy" }
+  if(buddy.department) {
+    substitutions['department_' + suffix] = buddy.department
+  } else {
+    substitutions['department_' + suffix] = ""
+  }
+  if(buddy.about) {
+    substitutions['about_' + suffix] = buddy.about
+  } else {
+    substitutions['about_' + suffix] = ""
+  }
+  const timePrefix = 'buddy' + suffix + '_time_'
+  for(let i = 0;i <= 4; i++) {
+    if(buddy.availability && buddy.availability[i] && buddy.availability[i].times) {
+      let time0 = TIMES.find(t => t.value === buddy.availability[i].times[0])
+      let time1 = TIMES.find(t => t.value === buddy.availability[i].times[1])
+      console.info(time0 && time0.label)
+      console.info(time1 && time1.label)
+      substitutions[`${timePrefix}${i}_0`] = (time0 && time0.label) || '- -'
+      substitutions[`${timePrefix}${i}_1`] = (time1 && time1.label) || '- -'
+    } else {
+      substitutions[`${timePrefix}${i}_0`] = '- -'
+      substitutions[`${timePrefix}${i}_1`] = '- -'
+    }
+  }
 }
 
+const addEmailPersonalization = (buddy1, buddy2, buddy3, activity, emailInfo) => {
+  if (!buddy1 || !buddy1.email || !buddy1.notifyEmail) return null
+  let to = [{email: buddy1.email}]
+  let activityString = activity ? activity.name : "Grab a Coffee"
+  let substitutions = {"buddy1": `${buddy1.firstName} ${buddy1.lastName}`, "activityString": activityString , links: '', profilePic: '', department: '', about: '', email: ''}
+  if (buddy2) {
+    addBuddySubstitutions(buddy2, '2', substitutions)
+    let subject = "I'm your weekly buddy"
+    let body = `Hello ${buddy2.firstName},\n\nWe've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?\n\nSincerely, ${buddy1.firstName}`
+    substitutions['contactHref'] = `mailto:${buddy2.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  }
+  if(buddy3) {
+    addBuddySubstitutions(buddy3, '3', substitutions)
+    let subject = "I'm your weekly buddy"
+    let body = `Hello ${buddy2.firstName} and ${buddy3.firstName},\n\nWe've been matched up as work buddies this week. Can we schedule a time this week to ${activityString}?\n\nSincerely, ${buddy1.firstName}`
+    substitutions['contactHref'] = `mailto:${buddy2.email},${buddy3.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+  }
+
+  return emailInfo.push({ to, substitutions, subject: "Your Weekly Buddy" })
+}
+
+const notify = (buddy1, buddy2, buddy3,  activity, emailInfo) => {
+  if (!buddy1) return null
+  addEmailPersonalization(buddy1, buddy2, buddy3, activity, emailInfo)
+  return null
+}
+
+const getOddManOutIndex = (previousMatchups, users) => {
+  if(!previousMatchups) return -1
+  let singleOrTriple = previousMatchups.find(matchup => {
+    return matchup.buddies && (matchup.buddies.length === 1 || matchup.buddies.length === 3)
+  })
+  if (!singleOrTriple) return -1
+  let id = singleOrTriple.buddies[0]
+
+  let oddManOut = users.findIndex(user => {
+    return user.id === id
+  })
+  return oddManOut
+}
+
+const getMatchups = async (companyRef, companyData) => {
+  let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
+  let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
+  let matchups = lastBuddiesDoc && lastBuddiesDoc.exists ? lastBuddiesDoc.data().matchups : []
+  return {doc: lastBuddiesDoc, matchups, ref: lastBuddiesRef}
+}
 const matchup = async (data) => {
   const companyId = data.id
+  let eventId = data.event_id || uuidv1()
+
   const firestore = admin.firestore();
   let companyRef = firestore.collection('companies').doc(companyId);
   if (!companyRef) return Promise.reject(new Error("company not found"))
+
+
+  let existingMatchup = await companyRef.collection('buddies').doc(eventId)
+  if(existingMatchup.exists) return Promise.reject(new Error('duplicate matchup event'))
+
+  await companyRef.collection('buddies').doc(eventId).set({ loading: true })
+
   let companyData = await companyRef.get()
   companyData = companyData.data()
   let activitiesSnapshot = await companyRef.collection('activities').get()
@@ -128,23 +225,33 @@ const matchup = async (data) => {
   activitiesSnapshot.forEach(doc => activities.push(doc.data()))
 
   let usersRef = firestore.collection('users').where('company_uid', '==', companyId)
-  let lastBuddiesRef = companyData.activeBuddies ? await companyRef.collection('buddies').doc(companyData.activeBuddies) : null
-  let lastBuddiesDoc = lastBuddiesRef  ? await lastBuddiesRef.get() : false
-  let previousMatchups = lastBuddiesDoc && lastBuddiesDoc.exists  ? await lastBuddiesDoc.data().matchups : []
+  let previousMatchupsInfo = await getMatchups(companyRef, companyData)
+  let previousMatchups = previousMatchupsInfo.matchups
 
   let newMatchups = []
   let emailInfo = []
   let emailPromises = []
+  let matchupEmailContent = await read('emails/matchup.html', 'utf8')
+  let matchupEmailThreeContent = await  read('emails/matchup3.html', 'utf8')
 
   let matchUpUsersPromise = usersRef.get()
-    .then(snapshot => {
+    .then(async snapshot => {
       const users = []
       snapshot.forEach(user => users.push(user))
+      if(users.length === 1) return null //no matchup if there is only one person
 
-      //TODO: if someone didn't have a partner last time, match them up first this time
-      while (users.length > 1) {
+      // If someone wasn't matched up last time, match them first this time
+      let oddManOutIndex = getOddManOutIndex(previousMatchups, users)
+      while (users.length > 1 && users.length !== 3) {
         let buddy = null
-        let user = users.pop()
+        let user = null
+        if(oddManOutIndex >=0 && oddManOutIndex < users.length) {
+          user = users[oddManOutIndex]
+          users.splice(oddManOutIndex, 1)
+          oddManOutIndex = -1
+        } else {
+          user = users.pop()
+        }
         if(users.length === 1) {
           buddy = users.pop()
         } else {
@@ -171,49 +278,95 @@ const matchup = async (data) => {
         }
         let activity = getRandom(activities)
 
-        emailInfo.push(getPersonalization(user.data(), buddy.data(), activity))
+        let userData = user ? user.data() : null
+        let buddyData = buddy ? buddy.data() : null
+
+        notify(userData, buddyData, null, activity, emailInfo)
+
+        //buddy2 notifications
+        notify(buddyData, userData, null, activity, emailInfo)
+
+
         newMatchups.push({
           buddies: [user.id, buddy.id],
           activity: activity
         })
       }
+      // end of matching up loop
 
+
+      let allMessages = []
       //Handle emails with buddies
       if (emailInfo.length) {
         let msg = {
           personalizations: emailInfo,
           from: getFromEmail(),
-          html: buddyEmail
+          html: matchupEmailContent
         }
-        console.info(JSON.stringify(msg))
-        emailPromises.push(sgMail.send(msg))
+        allMessages.push(msg)
       }
 
 
       if(users.length === 1) {
         //handle odd
         let activity = getRandom(activities)
-        user = users.pop()
+        let user = users.pop()
         newMatchups.push({
           buddies: [user.id],
           activity: activity
         })
-        let msg = {
-          personalizations: [getPersonalization(user.data(), null, activity)],
-          from: getFromEmail(),
-          html: noBuddyEmail
+        let userData = user.data()
+        if(userData.notifyEmail) {
+          let emailInfo = []
+          notify(userData, null, null, activity, emailInfo)
+
+          let msg = {
+            personalizations: emailInfo,
+            from: getFromEmail(),
+            html: noBuddyEmail
+          }
+          allMessages.push(msg)
         }
-        console.info(JSON.stringify(msg))
-        emailPromises.push(sgMail.send(msg))
+      } else if(users.length === 3) {
+        let activity = getRandom(activities)
+        let user = users.pop()
+        let buddy = users.pop()
+        let buddy2 = users.pop()
+        let emailInfo = []
+
+        let userData = user.data()
+        let buddyData = buddy.data()
+        let buddy2Data = buddy2.data()
+
+        notify(userData, buddyData, buddy2Data, activity, emailInfo)
+        notify(buddyData, userData, buddy2Data, activity, emailInfo)
+        notify(buddy2Data, userData, buddyData, activity, emailInfo)
+
+        newMatchups.push({
+          buddies: [user.id, buddy.id, buddy2.id],
+          activity: activity
+        })
+
+        let msg = {
+          personalizations: emailInfo,
+          from: getFromEmail(),
+          html: matchupEmailThreeContent
+        }
+        allMessages.push(msg)
       }
 
+      //double check existing matchup
+      let existingMatchup = await companyRef.collection('buddies').doc(eventId).get()
+      if (existingMatchup && !existingMatchup.data().loading) return null
+
+      emailPromises = allMessages.forEach(msg => sgMail.send(msg))
       // eslint-disable-next-line promise/no-nesting
-      return companyRef.collection('buddies').add({
+      return companyRef.collection('buddies').doc(eventId).set({
         matchups: newMatchups
       })
-      .then(snapshot => {
+      .then(_snapshot => {
         return companyRef.set({
-          activeBuddies: snapshot.id
+          activeBuddies: eventId
         }, {merge: true})
       })
     })
@@ -224,47 +377,159 @@ const matchup = async (data) => {
 }
 
 exports.matchupSub = functions.pubsub.topic('matchup').onPublish((message, _ctx) => {
-  const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
-  console.info(JSON.stringify(data))
-  return matchup(data)
+  try {
+    const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    console.info(JSON.stringify(data))
+    return matchup(data)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 })
 
 exports.matchup = functions.https.onCall((data, _ctx) => {
-  return matchup(data)
+  try {
+    return matchup(data)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 })
 // END GENERATE MATCHUPS
+
+
+//Matchup on new user
+exports.newUserHandler = functions.firestore.document('users/{userId}')
+  .onCreate(async (userSnapshot, _ctx) => {
+    try {
+      //get company
+      let user = userSnapshot.data()
+      if(user.admin) return null
+      let companyId = user.company_uid
+      console.log(companyId)
+      const firestore = admin.firestore();
+      const companyRef = firestore.collection('companies').doc(companyId)
+      if (!companyRef) return Promise.reject(new Error("company not found"))
+
+      let companyData = await companyRef.get()
+      companyData = companyData.data()
+
+      if(!companyData.activeBuddies) {
+      //if no matchup, create one and match people up
+        return matchup({id: companyId})
+      } else {
+        //get current matchup
+        let { ref, matchups } = await getMatchups(companyRef, companyData)
+        let usersRef = await firestore.collection('users').where('company_uid', '==', companyId).get()
+        let users = []
+        usersRef.forEach(user => users.push(user))
+
+        //check if there is an odd man out
+        let single = matchups.find(matchup => {
+          return matchup.buddies && matchup.buddies.length === 1
+        })
+
+        let buddy
+        let activity
+        if (single) {
+          let buddyId = single.buddies[0]
+          buddy = users.find(user => user.id === buddyId)
+          activity = single.activity
+          single.buddies.push(userSnapshot.id)
+        } else {
+          console.log('no single')
+          //check if there are any users not in a matchup at all
+          let buddiesInMatchup = []
+          matchups.forEach(matchup => {
+            buddiesInMatchup.push(matchup.buddies[0])
+            if(matchup.buddies.length > 1) buddiesInMatchup.push(matchup.buddies[1])
+            if(matchup.buddies.length > 2) buddiesInMatchup.push(matchup.buddies[2])
+          })
+
+          buddy = users.find(buddy => buddiesInMatchup.indexOf(buddy.id) === -1 && buddy.id !== userSnapshot.id)
+          if(!buddy) return null
+          activity = matchups[0].activity //just use the first activity so we don't have to fetch them all
+          matchups.push({buddies: [userSnapshot.id, buddy.id], activity})
+        }
+
+
+
+        let emailInfo = []
+        notify(user, buddy.data(), null, activity, emailInfo)
+        notify(buddy.data(), user, null, activity, emailInfo)
+
+        let emailContent = await read('emails/matchup.html', 'utf8')
+
+        if(emailInfo.length >= 1) {
+          let msg = {
+            personalizations: emailInfo,
+            from: getFromEmail(),
+            html: emailContent
+          }
+
+
+          console.log(msg)
+          return ref.set({matchups})
+          .then(() => {
+            //send email
+            return sgMail.send(msg)
+          })
+        } else {
+          return Promise.resolve()
+        }
+      }
+    } catch(e) {
+      Sentry.captureException(e)
+      return Promise.reject(e)
+    }
+  })
 
 
 // TRIGGER MATCHUPS
 
 //set next matchup time
 const setNextMatchupTime = (companyId) => {
-  const firestore = admin.firestore();
-  let companyRef = firestore.collection('companies').doc(companyId);
-  if (!companyRef) return Promise.reject(new Error("company not found"))
+  try {
+    const firestore = admin.firestore();
+    let companyRef = firestore.collection('companies').doc(companyId);
+    if (!companyRef) return Promise.reject(new Error("company not found"))
 
-  return companyRef.get()
-  .then(company => {
-    let data = company.data()
-    let now = moment().tz(data.timeZone)
-    let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0).milliseconds(0)
+    return companyRef.get()
+    .then(company => {
+      let data = company.data()
+      let now = moment().tz(data.timeZone)
+      let nextTime = moment().tz(data.timeZone).isoWeekday(data.day).hour(data.hour).minute(0).second(0).milliseconds(0)
 
-    if(now.isAfter(nextTime)) {
-      nextTime = nextTime.add(1, 'weeks')
-    }
+      if(now.isAfter(nextTime)) {
+        nextTime = nextTime.add(1, 'weeks')
+      }
 
-    return company.ref.set({
-      matchUpTime: nextTime.valueOf()
-    }, {merge: true})
-  })
+      return company.ref.set({
+        matchUpTime: nextTime.valueOf()
+      }, {merge: true})
+    })
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 }
 exports.setNextMatchupTime = functions.https.onCall(({ companyId }, _ctx) => {
-  return setNextMatchupTime(companyId)
+  try {
+    return setNextMatchupTime(companyId)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 })
 
 exports.setInitialMatchupTime = functions.firestore.document('companies/{companyId}')
 .onCreate((snapshot, _context) => {
-  setNextMatchupTime(snapshot.id)
+  try {
+    return setNextMatchupTime(snapshot.id)
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 });
 
 
@@ -300,8 +565,13 @@ let publishToTopic = topic =>
 
 
 exports.matchUpScheduler = functions.pubsub.schedule('*/5 * * * *').onRun((_ctx) => {
-  let timestamp = moment.utc().valueOf();
-  return queries.getToMatchUp(timestamp).asyncMap(publishToTopic('matchup'))
+  try {
+    let timestamp = moment.utc().valueOf();
+    return queries.getToMatchUp(timestamp).asyncMap(publishToTopic('matchup'))
+  } catch(e) {
+    Sentry.captureException(e)
+    return Promise.reject(e)
+  }
 });
 
 // END TRIGGER MATCHUPS

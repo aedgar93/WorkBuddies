@@ -3,24 +3,38 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@azure/msal-browser": "^2.1.0",
+    "@microsoft/microsoft-graph-client": "2.0.0",
+    "@sentry/browser": "^5.15.5",
+    "@types/microsoft-graph": "1.12.0",
     "bootstrap": "^4.3.1",
+    "cookies-eu-banner": "^2.0.1",
     "firebase": "^7.2.2",
+    "gapi-script": "file:./src/gapi-script",
+    "mixpanel-browser": "^2.38.0",
     "moment-timezone": "^0.5.27",
+    "node-sass": "^4.13.1",
     "react": "^16.11.0",
-    "react-bootstrap": "^1.0.0-beta.14",
+    "react-avatar-editor": "^12.0.0-beta.0",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.11.0",
+    "react-media": "^1.10.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
-    "react-transition-group": "^4.3.0"
+    "react-transition-group": "^4.3.0",
+    "wb-utils": "file:./utils"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start --no-cache",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "engines": {
+    "node": "10"
   },
   "browserslist": {
     "production": [

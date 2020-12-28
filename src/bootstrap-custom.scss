@@ -1,0 +1,55 @@
+
+$theme-colors: (
+  "primary": #7F68FF,
+);
+
+$btn-font-size-lg: 15px;
+
+$btn-padding-y-lg: 13px;
+
+$btn-padding-x-lg: 23px;
+
+@import '~bootstrap/scss/bootstrap.scss';
+
+.alert-primary {
+  color: #7F68FF;
+  background-color: #7F68FF15;
+  font-weight: bold;
+}
+
+.alert {
+  font-size: 18px;
+  line-height: 22px;
+  border-radius: 15px;
+  border: none;
+}
+
+.btn {
+  font-weight: bold;
+}
+.modal-title {
+  color: rgba(46, 36, 96, 1);
+  font-size: 26px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  letter-spacing: -0.3px;
+  line-height: 31px;
+}
+
+.modal-body {
+  color: rgba(91, 91, 91, 1);
+  font-size: 16px;
+  line-height: 18px;
+  padding: 25px 32px 30px 32px;
+}
+
+.modal-header {
+  padding: 40px 32px 0 32px;
+  border: none;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 543px;
+  }
+}

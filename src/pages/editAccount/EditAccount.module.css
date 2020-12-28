@@ -1,0 +1,194 @@
+.wrapper {
+  text-align: left;
+  margin-top: var(--page-top);
+}
+
+.nav {
+  text-align: left;
+  padding-left: calc(var(--vertical-padding) - 15px);
+
+}
+
+.navButton, .subNavButton {
+  display: block;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--primary-text);
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: -.17px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 210px;
+  height: 30px;
+  line-height: 30px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.subNavButton {
+  margin-left: 33px;
+}
+
+.subNavButton:hover {
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.navButtonActive {
+  background-color: #F2F2F2;
+}
+
+
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+  color: var(--primary-text);
+  letter-spacing: -0.25px;
+  margin-bottom: 25px;
+}
+
+.leftLabel {
+  display: inline-block;
+  width: 150px;
+  margin-right: 100px;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.form {
+  flex-grow: 1;
+}
+
+.button {
+  float: right;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 76px;
+}
+
+.formGroup {
+  margin: 10px 0;
+}
+
+.formGroup:first-child {
+  margin-top: 20px;
+}
+
+.input, .textarea  {
+  composes: input from '../../shared.css';
+}
+
+.formGroup .textarea {
+  height: 80px;
+  resize: none;
+}
+
+.buttonSpinner {
+  margin-right: 5px;
+}
+
+.editPic {
+  width: 100%;
+  color: var(--primary-color);
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.notifyLabel {
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--primary-color);
+  letter-spacing: -0.19px;
+  display: inline-block;
+  margin-right: 30px;
+}
+
+.cookieSettings {
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--primary-color);
+  letter-spacing: -0.19px;
+  display: inline-block;
+  margin-left: 50px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.cookieWrapper {
+  background-color: #F9F9F9;
+  padding: 25px 0;
+  margin-top: -50px;
+}
+
+.cookiesInner {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.arrow {
+  transform: rotate(90deg);
+  display: inline-block;
+  text-decoration: none;
+}
+
+.formCheck {
+  display: flex;
+  align-items: center;
+}
+
+@media only screen and (max-width: 768px) {
+
+  .nav {
+    margin-bottom: 50px;
+    padding-left: 0;
+  }
+
+  .profileSection {
+    flex-direction: column;
+  }
+
+  .leftLabel {
+    width: 100%;
+  }
+}
+
+
+@media only screen and (max-width: 600px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .about {
+    width: 100%;
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .title {
+    text-align: left;
+  }
+
+  .formGroup input, .formGroup textarea {
+    padding-left: 10px;
+  }
+
+  .cookieWrapper {
+    padding: 25px 20px;
+    width: calc(100% + 40px);
+    margin-left: -20px;
+  }
+}
+
+

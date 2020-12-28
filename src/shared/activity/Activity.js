@@ -1,13 +1,12 @@
 import React from 'react'
 import styles from './Activity.module.css'
+import { ReactComponent as CloseIcon} from '../../assets/images/close_icon.svg'
 
-const Activity = ({ name, icon, onClick, selected }) => {
+const Activity = ({ name, onDelete }) => {
   return (
-    <div className={[styles.card, selected ? styles.selected : ""].join(" ")} onClick={() => { if(onClick) onClick() }}>
-      <div className={styles.iconContainer}>
-        { icon ? <img className={styles.icon} src={icon} alt="Activity Icon"/> : null }
-      </div>
+    <div className={styles.card}>
       <span className={styles.name}>{name}</span>
+      { onDelete ? <div className={styles.closeContainer} onClick={onDelete}><CloseIcon className={styles.close}/></div> : null }
     </div>
   )
 }

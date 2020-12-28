@@ -1,17 +1,83 @@
 .wrapper {
+  margin-top: var(--page-top);
+}
+
+.nav {
   text-align: left;
+  padding-left: calc(var(--vertical-padding) - 15px);
+}
+
+.navButton {
+  display: block;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--primary-text);
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: -.17px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 210px;
+  height: 30px;
+  line-height: 30px;
+  text-align: left;
+}
+
+.navButtonActive {
+  background-color: #F2F2F2;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: row;
+}
+
+
+.sectionLabel {
+  font-weight: bold;
+  font-size: 24px;
+  color: var(--primary-text);
+  letter-spacing: -0.25px;
+  text-align: left;
+}
+
+.infoSection .sectionLabel {
+  margin-right: 70px;
+}
+
+.section .sectionLabel {
+  margin-bottom: 30px;
 }
 
 .activities {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 40px;
 }
 
-.timeColumn {
-  margin: 10px 0;
+.editEmployees {
+  margin-top: 40px;
 }
 
 .buttonSpinner {
   margin-right: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+  .infoSection {
+    flex-direction: column;
+  }
+
+  .nav {
+    margin-bottom: 30px;
+    padding-left: 0;
+  }
+
+}
+
+@media only screen and (max-width: 480px) {
+
 }

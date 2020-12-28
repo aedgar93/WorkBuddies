@@ -1,0 +1,31 @@
+.activities {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.activityContainer {
+  margin: 20px 10px;
+}
+
+.button  {
+  width: 220px;
+  height: 61px;
+  background: white;
+  font-size: 18px;
+  color: var(--primary-dark);
+  border-color: white;
+  box-shadow: 0 4px 7px 0 rgba(0,0,0,0.19);
+  border-radius: 5px;
+}
+
+.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  background: #7F68FF;
+  box-shadow: inset 2px 2px 4px 0 rgba(0,0,0,0.22);
+  border-radius: 5px;
+  font-weight: bold;
+}

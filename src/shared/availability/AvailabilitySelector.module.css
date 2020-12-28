@@ -1,0 +1,46 @@
+.week {
+  display: flex;
+  flex-direction: row;
+}
+
+.day {
+  flex: 1 1 0px;
+  margin: 0 5px;
+  text-align: center;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--gray);
+  line-height: 22px;
+  margin-bottom: 20px;
+}
+
+.timeSelectContainer {
+  margin: 20px 0;
+}
+
+.timeSelect, .tzSelect {
+  composes: select from '../../shared.css'
+}
+
+.tzSelectContainer {
+  width: 300px;
+  max-width: 100%;
+  margin-top: 35px;
+}
+
+@media only screen and (max-width: 600px) {
+  .week {
+    flex-direction: column;
+  }
+
+  .day {
+    margin: 20px 0;
+  }
+
+  .tzSelectContainer {
+    width: 100%;
+  }
+}

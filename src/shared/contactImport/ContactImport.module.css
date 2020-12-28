@@ -1,0 +1,82 @@
+.bookButton {
+  height: 50px;
+  background: white;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  outline: none;
+  color: var(--primary-text);
+  padding: 5px 10px;
+}
+
+.bookButton:first-child {
+  margin-right: 25px;
+}
+
+.bookButton:hover, .bookButton:active {
+  opacity: .5
+}
+
+.gmailIcon, .outlookIcon {
+  height: 30px;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.body {
+  padding-bottom: 17px;
+  color: var(--primary-text);
+}
+
+.title {
+  margin-bottom: 0;
+  font-weight: bold;
+  font-size: 26px;
+  color: var(--primary-dark);
+  letter-spacing: -0.28px;
+}
+
+.contactBody {
+  margin: 30px 0;
+}
+
+.error {
+  margin: 30px 0;
+}
+
+.spinner {
+  text-align: center;
+}
+
+.letterLabel {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: var(--primary-dark)
+}
+
+.contactInfoContainer{
+  border: 1px solid var(--primary-light);
+  border-top: 0;
+  padding: 10px 5px;
+}
+
+.letterLabel + .contactInfoContainer {
+  border-top: 1px solid var(--primary-light);
+}
+
+.contactInfo {
+  display: inline-block;
+  margin-left: 10px;
+  max-width: calc(100% - 28px);
+}
+
+@media only screen and (max-width: 600px) {
+  .bookButton {
+    width: 100%;
+  }
+
+  .bookButton:first-child {
+    margin-bottom: 20px;
+    margin-right: 0;
+  }
+}

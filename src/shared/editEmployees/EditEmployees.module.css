@@ -1,0 +1,74 @@
+.wrapper {
+  text-align: left;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 50px;
+}
+
+.sectionLabel {
+  font-weight: bold;
+  font-size: 24px;
+  color: var(--primary-text);
+  letter-spacing: -0.25px;
+  text-align: left;
+  margin-top: 60px;
+}
+
+.picContainer {
+  margin-right: 35px;
+}
+
+.user {
+  margin-bottom: 15px;
+}
+
+.loadingContainer {
+  margin: 20px auto;
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
+
+.inviteContainer {
+  display: flex;
+  flex-direction: row;
+  margin: 20px 0;
+  padding: 10px 22px;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  align-items: center;
+}
+
+.name {
+  margin-right: 25px;
+  justify-self: flex-start;
+}
+
+.email {
+  margin: 0 25px;
+  flex-grow: 1;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+.delete {
+  justify-self: flex-end;
+  margin: auto;
+}
+
+@media only screen and (max-width: 480px) {
+
+  .inviteContainer {
+    flex-direction: column;
+  }
+
+  .name, .email, .delete {
+    margin: 5px 0;
+  }
+
+  .picContainer {
+    margin-right: 0;
+  }
+}

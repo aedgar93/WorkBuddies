@@ -5,41 +5,57 @@ import {
   Switch
 } from 'react-router-dom';
 import './App.css';
-import { ROUTES } from './utils/constants'
+import { ROUTES } from 'wb-utils/constants'
 import SignIn from './pages/signIn'
 import AcceptInvite from './pages/acceptInvite'
 import EditCompany from './pages/editCompany'
 import Header from './shared/header'
+import Footer from './shared/footer'
 import { AuthUserContext } from './session'
 import { withFirebase } from './firebaseComponents'
 import Dashboard from './pages/dashboard'
-import EditEmployees from './pages/editEmployees/EditEmployees';
-import Spinner from 'react-bootstrap/Spinner'
+import EditAccount from './pages/editAccount'
+import { Spinner } from 'react-bootstrap'
 import CreateCompany from './pages/createCompany';
-import SetUpActivities from './pages/setUpActivities';
-import SetUpEmployees from './pages/setUpEmployees/SetUpEmployees';
+import SetUpEmployees from './pages/setUpEmployees';
+import LandingPage from './pages/landingPage';
+import Welcome from './pages/welcome'
+import ScrollToTop from './shared/scrollToTop'
+import { withTracking } from './tracking'
+import CookieBanner from './shared/cookies'
+import PrivacyPolicy from './pages/privacy'
+import TermsOfUse from './pages/terms'
+import MSRedirect from './pages/msRedirect'
+
 
 class App extends Component {
   constructor(props) {
     super(props);
-    let authUser = JSON.parse(localStorage.getItem('authUser'))
-    if (authUser) {
-      authUser.user = JSON.parse(localStorage.getItem('user'))
-    }
     this.state = {
-      authUser,
+      authUser: {waitingForAuth: true},
       loading: true
     };
   }
 
   componentDidMount() {
+    this.props.tracking.mixpanel.track('App Open')
+    let findAuthListener
     this.listener = this.props.firebase.auth.onAuthStateChanged(async authUser => {
       if (authUser) {
+        this.setState({ authUser : { waitingForAuth: true }})
         if (this.props.firebase.creatingUserPromise) await this.props.firebase.creatingUserPromise
-        this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid).get()
-        .then(snapshot => {
+        findAuthListener =this.props.firebase.db.collection('users').where('auth_id', '==', authUser.uid)
+        .onSnapshot(snapshot => {
+          if(!snapshot || !snapshot.docs || snapshot.docs.length === 0) return
           authUser.user = snapshot.docs[0].data()
-          authUser.user.id = snapshot.docs[0].id
+          let id = snapshot.docs[0].id
+          authUser.user.id = id
+          this.props.tracking.initUser(authUser.user)
+
+          authUser.updateUser = (val) => {
+            authUser.user = val.data()
+            authUser.user.id = val.id
+          }
           localStorage.setItem('authUser', JSON.stringify(authUser));
           localStorage.setItem('user', JSON.stringify(authUser.user));
           let companyRef = this.props.firebase.db.collection('companies').doc(authUser.user.company_uid)
@@ -47,10 +63,13 @@ class App extends Component {
           .then(snapshot => {
             authUser.company = snapshot.data()
             authUser.companyRef = this.props.firebase.db.collection('companies').doc(authUser.user.company_uid)
-            this.setState({ authUser, loading: false })
+            this.setState({ authUser, loading: false }, () => {
+              findAuthListener()
+            })
           })
         })
       } else {
+        findAuthListener && findAuthListener()
         localStorage.removeItem('authUser');
         localStorage.removeItem('user');
         this.setState({ authUser: null, loading: false });
@@ -59,7 +78,7 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    this.listener();
+    this.listener && this.listener();
   }
 
   render() {
@@ -69,34 +88,46 @@ class App extends Component {
         <div className="App">
           <>
             <Router>
-              <Header />
-              <div className="content">
-                {
-                  loading ? <div><Spinner animation="border" size="lg" variant="primary"/></div> :
+              <ScrollToTop>
+                <Header />
+                <div className="content">
+                  {
+                    loading ? <div style={{marginTop: '50px'}}><Spinner animation="border" size="lg" variant="primary"/></div> :
 
-                    <Switch>
-                        { /* Unauth Routes */}
-                        { !authUser ? <Route path={[ROUTES.SIGN_UP + '/:code', ROUTES.SIGN_UP]} component={AcceptInvite}></Route> : null }
-                        { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
+                      <Switch>
+                          { /* Unauth Routes */}
+                          { !authUser ? <Route path={ROUTES.SIGN_IN} component={SignIn}></Route> : null}
+                          { !authUser ? <Route path={ROUTES.ACCEPT_INVITE} component={AcceptInvite}></Route> : null }
+                          { !authUser ? <Route path={ROUTES.GET_STARTED} component={CreateCompany}></Route> : null}
 
-                        { /* Admin Routes */ }
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.EDIT_EMPLOYEES} component={EditEmployees}></Route> : null}
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.SET_UP_ACTIVITIES} component={SetUpActivities}></Route> : null}
-                        { authUser && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
+                          { /* Auth Routes */}
+                          { authUser ? <Route path={ROUTES.MY_ACCOUNT} component={EditAccount}></Route> : null}
 
-                        { /* Default */ }
-                        { authUser ? <Route component={Dashboard}></Route> : <Route component={SignIn}></Route> }
-                    </Switch>
-                }
-              </div>
+                          { /* Admin Routes */ }
+                          { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.EDIT_COMPANY} component={EditCompany}></Route> : null}
+                          { authUser && authUser.user && authUser.user.admin ? <Route path={ROUTES.SET_UP_EMPLOYEES} component={SetUpEmployees}></Route> : null}
+
+                          <Route path={ROUTES.WELCOME} component={Welcome}></Route> { /* Allow users to hit this page, in case they are in the process of being logged in */ }
+
+                          <Route path={ROUTES.PRIVACY} component={PrivacyPolicy}></Route>
+                          <Route path={ROUTES.TERMS} component={TermsOfUse}></Route>
+                          <Route path={ROUTES.REDIRECT} component={MSRedirect}></Route>
+
+                          { /* Default */ }
+                          { authUser ? <Route component={Dashboard}></Route> : <Route component={LandingPage}></Route> }
+                      </Switch>
+                  }
+                </div>
+                <Footer />
+                <CookieBanner />
+              </ScrollToTop>
             </Router>
           </>
-
         </div>
       </AuthUserContext.Provider>
     );
   }
 }
 
-export default withFirebase(App);
+
+export default withTracking(withFirebase(App));
