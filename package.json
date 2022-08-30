@@ -12,7 +12,7 @@
     "firebase": "^7.2.2",
     "gapi-script": "file:./src/gapi-script",
     "mixpanel-browser": "^2.38.0",
-    "moment-timezone": "^0.5.27",
+    "moment-timezone": "^0.5.35",
     "node-sass": "^4.13.1",
     "react": "^16.11.0",
     "react-avatar-editor": "^12.0.0-beta.0",
